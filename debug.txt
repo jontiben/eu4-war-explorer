@@ -1,14 +1,1 @@
-[21:33:44.348780] *** Detecting EU4 directory in [C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV]...
-[21:33:44.348780] *** EU4 directory found automatically	
-[21:33:46.383384] *** Started EU4 Savefile Explorer version 1.0
-[21:33:46.384384] *** Waiting for the user to select a file...
-[21:33:48.547750] *** Attempting to open []
-[21:33:48.548748] *** Savefile opening failed with exception [[Errno 2] No such file or directory: '']
-[21:33:48.549746] *** Exception [Traceback (most recent call last):
-  File "C:\Users\Jonathan Schierman\Documents\Test Python Programs\EU4 Savefile Reader\main.pyw", line 104, in init
-    WAR_LIST = savefilereader.locate_wars(CURR_FILENAME)
-  File "C:\Users\Jonathan Schierman\Documents\Test Python Programs\EU4 Savefile Reader\savefilereader.py", line 521, in locate_wars
-    file_lines = savefile.split("\n")
-UnboundLocalError: local variable 'savefile' referenced before assignment
-] while initializing save
-[21:33:49.863103] *** Exited normally
+
