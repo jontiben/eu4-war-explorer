@@ -4,10 +4,11 @@ import defines
 def return_ordinal_number(number: str) -> str:
 	# Converts a number to its ordinal form
 	ordinal_dict = {'1': "st", '2': "nd", '3': "rd"}
+	if number == "11" or number == "12" or number == "13":
+		return number+"th"
 	if number[-1] in ordinal_dict.keys():
 		return number+ordinal_dict[number[-1]]
-	else:
-		return number+"th"
+	return number+"th"
 
 def break_up_large_numbers(number: str) -> str:
 	number = str(number)
@@ -77,3 +78,4 @@ def date_to_days(date: str) -> int:
 		return (year-1)*365 + sum(months[:month]) + day - 1
 	except:
 		return 0
+	return 0
