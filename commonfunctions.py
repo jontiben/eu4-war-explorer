@@ -18,7 +18,6 @@ def break_up_large_numbers(number: str) -> str:
 		new_text += number[i]
 		if (len(number)-(i+1)) % 3 == 0 and i != len(number)-1:
 			new_text += ","
-
 	return new_text
 
 def is_created_nation(tag: str) -> bool:

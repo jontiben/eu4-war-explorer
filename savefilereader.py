@@ -256,33 +256,13 @@ class War:
 				self.end_date = self.participants[original_attacker].quit_date
 			else:
 				debugfunctions.debug_out(f"No original attacker found for war [{self.title}]. Skipping war.",event_type="WARN")
-
-			'''
-			start_time = commonfunctions.date_to_days(self.participants[list(self.participants.keys())[0]].join_date)
-			curr_start_date = self.participants[list(self.participants.keys())[0]].join_date
-			end_time = commonfunctions.date_to_days(self.participants[list(self.participants.keys())[0]].quit_date)
-			curr_end_date = self.participants[list(self.participants.keys())[0]].quit_date
-			for participant in self.participants.keys():
-				if self.participants[participant].quit_date != "annexed":
-					if commonfunctions.date_to_days(self.participants[participant].join_date) < start_time:
-						start_time = commonfunctions.date_to_days(self.participants[participant].join_date)
-						curr_start_date = self.participants[participant].join_date
-					if commonfunctions.date_to_days(self.participants[participant].quit_date) > end_time:
-						end_time = commonfunctions.date_to_days(self.participants[participant].quit_date)
-						curr_end_date = self.participants[participant].quit_date
-			'''
-			
-
-		# Other init functions split off for readability
 		
 		if self.viable == True:
+			# Other init functions, split off for readability.
 			self.set_primary_participants()
 			self.find_battles()
 			self.get_total_losses()
 			self.get_events()
-
-	def first_element(self, elem) -> list:
-		return elem[0]
 
 	def get_events(self) -> None:
 		try:
@@ -300,7 +280,7 @@ class War:
 			for battle in self.battles:
 				self.events.append((commonfunctions.date_to_days(battle.date), battle.date, battle.fullname, "battle"))
 
-			self.events.sort(key=self.first_element)
+			self.events.sort(key=first_element)
 		except Exception as exception:
 			self.viable = False
 			debugfunctions.debug_out(f"Exception [{exception}] occurred when building event list for [{self.title}]. Skipping war.",event_type="WARN")
@@ -420,6 +400,11 @@ def parse_combatant_block(start_point: int, end_point: int) -> list:
 	out_list.append(battle_commander)
 
 	return out_list
+
+
+# The following are mostly utility functions.
+def first_element(input_list: list):
+	return input_list[0]
 
 
 def is_date(line_no: int) -> bool:
