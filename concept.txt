@@ -1,0 +1,13 @@
+-Map showing battle locations (composite of rivers, terrain color, heightmap(?), -province outlines?)
+~Interactive Timeline
+-Flags and full names for the nations
+
+Search by number of casualties in war list
+-prompt on open to select EU4 folder
+-buttons on war list to open dialog to select savefile
+
+-debug file
+
+have it show an icon whenever you can press ESC to go back
+
+zoom map?
