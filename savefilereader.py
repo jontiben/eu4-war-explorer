@@ -173,6 +173,8 @@ class War:
 		self.defend_total_warscore = 0
 		self.has_player = False # Includes a current player nation
 		self.events = [] # List of tuples: (days, date, event)
+		self.primary_attacker = "000"
+		self.primary_defender = "000"
 
 		self.battles = [] # All the battles recorded for the war, in chronological order
 		
@@ -245,6 +247,13 @@ class War:
 				self.outcome = get_line_data(check_misc_num)
 
 		if self.viable == True:
+			# Other init functions, split off for readability.
+			self.set_primary_participants()
+			self.find_battles()
+			self.get_total_losses()
+			self.get_events()
+
+		if self.viable == True:
 			original_attacker = None
 			for check_original_attacker_num in range(self.history_end,self.end_point):
 				if get_line_key(check_original_attacker_num) == "original_attacker=":
@@ -257,12 +266,6 @@ class War:
 			else:
 				debugfunctions.debug_out(f"No original attacker found for war [{self.title}]. Skipping war.",event_type="WARN")
 		
-		if self.viable == True:
-			# Other init functions, split off for readability.
-			self.set_primary_participants()
-			self.find_battles()
-			self.get_total_losses()
-			self.get_events()
 
 	def get_events(self) -> None:
 		try:
@@ -443,7 +446,7 @@ def define_bracket_block(start_point: int) -> int:
 		if '}' in file_lines[check_bracket_num]:
 			bracket_count -= 1
 		if bracket_count == 0:
-			return p # Returns the line number it ends on
+			return check_bracket_num # Returns the line number it ends on
 	return -1 # Error, no end
 
 
@@ -509,7 +512,7 @@ def locate_wars(filename) -> list:
 	debugfunctions.debug_out(f"Current player nations are {all_player_nations}", event_type="INFO")
 	find_colonial_names()
 	for i in range(int(len(file_lines)*0.7),len(file_lines)): #!!!!!! (You can set this to like 0.98 for speed loading in testing but it will cut off a lot of early wars)
-		if file_lines[l] == "previous_war={":
+		if file_lines[i] == "previous_war={":
 			start_point = i
 			end_point = define_bracket_block(start_point)
 			i = end_point+1

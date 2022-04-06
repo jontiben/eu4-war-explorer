@@ -136,7 +136,7 @@ def main():
 	try:
 		while not do_quit:
 			for event in pygame.event.get():
-				if event.type == pygame.do_quit:
+				if event.type == pygame.QUIT:
 					do_quit = True
 				elif event.type == pygame.VIDEORESIZE:
 					# When pygame.event.get() is called in a function, for some reason it never gets pygame.VIDEORESIZE
