@@ -1,5 +1,8 @@
 import pygame
-import defines, commonfunctions, debugfunctions
+
+import defines
+import commonfunctions
+import debugfunctions
 
 global prev_position, current_position
 global has_rendered
