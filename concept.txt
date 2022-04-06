@@ -1,7 +1,0 @@
-Search by number of casualties in war list
--prompt on open to select EU4 folder
--buttons on war list to open dialog to select savefile
-
-have it show an icon whenever you can press ESC to go back
-
-zoom map?
