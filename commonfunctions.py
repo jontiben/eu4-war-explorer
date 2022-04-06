@@ -1,4 +1,5 @@
-import re, os
+import re
+import os
 import defines
 
 def return_ordinal_number(number: str) -> str:
