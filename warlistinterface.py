@@ -133,24 +133,12 @@ def list_disp_update(window, font, small_font, war_list):
 			to_render.append((end_date_text, end_text_loc))
 
 			# Draw flags: (primary) attacker's left of the war title, defender's right
-			if not commonfunctions.is_created_nation(war_list[i].participants[war_list[i].primary_attacker].name):
-				# Can't load a flag that was generated while playing the save
-				try:
-					first_flag = pygame.transform.scale(pygame.image.load(war_list[i].participants[war_list[i].primary_attacker].flag_path), (FLAG_WIDTH, FLAG_HEIGHT))
-				except:
-					debugfunctions.debug_out(f"Failed to open flag for primary attacker {war_list[i].primary_attacker}",event_type="WARN")
-					first_flag = pygame.transform.scale(pygame.image.load(defines.PATH_TO_BACKUP_FLAG), (FLAG_WIDTH, FLAG_HEIGHT))
-			else:
-				first_flag = pygame.transform.scale(pygame.image.load(defines.PATH_TO_BACKUP_FLAG), (FLAG_WIDTH, FLAG_HEIGHT))
+			curr_flag = commonfunctions.load_flag(war_list[i].primary_attacker, war_list[i])
+			first_flag = pygame.transform.scale(curr_flag, (FLAG_WIDTH, FLAG_HEIGHT))
 			to_render.append((first_flag, (text_loc.left-defines.PAD_DIST-FLAG_WIDTH, text_loc.y)))	
-			if not commonfunctions.is_created_nation(war_list[i].participants[war_list[i].primary_defender].name):
-				try:
-					second_flag = pygame.transform.scale(pygame.image.load(war_list[i].participants[war_list[i].primary_defender].flag_path), (FLAG_WIDTH, FLAG_HEIGHT))
-				except:
-					debugfunctions.debug_out(f"Failed to open flag for primary defender {war_list[i].primary_defender}",event_type="WARN")
-					second_flag = pygame.transform.scale(pygame.image.load(defines.PATH_TO_BACKUP_FLAG), (FLAG_WIDTH, FLAG_HEIGHT))
-			else:
-				second_flag = pygame.transform.scale(pygame.image.load(defines.PATH_TO_BACKUP_FLAG), (FLAG_WIDTH, FLAG_HEIGHT))
+
+			curr_flag = commonfunctions.load_flag(war_list[i].primary_defender, war_list[i])
+			second_flag = pygame.transform.scale(curr_flag, (FLAG_WIDTH, FLAG_HEIGHT))
 			to_render.append((second_flag, (text_loc.right+defines.PAD_DIST, text_loc.y)))
 
 	window.blits(to_render)

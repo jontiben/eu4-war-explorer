@@ -193,19 +193,13 @@ def render_one_battle(window, font, small_font, light_font, stats_font):
 	start_of_battle_info = map_bottom+defines.NAV_BUTTON_HEIGHT
 
 	# Battle attacker's flag
-	if not commonfunctions.is_created_nation(BATTLE.attacker):
-		att_flag = pygame.transform.scale(pygame.image.load(attacker_obj.flag_path), (battle_flag_width, battle_flag_height))
-	else:
-		att_flag = pygame.transform.scale(pygame.image.load(defines.PATH_TO_BACKUP_FLAG), (battle_flag_width, battle_flag_height))
+	att_flag = pygame.transform.scale(commonfunctions.load_flag(attacker_obj.name, WAR), (battle_flag_width, battle_flag_height))
 	att_flag_loc = att_flag.get_rect()
 	att_flag_loc.topleft = (defines.PAD_DIST, defines.PAD_DIST+start_of_battle_info)
 	window.blit(att_flag, att_flag_loc)
 
 	# Battle defender's flag
-	if not commonfunctions.is_created_nation(BATTLE.defender):
-		def_flag = pygame.transform.scale(pygame.image.load(defender_obj.flag_path), (battle_flag_width, battle_flag_height))
-	else:
-		def_flag = pygame.transform.scale(pygame.image.load(defines.PATH_TO_BACKUP_FLAG), (battle_flag_width, battle_flag_height))
+	def_flag = pygame.transform.scale(commonfunctions.load_flag(defender_obj.name, WAR), (battle_flag_width, battle_flag_height))
 	def_flag_loc = def_flag.get_rect()
 	def_flag_loc.topright = (window.get_width()-defines.PAD_DIST, defines.PAD_DIST+start_of_battle_info)
 	window.blit(def_flag, def_flag_loc)
@@ -577,10 +571,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	flag_width = defines.FLAG_WIDTH
 
 	# Primary Belligerants' Flags
-	if not commonfunctions.is_created_nation(prim_att):
-		prim_att_flag = pygame.image.load(participants[prim_att].flag_path)
-	else:
-		prim_att_flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
+	prim_att_flag = commonfunctions.load_flag(prim_att, WAR)
 	prim_att_flag_loc = prim_att_flag.get_rect()
 	prim_att_flag_loc.topleft = (defines.PAD_DIST, defines.PAD_DIST)
 	window.blit(prim_att_flag, prim_att_flag_loc)
@@ -588,10 +579,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	if WAR.outcome == "2":
 		pygame.draw.rect(window, defines.C_GOLD, prim_att_flag_loc, defines.NAV_BUTTON_BORDER_WIDTH)
 
-	if not commonfunctions.is_created_nation(prim_def):
-		prim_def_flag = pygame.image.load(participants[prim_def].flag_path)
-	else:
-		prim_def_flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
+	prim_def_flag = commonfunctions.load_flag(prim_def, WAR)
 	prim_def_flag_loc = prim_def_flag.get_rect()
 	prim_def_flag_loc.topleft = (window.get_width()-flag_width-defines.PAD_DIST, defines.PAD_DIST)
 	window.blit(prim_def_flag, prim_def_flag_loc)
@@ -641,10 +629,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	padding_before_small_flags = flag_height+defines.PAD_DIST*3+prim_att_name_loc.height
 	for a in range(CURR_POSITION, len(add_attackers)):
 		a_loc = a-CURR_POSITION
-		if not commonfunctions.is_created_nation(add_attackers[a]):
-			curr_flag = pygame.transform.scale(pygame.image.load(participants[add_attackers[a]].flag_path), (flag_half_width, flag_half_height))
-		else:
-			curr_flag = pygame.transform.scale(pygame.image.load(defines.PATH_TO_BACKUP_FLAG), (flag_half_width, flag_half_height))			
+		curr_flag = pygame.transform.scale(commonfunctions.load_flag(add_attackers[a], WAR), (flag_half_width, flag_half_height))
 		curr_flag_loc = curr_flag.get_rect()
 		curr_flag_loc.x = defines.PAD_DIST
 		curr_flag_loc.y = (a_loc*(defines.PAD_DIST+flag_half_height))+padding_before_small_flags
@@ -672,10 +657,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	# Other defenders
 	for d in range(CURR_POSITION, len(add_defenders)):
 		d_loc = d-CURR_POSITION
-		if not commonfunctions.is_created_nation(add_defenders[d]):
-			curr_flag = pygame.transform.scale(pygame.image.load(participants[add_defenders[d]].flag_path), (flag_half_width, flag_half_height))
-		else:
-			curr_flag = pygame.transform.scale(pygame.image.load(defines.PATH_TO_BACKUP_FLAG), (flag_half_width, flag_half_height))
+		curr_flag = pygame.transform.scale(commonfunctions.load_flag(add_defenders[d], WAR), (flag_half_width, flag_half_height))
 		curr_flag_loc = curr_flag.get_rect()
 		curr_flag_loc.right = window.get_width() - defines.PAD_DIST
 		curr_flag_loc.y = (d_loc*(defines.PAD_DIST+flag_half_height))+flag_height+defines.PAD_DIST*3+prim_def_name_loc.height

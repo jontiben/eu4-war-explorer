@@ -128,10 +128,13 @@ class Participant:
 
 	def consolidate_losses(self) -> None: 
 		try: 
-			self.losses = [int(j) for j in
-			self.losses] 
+			self.losses = [int(j) for j in self.losses] 
 		except: 
 			self.losses = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			debugfunctions.debug_out(f"Couldn't find losses for {self.name} in war [{self.war_name}]. Defaulting to zero.", event_type="WARN")
+		for k in range(2, len(self.losses), 3):
+			if self.losses[k] != 0:
+				debugfunctions.debug_out(f"Nonzero third digit found in losses for {self.name} in war [{self.war_name}]. This is very unusual; please let this utility's creator know if you ever see this and send him the save file.", event_type="WARN")
 		# HOW LOSSES WORK: (as far as I can tell)
 		# Example: 11403 7835 0 1265 2756 0 8000 5671 0 0 0 0 2 0 0 0 0 0 0 0 0
 		# It's broken into groups of three digits. The first three are infantry, second cavalry, third artillery,

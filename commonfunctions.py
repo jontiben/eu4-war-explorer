@@ -4,6 +4,8 @@
 import re
 import os
 import defines
+import pygame
+import debugfunctions
 
 def return_ordinal_number(number: str) -> str:
 	# Converts a number to its ordinal form
@@ -82,3 +84,11 @@ def date_to_days(date: str) -> int:
 	except:
 		return 0
 	return 0
+
+def load_flag(tag: str, war):
+	try:
+		flag = pygame.image.load(war.participants[tag].flag_path)
+	except:
+		flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
+		debugfunctions.debug_out(f"Failed to open flag for tag {tag}",event_type="WARN")
+	return flag
