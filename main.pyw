@@ -35,8 +35,8 @@ screen_info = pygame.display.Info()
 start_width = int(screen_info.current_w*0.7)
 start_height = int(screen_info.current_h*0.75)
 window = pygame.display.set_mode((start_width, start_height), pygame.RESIZABLE)
-caption_base = "EU4 Savefile Explorer - "+VERSION
-pygame.display.set_caption(caption_base)
+caption_root = "EU4 War Explorer - "+VERSION
+pygame.display.set_caption(caption_root)
 pygame.display.set_icon(pygame.image.load(defines.INFANTRY_GRAPHIC))
 
 # Fonts
@@ -106,7 +106,7 @@ def init():
 			debug_mode_out()
 			warlistinterface.list_loop(window, FONT, SMALL_FONT, war_list, None, force_update=True)
 			pygame.display.update()
-			pygame.display.set_caption(caption_base+" - "+curr_filename.split('/')[-1])
+			pygame.display.set_caption(caption_root+" - "+curr_filename.split('/')[-1])
 
 	except:
 		debugfunctions.debug_out(f"Exception [{traceback.format_exc()}] while initializing save")
