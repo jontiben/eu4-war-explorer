@@ -130,7 +130,7 @@ class Participant:
 		try: 
 			self.losses = [int(j) for j in self.losses] 
 		except: 
-			self.losses = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			self.losses = [0 for i in range(defines.CASUALTY_VECTOR_LENGTH)]
 			debugfunctions.debug_out(f"Couldn't find losses for {self.name} in war [{self.war_name}]. Defaulting to zero.", event_type="WARN")
 		for k in range(2, len(self.losses), 3):
 			if self.losses[k] != 0:
@@ -145,15 +145,15 @@ class Participant:
 		# inf: [11,403; 7,835*; 0] cav: [1,265; 2,756*; 0] art: [8,000; 5,671*; 0] hs: [0; 0*; 0]
 		# ls: [2; 0*; 0] gal:[0; 0*; 0] tra:[0; 0*; 0] (attrition has the asterisk)
 		loss = self.losses # Just for convenience
-		self.inf_losses = sum(loss[:3])
-		self.cav_losses = sum(loss[3:6])
-		self.art_losses = sum(loss[6:9])
-		self.hs_losses = sum(loss[9:12])
-		self.ls_losses = sum(loss[12:15])
-		self.gal_losses = sum(loss[15:18])
-		self.tra_losses = sum(loss[18:21])
+		self.inf_losses = sum(loss[defines.INF_START:defines.INF_END])
+		self.cav_losses = sum(loss[defines.CAV_START:defines.CAV_END])
+		self.art_losses = sum(loss[defines.ART_START:defines.ART_END])
+		self.hs_losses = sum(loss[defines.HS_START:defines.HS_END])
+		self.ls_losses = sum(loss[defines.LS_START:defines.LS_END])
+		self.gal_losses = sum(loss[defines.GAL_START:defines.GAL_END])
+		self.tra_losses = sum(loss[defines.TRA_START:defines.TRA_END])
 		self.loss_list = [self.inf_losses, self.cav_losses, self.art_losses, self.hs_losses, self.ls_losses, self.gal_losses, self.tra_losses]
-		self.attrition_losses = sum(loss[1::3])
+		self.attrition_losses = sum(loss[defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
 
 class War:
@@ -355,11 +355,11 @@ class War:
 	def get_total_losses(self):
 		# Does a bunch of arithmetic
 		# Also cleans up nations that have had no losses added
-		self.attacker_losses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
-		self.defender_losses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
+		self.attacker_losses = [0 for i in range(defines.CASUALTY_VECTOR_LENGTH)]
+		self.defender_losses = [0 for i in range(defines.CASUALTY_VECTOR_LENGTH)]
 		for participant in self.participants.keys():
 			if self.participants[participant].losses == None:
-				self.participants[participant].losses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
+				self.participants[participant].losses = [0 for i in range(defines.CASUALTY_VECTOR_LENGTH)]
 			if self.participants[participant].side == "attack":
 				for element in range(len(self.participants[participant].losses)):
 					self.attacker_losses[element] += self.participants[participant].losses[element]
@@ -368,26 +368,26 @@ class War:
 					self.defender_losses[element] += self.participants[participant].losses[element]
 	
 		loss = self.attacker_losses
-		self.a_inf_losses = sum(loss[:3])
-		self.a_cav_losses = sum(loss[3:6])
-		self.a_art_losses = sum(loss[6:9])
-		self.a_hs_losses = sum(loss[9:12])
-		self.a_ls_losses = sum(loss[12:15])
-		self.a_gal_losses = sum(loss[15:18])
-		self.a_tra_losses = sum(loss[18:21])
+		self.a_inf_losses = sum(loss[defines.INF_START:defines.INF_END])
+		self.a_cav_losses = sum(loss[defines.CAV_START:defines.CAV_END])
+		self.a_art_losses = sum(loss[defines.ART_START:defines.ART_END])
+		self.a_hs_losses = sum(loss[defines.HS_START:defines.HS_END])
+		self.a_ls_losses = sum(loss[defines.LS_START:defines.LS_END])
+		self.a_gal_losses = sum(loss[defines.GAL_START:defines.GAL_END])
+		self.a_tra_losses = sum(loss[defines.TRA_START:defines.TRA_END])
 		self.a_loss_list = [self.a_inf_losses, self.a_cav_losses, self.a_art_losses, self.a_hs_losses, self.a_ls_losses, self.a_gal_losses, self.a_tra_losses]
-		self.a_attrition_losses = sum(loss[1::3])
+		self.a_attrition_losses = sum(loss[defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
 		loss = self.defender_losses
-		self.d_inf_losses = sum(loss[:3])
-		self.d_cav_losses = sum(loss[3:6])
-		self.d_art_losses = sum(loss[6:9])
-		self.d_hs_losses = sum(loss[9:12])
-		self.d_ls_losses = sum(loss[12:15])
-		self.d_gal_losses = sum(loss[15:18])
-		self.d_tra_losses = sum(loss[18:21])
+		self.d_inf_losses = sum(loss[defines.INF_START:defines.INF_END])
+		self.d_cav_losses = sum(loss[defines.CAV_START:defines.CAV_END])
+		self.d_art_losses = sum(loss[defines.ART_START:defines.ART_END])
+		self.d_hs_losses = sum(loss[defines.HS_START:defines.HS_END])
+		self.d_ls_losses = sum(loss[defines.LS_START:defines.LS_END])
+		self.d_gal_losses = sum(loss[defines.GAL_START:defines.GAL_END])
+		self.d_tra_losses = sum(loss[defines.TRA_START:defines.TRA_END])
 		self.d_loss_list = [self.d_inf_losses, self.d_cav_losses, self.d_art_losses, self.d_hs_losses, self.d_ls_losses, self.d_gal_losses, self.d_tra_losses]
-		self.d_attrition_losses = sum(loss[1::3])
+		self.d_attrition_losses = sum(loss[defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
 
 def parse_combatant_block(start_point: int, end_point: int) -> list: 

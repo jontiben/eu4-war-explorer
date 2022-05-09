@@ -39,6 +39,27 @@ C_RED = (255, 48, 48)
 C_INTERFACE = (10,25,60)
 #C_INTERFACE = (36,52,72)
 
+# Casualty vector info
+CASUALTY_VECTOR_LENGTH = 21 # Length (number of values) of the casualty (loss) vector in the savefile
+ATTRITION_OFFSET = 1 # Amount the attrition casualty count is offset from the start of the casualty type group (triplet) 
+GROUP_SIZE = 3 # Number of values corresponding to each type of unit
+
+# Casualty vector locations
+INF_START = 0
+INF_END =   3
+CAV_START = INF_END
+CAV_END =   6
+ART_START = CAV_END
+ART_END =   9
+HS_START =  ART_END
+HS_END =    12
+LS_START =  HS_END
+LS_END =    15
+GAL_START = LS_END
+GAL_END =   18
+TRA_START = GAL_END
+TRA_END =   21
+
 # Measurements
 PAD_DIST = 10 # Pixels
 FLAG_HEIGHT = 128 # Pixels
