@@ -75,7 +75,7 @@ def init():
 	try:
 		# Loads a new map and runs savefilereader.py
 		global has_updated_for_resize
-		global curr_filename, mode, war_list
+		global curr_filename, mode, war_list, present_date
 		try_counts = 0
 		while curr_filename is None:
 			# This is necessary because sometimes tkinter exits with a "catastrophic error." This is
@@ -99,7 +99,9 @@ def init():
 
 			has_updated_for_resize = True
 
-			war_list = savefilereader.locate_wars(curr_filename)
+			savefilereader_out = savefilereader.locate_wars(curr_filename)
+			war_list = savefilereader_out[0]
+			present_date = savefilereader_out[1]
 
 			mode = "list"
 
@@ -112,12 +114,13 @@ def init():
 		debugfunctions.debug_out(f"Exception [{traceback.format_exc()}] while initializing save")
 
 def render_scene(event):
-	global window, mode, has_updated_for_resize
+	global window, mode, has_updated_for_resize, curr_filename
 	try:
 		if mode == "list": # The window/scene that's active
 			list_out = warlistinterface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=(not has_updated_for_resize))
 			if list_out is not None:
 				if list_out == "open":
+					curr_filename = None
 					init()
 					return
 				else:
@@ -125,7 +128,7 @@ def render_scene(event):
 					debug_mode_out()
 					warinfointerface.init(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, list_out)
 		elif mode == "info":
-			poss_prev_window = warinfointerface.info_loop(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, event, force_update=(not has_updated_for_resize))
+			poss_prev_window = warinfointerface.info_loop(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, event, present_date, force_update=(not has_updated_for_resize))
 			if poss_prev_window is not None:
 				mode = "list"
 				debug_mode_out()

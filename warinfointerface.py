@@ -30,7 +30,7 @@ sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 SCROLL_SIZE = 1
 TIMELINE_SCROLL_SIZE = 25 # Pixels here
 
-def render_timeline(window, font, small_font, light_font, stats_font):
+def render_timeline(window, font, small_font, light_font, stats_font, present_date):
 	### MAKE LINKS FROM BATTLE TITLES
 	### Show date and days since war begun
 	### Markers every x days since war beginning or every x months
@@ -40,7 +40,10 @@ def render_timeline(window, font, small_font, light_font, stats_font):
 	halfheight = int((window.get_height()-defines.NAV_BUTTON_HEIGHT)/2)
 
 	start_days = commonfunctions.date_to_days(WAR.start_date)
-	war_length = commonfunctions.date_to_days(WAR.end_date) - start_days
+	if not WAR.ongoing:
+		war_length = commonfunctions.date_to_days(WAR.end_date) - start_days
+	else:
+		war_length = commonfunctions.date_to_days(present_date) - start_days
 	timeline = pygame.draw.line(window, defines.C_GOLD, (defines.PAD_DIST-CURR_POSITION, halfheight), (war_length+defines.PAD_DIST-CURR_POSITION, halfheight), defines.TIMELINE_WIDTH)
 
 	portion_distance = (window.get_height()-defines.NAV_BUTTON_HEIGHT)/(defines.TIMELINE_POS*2+1)
@@ -449,10 +452,13 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 
 	# The phrase "losses by side"
 	if tag == "000":
-		total_losses = font.render("Losses by Side (Attrition):", True, defines.C_WHITE)
+		total_losses = font.render("Total Losses by Side (Attrition):", True, defines.C_WHITE)
 	else:
 		country_data = participants[tag]
-		total_losses = font.render(country_data.longname+" Losses/% of Total (Attrition):", True, defines.C_WHITE)
+		if WAR.participants[tag].side == "attack":
+			total_losses = font.render(country_data.longname+" Losses/% of Total (Attrition):", True, defines.C_WHITE)
+		else:
+			total_losses = font.render(country_data.longname+" (Attrition) % of Total/Losses:", True, defines.C_WHITE)
 	total_losses_loc = total_losses.get_rect()
 	total_losses_loc.centerx = int(window.get_width()/2)
 	total_losses_loc.top = padding_before_small_flags+defines.PAD_DIST*4
@@ -602,8 +608,12 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	window.blit(prim_def_name, prim_def_name_loc)	
 
 	# Dates of the war
-	war_dates = small_font.render(commonfunctions.date_conversion(WAR.start_date)+" - "+commonfunctions.date_conversion(WAR.end_date),
-		True, defines.C_LGRAY)
+	war_dates_text = commonfunctions.date_conversion(WAR.start_date)+" - "
+	if not WAR.ongoing:
+		war_dates_text += commonfunctions.date_conversion(WAR.end_date)
+	else:
+		war_dates_text += "present"
+	war_dates = small_font.render(war_dates_text,True, defines.C_LGRAY)
 	war_dates_loc = war_dates.get_rect()
 	war_dates_loc.center = (window.get_width()/2, 0)
 	war_dates_loc.y = (flag_height/2)
@@ -644,7 +654,9 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 		date_string = ""
 		if participants[add_attackers[a]].join_date != WAR.start_date:
 			date_string += participants[add_attackers[a]].join_date+"-"
-		if participants[add_attackers[a]].quit_date != WAR.end_date:
+		if participants[add_attackers[a]].quit_date != WAR.end_date and not (WAR.ongoing and participants[add_attackers[a]].quit_date == "annexed"):
+			# If participants are annexed during an ongoing war this won't be reflected in the war info screen. We have no way of knowing that until
+			# the war is over.
 			date_string += "-"+participants[add_attackers[a]].quit_date
 		if date_string != "":
 			date_string = date_string.replace("--",'-')
@@ -672,7 +684,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 		date_string = ""
 		if participants[add_defenders[d]].join_date != WAR.start_date:
 			date_string += participants[add_defenders[d]].join_date+"-"
-		if participants[add_defenders[d]].quit_date != WAR.end_date:
+		if participants[add_defenders[d]].quit_date != WAR.end_date and not (WAR.ongoing and participants[add_defenders[d]].quit_date == "annexed"):
 			date_string += "-"+participants[add_defenders[d]].quit_date
 		if date_string != "":
 			date_string = date_string.replace("--",'-')
@@ -689,7 +701,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 
 
 
-def info_loop(window, font, small_font, light_font, stats_font, event, force_update=False):
+def info_loop(window, font, small_font, light_font, stats_font, event, present_date, force_update=False):
 	global CLICKABLE_LIST
 	global LOADED_TAG
 	global SOMETHING_FOCUSED
@@ -765,7 +777,7 @@ def info_loop(window, font, small_font, light_font, stats_font, event, force_upd
 				else:
 					render_one_battle(window, font, small_font, light_font, stats_font)
 		elif CURRENT_SCREEN == "timeline":
-			render_timeline(window, font, small_font, light_font, stats_font)
+			render_timeline(window, font, small_font, light_font, stats_font, present_date)
 
 		return None
 

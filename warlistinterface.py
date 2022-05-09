@@ -207,6 +207,7 @@ def list_loop(window, font, small_font, war_list, event, force_update=False):
 
 	# Update war list for search string
 	if changed_text == True:
+		current_position = 0
 		if mode == "player":
 			# Search only player nations
 			temp_war_list = get_player_war_list(war_list)
