@@ -10,7 +10,7 @@ This application reads EU4 savefiles (ending in the file extension .eu4) for inf
 
 Navigation is done exclusively through clicking, the ESC key, and typing to search on the war list screen.
 
-Note that the first 11 warss on the battle screen will always be the same on any vanilla EU4 savefile because they took place before the beginning of the game.
+Note that the first 11 wars on the battle screen will always be the same on any vanilla EU4 savefile because they took place before the beginning of the game.
 
 
 The War Explorer has limited support for modded saves. It will not render the flag or name of a nation that does not exist in vanilla EU4, instead it displays a generic rebel flag and the nation's tag. 
