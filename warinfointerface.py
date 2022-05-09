@@ -492,10 +492,10 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 			a_losses_to_blit += [[curr_graphic, curr_graphic_loc], [loss_text, loss_text_loc]]
 		window.blits(a_losses_to_blit)
 		# Attacker Total
-		a_total_str = commonfunctions.break_up_large_numbers(str(sum(attacker_losses[:10])))
+		a_total_str = commonfunctions.break_up_large_numbers(str(sum(attacker_losses)))
 		if tag != "000":
 			try:
-				a_total_str += '/'+str(round(sum(attacker_losses[:10])/sum(WAR.attacker_losses[:10])*100, 2))+"%"
+				a_total_str += '/'+str(round(sum(attacker_losses)/sum(WAR.attacker_losses)*100, 2))+"%"
 			except ZeroDivisionError:
 				pass
 		a_total_str += " ("+commonfunctions.break_up_large_numbers(str(a_attrition_losses))+")"
@@ -535,10 +535,10 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 			d_losses_to_blit += [[curr_graphic, curr_graphic_loc], [loss_text, loss_text_loc]]
 		window.blits(d_losses_to_blit)
 		# Defender Total
-		d_total_str = commonfunctions.break_up_large_numbers(str(sum(defender_losses[:10])))
+		d_total_str = commonfunctions.break_up_large_numbers(str(sum(defender_losses)))
 		if tag != "000":
 			try:
-				d_total_str = str(round(sum(defender_losses[:10])/sum(WAR.defender_losses[:10])*100, 2))+"%/"+d_total_str
+				d_total_str = str(round(sum(defender_losses)/sum(WAR.defender_losses)*100, 2))+"%/"+d_total_str
 			except ZeroDivisionError:
 				pass
 		d_total_str = '('+commonfunctions.break_up_large_numbers(str(d_attrition_losses))+") "+d_total_str
@@ -550,7 +550,7 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 
 	# The absolute total casualty count
 	if tag == "000":
-		abs_total_str = "Overall losses of "+commonfunctions.break_up_large_numbers(str(sum(attacker_losses[:10])+sum(defender_losses[:10])))+" men, "+commonfunctions.break_up_large_numbers(str(sum(attacker_losses[10:])+sum(defender_losses[10:])))+" ships"
+		abs_total_str = "Overall losses of "+commonfunctions.break_up_large_numbers(str(sum(attacker_losses[:9])+sum(defender_losses[:9])))+" men, "+commonfunctions.break_up_large_numbers(str(sum(attacker_losses[9:])+sum(defender_losses[9:])))+" ships"
 		abs_total_text = stats_font.render(abs_total_str, True, defines.C_WHITE)
 		abs_total_text_loc = abs_total_text.get_rect()
 		abs_total_text_loc.midtop = (int(window.get_width()/2), d_total_text_loc.bottom+defines.PAD_DIST*4)
