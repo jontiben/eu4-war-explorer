@@ -5,7 +5,7 @@ import pygame
 import os
 import eu4pathfinder
 
-
+# 
 # Paths
 EU4_FOLDER = eu4pathfinder.EU4_FOLDER
 PATH_TO_COUNTRIES_FOLDER = eu4pathfinder.PATH_TO_COUNTRIES_FOLDER
@@ -13,17 +13,17 @@ PATH_TO_FLAGS_FOLDER = eu4pathfinder.PATH_TO_FLAGS_FOLDER
 PATH_TO_BACKUP_FLAG = eu4pathfinder.PATH_TO_BACKUP_FLAG
 EU4_SAVE_DIR = eu4pathfinder.EU4_SAVE_DIR
 
-MAP_TERRAIN_PATH = os.path.join(os.curdir,"graphics\\mapterrain.png")
-MAP_BORDERS_PATH = os.path.join(os.curdir,"graphics\\mapprovinces.png")
-MAP_RIVERS_PATH = os.path.join(os.curdir,"graphics\\maprivers.png")
+MAP_TERRAIN_PATH = os.path.join(os.curdir,"graphics/mapterrain.png")
+MAP_BORDERS_PATH = os.path.join(os.curdir,"graphics/mapprovinces.png")
+MAP_RIVERS_PATH = os.path.join(os.curdir,"graphics/maprivers.png")
 
-INFANTRY_GRAPHIC = os.path.join(os.curdir,"graphics\\infantry_icon.png")
-CAVALRY_GRAPHIC = os.path.join(os.curdir,"graphics\\cavalry_icon.png")
-ARTILLERY_GRAPHIC = os.path.join(os.curdir,"graphics\\artillery_icon.png")
-TRA_GRAPHIC = os.path.join(os.curdir,"graphics\\transport_icon.png")
-GAL_GRAPHIC = os.path.join(os.curdir,"graphics\\galley_icon.png")
-LS_GRAPHIC = os.path.join(os.curdir,"graphics\\light_ship_icon.png")
-HS_GRAPHIC = os.path.join(os.curdir,"graphics\\big_ship_icon.png")
+INFANTRY_GRAPHIC = os.path.join(os.curdir,"graphics/infantry_icon.png")
+CAVALRY_GRAPHIC = os.path.join(os.curdir,"graphics/cavalry_icon.png")
+ARTILLERY_GRAPHIC = os.path.join(os.curdir,"graphics/artillery_icon.png")
+TRA_GRAPHIC = os.path.join(os.curdir,"graphics/transport_icon.png")
+GAL_GRAPHIC = os.path.join(os.curdir,"graphics/galley_icon.png")
+LS_GRAPHIC = os.path.join(os.curdir,"graphics/light_ship_icon.png")
+HS_GRAPHIC = os.path.join(os.curdir,"graphics/big_ship_icon.png")
 
 
 # Colors
