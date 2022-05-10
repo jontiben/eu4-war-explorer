@@ -5,20 +5,21 @@ import tkinter as tk
 from tkinter import filedialog
 import os
 import platform
-import debugfunctions
+
+import debug_functions
 
 operating_system = platform.system()
-debugfunctions.debug_out(f"OS is {operating_system} {platform.release()}", "INFO")
+debug_functions.debug_out(f"OS is {operating_system} {platform.release()}", "INFO")
 
 def find_eu4_folder():
-	debugfunctions.debug_out("Prompting user to select EU4 directory...")
+	debug_functions.debug_out("Prompting user to select EU4 directory...")
 	root = tk.Tk()
 	root.withdraw()
 	folder_name = filedialog.askdirectory(initialdir = os.getcwd(),title='Select your Europa Universalis IV directory')
 	root.destroy()
 	return folder_name
 
-debugfunctions.debug_out("Detecting EU4 directory in [C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV]...")
+debug_functions.debug_out("Detecting EU4 directory in [C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV]...")
 if operating_system == "Linux":
 	EU4_FOLDER = os.path.expanduser('~')+".local/share/Steam/steamapps/common/Europa Universalis IV"
 elif operating_system == "Darwin": # OSX
@@ -26,12 +27,12 @@ elif operating_system == "Darwin": # OSX
 else:
 	EU4_FOLDER = "C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV"
 if not os.path.isdir(EU4_FOLDER):
-	debugfunctions.debug_out("EU4 directory not found")
+	debug_functions.debug_out("EU4 directory not found")
 	EU4_FOLDER = ""
 	while EU4_FOLDER.split('/')[-1] != "Europa Universalis IV":
 		EU4_FOLDER = find_eu4_folder()
 else:
-	debugfunctions.debug_out("EU4 directory found automatically	")
+	debug_functions.debug_out("EU4 directory found automatically	")
 PATH_TO_COUNTRIES_FOLDER = EU4_FOLDER+"/history/countries"
 PATH_TO_FLAGS_FOLDER = EU4_FOLDER+"/gfx/flags"
 PATH_TO_BACKUP_FLAG = PATH_TO_FLAGS_FOLDER+"/colonial_patriot_rebels.tga"

@@ -6,11 +6,11 @@ import tkinter as tk
 from tkinter import filedialog
 import traceback
 
-import savefilereader
-import warinfointerface
-import warlistinterface
+import save_file_reader
+import war_info_interface
+import war_list_interface
 import defines
-import debugfunctions
+import debug_functions
 
 ### VERSION
 VERSION = "1.0"
@@ -54,18 +54,18 @@ def disp_resize(screen_size):
 
 def debug_mode_out():
 	# Outputs the current mode to the debug.txt file
-	debugfunctions.debug_out(mode,event_type="mode")
+	debug_functions.debug_out(mode,event_type="mode")
 
 def open_file():
 	global do_quit
 	# Opens a file using a tkinter dialog
-	debugfunctions.debug_out("Waiting for the user to select a file...")
+	debug_functions.debug_out("Waiting for the user to select a file...")
 	root = tk.Tk()
 	root.withdraw()
 	try:
 		file_name = filedialog.askopenfilename(initialdir = defines.EU4_SAVE_DIR,title='Select an EU4 Savefile',filetypes=[('eu4 savefiles','*.eu4')])
 	except:
-		debugfunctions.debug_out(f"Exception [{traceback.format_exc()}] while prompting the user to select a file, user likely closed the file dialog without making a selection.")
+		debug_functions.debug_out(f"Exception [{traceback.format_exc()}] while prompting the user to select a file, user likely closed the file dialog without making a selection.")
 		do_quit = True
 		return None
 	root.destroy()
@@ -73,7 +73,7 @@ def open_file():
 
 def init():
 	try:
-		# Loads a new map and runs savefilereader.py
+		# Loads a new map and runs save_file_reader.py
 		global has_updated_for_resize
 		global curr_filename, mode, war_list, present_date
 		try_counts = 0
@@ -82,13 +82,13 @@ def init():
 			# usually tied to multithreading, which I'm not using, so in lieu of an actual solution 
 			# I'm just gonna have it try to open the prompt 20 times until it succeeds.
 			if try_counts > 20:
-				debugfunctions.debug_out("Tkinter failed to open dialog too many times. Exiting.")   
+				debug_functions.debug_out("Tkinter failed to open dialog too many times. Exiting.")   
 				return
 			try:
 				curr_filename = open_file()
 			except:
 				try_counts += 1
-				debugfunctions.debug_out("Tkinter failed to open dialog, likely due to Tkinter giving a catastrophic error. Trying again.", event_type="ERROR")
+				debug_functions.debug_out("Tkinter failed to open dialog, likely due to Tkinter giving a catastrophic error. Trying again.", event_type="ERROR")
 		if not do_quit:
 			window.fill(defines.C_BLACK)
 			load_text = FONT.render("Loading...", True, defines.C_WHITE)
@@ -99,25 +99,25 @@ def init():
 
 			has_updated_for_resize = True
 
-			savefilereader_out = savefilereader.locate_wars(curr_filename)
-			war_list = savefilereader_out[0]
-			present_date = savefilereader_out[1]
+			save_file_reader_out = save_file_reader.locate_wars(curr_filename)
+			war_list = save_file_reader_out[0]
+			present_date = save_file_reader_out[1]
 
 			mode = "list"
 
 			debug_mode_out()
-			warlistinterface.list_loop(window, FONT, SMALL_FONT, war_list, None, force_update=True)
+			war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, None, force_update=True)
 			pygame.display.update()
 			pygame.display.set_caption(caption_root+" - "+curr_filename.split('/')[-1])
 
 	except:
-		debugfunctions.debug_out(f"Exception [{traceback.format_exc()}] while initializing save")
+		debug_functions.debug_out(f"Exception [{traceback.format_exc()}] while initializing save")
 
 def render_scene(event):
 	global window, mode, has_updated_for_resize, curr_filename
 	try:
 		if mode == "list": # The window/scene that's active
-			list_out = warlistinterface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=(not has_updated_for_resize))
+			list_out = war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=(not has_updated_for_resize))
 			if list_out is not None:
 				if list_out == "open":
 					curr_filename = None
@@ -126,16 +126,16 @@ def render_scene(event):
 				else:
 					mode = "info"
 					debug_mode_out()
-					warinfointerface.init(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, list_out)
+					war_info_interface.init(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, list_out)
 		elif mode == "info":
-			poss_prev_window = warinfointerface.info_loop(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, event, present_date, force_update=(not has_updated_for_resize))
+			poss_prev_window = war_info_interface.info_loop(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, event, present_date, force_update=(not has_updated_for_resize))
 			if poss_prev_window is not None:
 				mode = "list"
 				debug_mode_out()
-				warlistinterface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=True)
+				war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=True)
 		has_updated_for_resize = True
 	except:
-		debugfunctions.debug_out(f"Exception [{traceback.format_exc()}] on rendering scene [{mode}]")
+		debug_functions.debug_out(f"Exception [{traceback.format_exc()}] on rendering scene [{mode}]")
 
 def main():
 	global do_quit, has_updated_for_resize
@@ -153,12 +153,12 @@ def main():
 				else:
 					render_scene(event)
 
-		debugfunctions.debug_out("Exited normally")
+		debug_functions.debug_out("Exited normally")
 
 	except:
-		debugfunctions.debug_out(f"Program crashed, exiting with exception [{traceback.format_exc()}]")
+		debug_functions.debug_out(f"Program crashed, exiting with exception [{traceback.format_exc()}]")
 
 if __name__ ==  "__main__":
-	debugfunctions.debug_out(f"Started EU4 Savefile Explorer version {VERSION}")
+	debug_functions.debug_out(f"Started EU4 Savefile Explorer version {VERSION}")
 	init()
 	main()

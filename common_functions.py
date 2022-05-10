@@ -5,7 +5,8 @@ import re
 import os
 import defines
 import pygame
-import debugfunctions
+
+import debug_functions
 
 def return_ordinal_number(number: str) -> str:
 	# Converts a number to its ordinal form
@@ -90,5 +91,5 @@ def load_flag(tag: str, war):
 		flag = pygame.image.load(war.participants[tag].flag_path)
 	except:
 		flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
-		debugfunctions.debug_out(f"Failed to open flag for tag {tag}",event_type="WARN")
+		debug_functions.debug_out(f"Failed to open flag for tag {tag}",event_type="WARN")
 	return flag

@@ -3,15 +3,15 @@
 
 import pygame
 import os
-import eu4pathfinder
+import eu4_path_finder
 
 # 
 # Paths
-EU4_FOLDER = eu4pathfinder.EU4_FOLDER
-PATH_TO_COUNTRIES_FOLDER = eu4pathfinder.PATH_TO_COUNTRIES_FOLDER
-PATH_TO_FLAGS_FOLDER = eu4pathfinder.PATH_TO_FLAGS_FOLDER
-PATH_TO_BACKUP_FLAG = eu4pathfinder.PATH_TO_BACKUP_FLAG
-EU4_SAVE_DIR = eu4pathfinder.EU4_SAVE_DIR
+EU4_FOLDER = eu4_path_finder.EU4_FOLDER
+PATH_TO_COUNTRIES_FOLDER = eu4_path_finder.PATH_TO_COUNTRIES_FOLDER
+PATH_TO_FLAGS_FOLDER = eu4_path_finder.PATH_TO_FLAGS_FOLDER
+PATH_TO_BACKUP_FLAG = eu4_path_finder.PATH_TO_BACKUP_FLAG
+EU4_SAVE_DIR = eu4_path_finder.EU4_SAVE_DIR
 
 MAP_TERRAIN_PATH = os.path.join(os.curdir,"graphics/mapterrain.png")
 MAP_BORDERS_PATH = os.path.join(os.curdir,"graphics/mapprovinces.png")

@@ -7,8 +7,8 @@ import os
 import zipfile
 import operator
 
-import commonfunctions
-import debugfunctions
+import common_functions
+import debug_functions
 import defines
 
 alt_names = {} # Dictionary of names for countries created at runtime
@@ -69,7 +69,7 @@ class Battle:
 				self.fullname = self.iteration+"Battle of "+self.name
 
 		#if self.fullname == "NONE":
-		#	debugfunctions.debug_out(f"No name found for battle at line {str(line_loc)}", event_type="WARN")
+		#	debug_functions.debug_out(f"No name found for battle at line {str(line_loc)}", event_type="WARN")
 
 
 class Participant:
@@ -89,9 +89,9 @@ class Participant:
 
 		# Setting up the full name for the nation
 		self.longname = None
-		if not commonfunctions.is_created_nation(self.name):
-			self.longname = commonfunctions.get_full_country_name(self.name)
-		else: # Easier to handle this in here than in commonfunctions.py because the savefile is already open
+		if not common_functions.is_created_nation(self.name):
+			self.longname = common_functions.get_full_country_name(self.name)
+		else: # Easier to handle this in here than in common_functions.py because the savefile is already open
 			if self.name in alt_names.keys():
 				if alt_names[self.name] == None:
 					self.longname = self.name
@@ -107,7 +107,7 @@ class Participant:
 				if "against" in war_name and side == "defend" and level == "primary":
 					self.longname = war_name.split("against ")[-1]
 				else:
-					debugfunctions.debug_out(f"Couldn't find full name for tag {self.name}. This usually means that it's a colonial nation that's been annexed. Defaulting to tag.", event_type="WARN")
+					debug_functions.debug_out(f"Couldn't find full name for tag {self.name}. This usually means that it's a colonial nation that's been annexed. Defaulting to tag.", event_type="WARN")
 					self.longname = self.name
 					alt_names[name] = None # Usually when a colonial nation has been annexed
 		self.longname = self.longname[0].upper()+self.longname[1:]
@@ -124,17 +124,17 @@ class Participant:
 		# Sometimes this happens too?
 		if self.join_date == None:
 			self.join_date = "unknown"
-			debugfunctions.debug_out(f"Couldn't find join date for {self.name} in war [{self.war_name}]", event_type="WARN")
+			debug_functions.debug_out(f"Couldn't find join date for {self.name} in war [{self.war_name}]", event_type="WARN")
 
 	def consolidate_losses(self) -> None: 
 		try: 
 			self.losses = [int(j) for j in self.losses] 
 		except: 
 			self.losses = [0 for i in range(defines.CASUALTY_VECTOR_LENGTH)]
-			debugfunctions.debug_out(f"Couldn't find losses for {self.name} in war [{self.war_name}]. Defaulting to zero.", event_type="WARN")
+			debug_functions.debug_out(f"Couldn't find losses for {self.name} in war [{self.war_name}]. Defaulting to zero.", event_type="WARN")
 		for k in range(2, len(self.losses), 3):
 			if self.losses[k] != 0:
-				debugfunctions.debug_out(f"Nonzero third digit found in losses for {self.name} in war [{self.war_name}]. This is very unusual; please let this utility's creator know if you ever see this and send him the save file.", event_type="INFO")
+				debug_functions.debug_out(f"Nonzero third digit found in losses for {self.name} in war [{self.war_name}]. This is very unusual; please let this utility's creator know if you ever see this and send him the save file.", event_type="INFO")
 		# HOW LOSSES WORK: (as far as I can tell)
 		# Example: 11403 7835 0 1265 2756 0 8000 5671 0 0 0 0 2 0 0 0 0 0 0 0 0
 		# It's broken into groups of three digits. The first three are infantry, second cavalry, third artillery,
@@ -190,7 +190,7 @@ class War:
 		if self.title == "":
 			self.viable = False # For some reason the game generates 0-length wars with no participants early on
 			# in the list of historical wars. These don't have titles.
-			debugfunctions.debug_out(f"Empty war (no title, zero-length) found at line {str(start_point+1)}. Skipping war.",event_type="WARN")
+			debug_functions.debug_out(f"Empty war (no title, zero-length) found at line {str(start_point+1)}. Skipping war.",event_type="WARN")
 			return
 
 		self.participants = {}
@@ -250,7 +250,7 @@ class War:
 					self.participants[get_line_data(check_misc_num)].level = "primary"
 				except LookupError:
 					self.viable = False
-					debugfunctions.debug_out(f"Primary participant {get_line_data(check_misc_num)} not in [{self.title}] participants list (bad participant on line {str(check_misc_num)}). Skipping war.",event_type="WARN")
+					debug_functions.debug_out(f"Primary participant {get_line_data(check_misc_num)} not in [{self.title}] participants list (bad participant on line {str(check_misc_num)}). Skipping war.",event_type="WARN")
 			if "outcome" in file_lines[check_misc_num]:
 				self.outcome = get_line_data(check_misc_num)
 
@@ -269,43 +269,43 @@ class War:
 
 			if original_attacker != None:
 				self.start_date = self.participants[original_attacker].join_date
-				self.start_days = commonfunctions.date_to_days(self.start_date)
+				self.start_days = common_functions.date_to_days(self.start_date)
 				if self.participants[original_attacker].quit_date != "annexed":
 					self.end_date = self.participants[original_attacker].quit_date
 				else:
 					self.ongoing = True
 			else:
-				debugfunctions.debug_out(f"No original attacker found for war [{self.title}]. Skipping war.",event_type="WARN")
+				debug_functions.debug_out(f"No original attacker found for war [{self.title}]. Skipping war.",event_type="WARN")
 			
 			self.get_events()
 
 	def get_events(self) -> None:
 		# Events are tuples formatted (event day #, formatted event date, event name, event type)
 		try:
-			start_days = commonfunctions.date_to_days(self.start_date)
+			start_days = common_functions.date_to_days(self.start_date)
 			self.events.append((start_days, self.start_date, self.participants[self.primary_attacker].longname+" declared war on "+self.participants[self.primary_defender].longname, "start"))
 			if not self.ongoing:
-				end_days = commonfunctions.date_to_days(self.end_date)
+				end_days = common_functions.date_to_days(self.end_date)
 				self.events.append((end_days, self.end_date, "War ended", "end"))
 			else:
-				end_days = commonfunctions.date_to_days(present_date)
+				end_days = common_functions.date_to_days(present_date)
 				self.events.append((end_days, present_date, "Present", "end"))
 			
 			for participant in self.participants.keys():
-				curr_join_days = commonfunctions.date_to_days(self.participants[participant].join_date)
-				curr_quit_days = commonfunctions.date_to_days(self.participants[participant].quit_date)
+				curr_join_days = common_functions.date_to_days(self.participants[participant].join_date)
+				curr_quit_days = common_functions.date_to_days(self.participants[participant].quit_date)
 				if curr_join_days-start_days > 1:
 					self.events.append((curr_join_days, self.participants[participant].join_date, self.participants[participant].side+"er "+self.participants[participant].longname+" joined the war", "join"))
 				if curr_quit_days != end_days or self.ongoing:
 					self.events.append((curr_quit_days, self.participants[participant].quit_date, self.participants[participant].side+"er "+self.participants[participant].longname+" left the war", "quit"))
 			for battle in self.battles:
-				self.events.append((commonfunctions.date_to_days(battle.date), battle.date, battle.fullname, "battle"))
+				self.events.append((common_functions.date_to_days(battle.date), battle.date, battle.fullname, "battle"))
 
 			self.events.sort(key=first_element)
 
 		except Exception as exception:
 			self.viable = False
-			debugfunctions.debug_out(f"Exception [{exception}] occurred when building event list for [{self.title}]. Skipping war.",event_type="WARN")
+			debug_functions.debug_out(f"Exception [{exception}] occurred when building event list for [{self.title}]. Skipping war.",event_type="WARN")
 
 	def find_battles(self) -> None: 
 		for check_battle_num in range(self.history_start,self.history_end):
@@ -322,7 +322,7 @@ class War:
 						for b in range(len(self.battles)):
 							if self.battles[b].name == battle_name:
 								curr_iteration += 1
-						battle_iteration = commonfunctions.return_ordinal_number(str(curr_iteration))
+						battle_iteration = common_functions.return_ordinal_number(str(curr_iteration))
 					elif get_line_key(n) == "location=":
 						battle_location = get_line_data(n)
 					elif get_line_key(n) == "result=":
@@ -494,7 +494,7 @@ def find_colonial_names() -> None:
 	for check_colonial_num in range(len(file_lines)):
 		if len(file_lines[check_colonial_num]) == 6:
 			if file_lines[check_colonial_num][4:6] == "={":
-				if commonfunctions.is_created_nation(file_lines[check_colonial_num][1:4]):
+				if common_functions.is_created_nation(file_lines[check_colonial_num][1:4]):
 					new_key = get_line_key(check_colonial_num)[:-1]
 					start_point = check_colonial_num
 					end_point = define_bracket_block(check_colonial_num)
@@ -507,15 +507,15 @@ def find_colonial_names() -> None:
 
 def locate_wars(filename) -> list:
 	global file_lines, present_date
-	debugfunctions.debug_out(f"Attempting to open [{filename}]")
+	debug_functions.debug_out(f"Attempting to open [{filename}]")
 	try:
 		savefile = codecs.open(filename, encoding="latin_1").read()
 	except Exception as exception:
-		debugfunctions.debug_out(f"Savefile opening failed with exception [{exception}]")
+		debug_functions.debug_out(f"Savefile opening failed with exception [{exception}]")
 	file_lines = savefile.split("\n")
 	if file_lines[0] != "EU4txt": # Compressed save
 		short_name = filename.split('/')[-1]
-		debugfunctions.debug_out(f"Savefile [{short_name}] is compressed. Decompressing...")
+		debug_functions.debug_out(f"Savefile [{short_name}] is compressed. Decompressing...")
 		with zipfile.ZipFile(filename, 'r') as zip:
 			zip.extractall()
 			savefile = codecs.open("gamestate", encoding="latin_1").read()
@@ -523,19 +523,19 @@ def locate_wars(filename) -> list:
 			os.remove("gamestate")
 			os.remove("meta")
 			os.remove("ai")
-		debugfunctions.debug_out("Savefile successfully decompressed.")
+		debug_functions.debug_out("Savefile successfully decompressed.")
 
 	present_date = get_present_date()
 
 	war_list = []
 	get_curr_player_countries()
 	if len(PLAYER_COUNTRIES) == 0:
-		debugfunctions.debug_out("No player countries found",event_type="WARN")
+		debug_functions.debug_out("No player countries found",event_type="WARN")
 	all_player_nations = ""
 	for nat in PLAYER_COUNTRIES:
 		all_player_nations += nat+", "
 	all_player_nations = all_player_nations[:-2]
-	debugfunctions.debug_out(f"Current player nations are {all_player_nations}", event_type="INFO")
+	debug_functions.debug_out(f"Current player nations are {all_player_nations}", event_type="INFO")
 	find_colonial_names()
 	for i in range(int(len(file_lines)*0.7),len(file_lines)): #!!!!!! (You can set this to like 0.98 for speed loading in testing but it will cut off a lot of early wars)
 		if file_lines[i] == "previous_war={" or file_lines[i] == "active_war={":
@@ -546,8 +546,8 @@ def locate_wars(filename) -> list:
 			if new_war.viable == True:
 				war_list.append(new_war)
 	war_list = sorted(war_list, key=operator.attrgetter("start_days"))
-	debugfunctions.debug_out("Finished reading savefile war data")
-	debugfunctions.debug_out(f"{str(len(war_list))} viable wars discovered", event_type="INFO")
+	debug_functions.debug_out("Finished reading savefile war data")
+	debug_functions.debug_out(f"{str(len(war_list))} viable wars discovered", event_type="INFO")
 	if len(war_list) == 0:
-		debugfunctions.debug_out("No viable wars discovered!", event_type="ERROR")
+		debug_functions.debug_out("No viable wars discovered!", event_type="ERROR")
 	return (war_list, present_date)

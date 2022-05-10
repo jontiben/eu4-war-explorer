@@ -4,8 +4,8 @@
 import pygame
 
 import defines
-import commonfunctions
-import debugfunctions
+import common_functions
+import debug_functions
 
 global prev_position, current_position
 global has_rendered
@@ -133,11 +133,11 @@ def list_disp_update(window, font, small_font, war_list):
 			to_render.append((end_date_text, end_text_loc))
 
 			# Draw flags: (primary) attacker's left of the war title, defender's right
-			curr_flag = commonfunctions.load_flag(war_list[i].primary_attacker, war_list[i])
+			curr_flag = common_functions.load_flag(war_list[i].primary_attacker, war_list[i])
 			first_flag = pygame.transform.scale(curr_flag, (FLAG_WIDTH, FLAG_HEIGHT))
 			to_render.append((first_flag, (text_loc.left-defines.PAD_DIST-FLAG_WIDTH, text_loc.y)))	
 
-			curr_flag = commonfunctions.load_flag(war_list[i].primary_defender, war_list[i])
+			curr_flag = common_functions.load_flag(war_list[i].primary_defender, war_list[i])
 			second_flag = pygame.transform.scale(curr_flag, (FLAG_WIDTH, FLAG_HEIGHT))
 			to_render.append((second_flag, (text_loc.right+defines.PAD_DIST, text_loc.y)))
 

@@ -4,7 +4,7 @@
 import pygame
 import math
 import defines
-import commonfunctions
+import common_functions
 
 #MAX_BATTLE_OFFSET = 8 # Max amount (in pixels on the original-scale map) to randomly offset the centerpoint of each battle to one side
 
@@ -39,11 +39,11 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 
 	halfheight = int((window.get_height()-defines.NAV_BUTTON_HEIGHT)/2)
 
-	start_days = commonfunctions.date_to_days(WAR.start_date)
+	start_days = common_functions.date_to_days(WAR.start_date)
 	if not WAR.ongoing:
-		war_length = commonfunctions.date_to_days(WAR.end_date) - start_days
+		war_length = common_functions.date_to_days(WAR.end_date) - start_days
 	else:
-		war_length = commonfunctions.date_to_days(present_date) - start_days
+		war_length = common_functions.date_to_days(present_date) - start_days
 	timeline = pygame.draw.line(window, defines.C_GOLD, (defines.PAD_DIST-CURR_POSITION, halfheight), (war_length+defines.PAD_DIST-CURR_POSITION, halfheight), defines.TIMELINE_WIDTH)
 
 	portion_distance = (window.get_height()-defines.NAV_BUTTON_HEIGHT)/(defines.TIMELINE_POS*2+1)
@@ -182,7 +182,7 @@ def render_one_battle(window, font, small_font, light_font, stats_font):
 	window.blit(surface_text, surface_text_loc)
 
 	# Date
-	date_text = light_font.render(commonfunctions.date_conversion(BATTLE.date), True, defines.C_LGRAY)
+	date_text = light_font.render(common_functions.date_conversion(BATTLE.date), True, defines.C_LGRAY)
 	date_text_loc = date_text.get_rect()
 	date_text_loc.right = window.get_width()-defines.PAD_DIST
 	date_text_loc.centery = battle_title_loc.centery
@@ -196,13 +196,13 @@ def render_one_battle(window, font, small_font, light_font, stats_font):
 	start_of_battle_info = map_bottom+defines.NAV_BUTTON_HEIGHT
 
 	# Battle attacker's flag
-	att_flag = pygame.transform.scale(commonfunctions.load_flag(attacker_obj.name, WAR), (battle_flag_width, battle_flag_height))
+	att_flag = pygame.transform.scale(common_functions.load_flag(attacker_obj.name, WAR), (battle_flag_width, battle_flag_height))
 	att_flag_loc = att_flag.get_rect()
 	att_flag_loc.topleft = (defines.PAD_DIST, defines.PAD_DIST+start_of_battle_info)
 	window.blit(att_flag, att_flag_loc)
 
 	# Battle defender's flag
-	def_flag = pygame.transform.scale(commonfunctions.load_flag(defender_obj.name, WAR), (battle_flag_width, battle_flag_height))
+	def_flag = pygame.transform.scale(common_functions.load_flag(defender_obj.name, WAR), (battle_flag_width, battle_flag_height))
 	def_flag_loc = def_flag.get_rect()
 	def_flag_loc.topright = (window.get_width()-defines.PAD_DIST, defines.PAD_DIST+start_of_battle_info)
 	window.blit(def_flag, def_flag_loc)
@@ -285,17 +285,17 @@ def render_one_battle(window, font, small_font, light_font, stats_font):
 		curr_graphic_loc = curr_graphic.get_rect()
 		curr_graphic_loc.topleft = (defines.PAD_DIST, att_commander_loc.bottom+defines.PAD_DIST*2+(defines.SMALL_UNIT_GRAPHIC_SIZE+defines.PAD_DIST)*u)
 		window.blit(curr_graphic, curr_graphic_loc)
-		curr_count = stats_font.render(commonfunctions.break_up_large_numbers(BATTLE.attacking_force[u]), True, defines.C_WHITE)
+		curr_count = stats_font.render(common_functions.break_up_large_numbers(BATTLE.attacking_force[u]), True, defines.C_WHITE)
 		curr_count_loc = curr_count.get_rect()
 		curr_count_loc.bottomleft = (curr_graphic_loc.right+defines.PAD_DIST, curr_graphic_loc.bottom)
 		window.blit(curr_count, curr_count_loc)
 	# Total
-	att_total = stats_font.render(commonfunctions.break_up_large_numbers(sum(BATTLE.attacking_force)), True, defines.C_WHITE)
+	att_total = stats_font.render(common_functions.break_up_large_numbers(sum(BATTLE.attacking_force)), True, defines.C_WHITE)
 	att_total_loc = att_total.get_rect()
 	att_total_loc.bottomleft = (defines.PAD_DIST*2+defines.SMALL_UNIT_GRAPHIC_SIZE, curr_graphic_loc.bottom+defines.SMALL_UNIT_GRAPHIC_SIZE+defines.PAD_DIST)
 	window.blit(att_total, att_total_loc)
 	# Losses
-	att_losses = stats_font.render(commonfunctions.break_up_large_numbers(BATTLE.attacking_losses)+" losses", True, defines.C_WHITE)
+	att_losses = stats_font.render(common_functions.break_up_large_numbers(BATTLE.attacking_losses)+" losses", True, defines.C_WHITE)
 	att_losses_loc = att_losses.get_rect()
 	att_losses_loc.bottomleft = (att_total_loc.right+defines.PAD_DIST*4, att_total_loc.bottom)
 	window.blit(att_losses, att_losses_loc)
@@ -309,17 +309,17 @@ def render_one_battle(window, font, small_font, light_font, stats_font):
 		curr_graphic_loc = curr_graphic.get_rect()
 		curr_graphic_loc.topright = (window.get_width()-defines.PAD_DIST, att_commander_loc.bottom+defines.PAD_DIST*2+(defines.SMALL_UNIT_GRAPHIC_SIZE+defines.PAD_DIST)*u)
 		window.blit(curr_graphic, curr_graphic_loc)
-		curr_count = stats_font.render(commonfunctions.break_up_large_numbers(BATTLE.defending_force[u]), True, defines.C_WHITE)
+		curr_count = stats_font.render(common_functions.break_up_large_numbers(BATTLE.defending_force[u]), True, defines.C_WHITE)
 		curr_count_loc = curr_count.get_rect()
 		curr_count_loc.bottomright = (curr_graphic_loc.left-defines.PAD_DIST, curr_graphic_loc.bottom)
 		window.blit(curr_count, curr_count_loc)
 	# Total
-	def_total = stats_font.render(commonfunctions.break_up_large_numbers(sum(BATTLE.defending_force)), True, defines.C_WHITE)
+	def_total = stats_font.render(common_functions.break_up_large_numbers(sum(BATTLE.defending_force)), True, defines.C_WHITE)
 	def_total_loc = def_total.get_rect()
 	def_total_loc.bottomright = (window.get_width()-defines.PAD_DIST*2-defines.SMALL_UNIT_GRAPHIC_SIZE, curr_graphic_loc.bottom+defines.SMALL_UNIT_GRAPHIC_SIZE+defines.PAD_DIST)
 	window.blit(def_total, def_total_loc)
 	# Losses
-	def_losses = stats_font.render(commonfunctions.break_up_large_numbers(BATTLE.defending_losses)+" losses", True, defines.C_WHITE)
+	def_losses = stats_font.render(common_functions.break_up_large_numbers(BATTLE.defending_losses)+" losses", True, defines.C_WHITE)
 	def_losses_loc = def_losses.get_rect()
 	def_losses_loc.bottomright = (def_total_loc.left-defines.PAD_DIST*4, def_total_loc.bottom)
 	window.blit(def_losses, def_losses_loc)
@@ -363,7 +363,7 @@ def render_battles(window, font, small_font, light_font, stats_font):
 		surface_text_loc.x = battle_title_loc.right+defines.PAD_DIST*4
 		surface_text_loc.centery = battle_title_loc.centery
 		battles_to_blit.append([surface_text, surface_text_loc])
-		loss_text = stats_font.render(commonfunctions.break_up_large_numbers(str(curr_battle.attacking_losses+curr_battle.defending_losses))+" losses", True, defines.C_WHITE)
+		loss_text = stats_font.render(common_functions.break_up_large_numbers(str(curr_battle.attacking_losses+curr_battle.defending_losses))+" losses", True, defines.C_WHITE)
 		loss_text_loc = loss_text.get_rect()
 		loss_text_loc.right = int(window.get_width()*0.75)
 		loss_text_loc.centery = battle_title_loc.centery
@@ -484,27 +484,27 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 			curr_graphic = all_graphics_list[a]
 			curr_graphic_loc = curr_graphic.get_rect()
 			curr_graphic_loc.topleft = (loss_dist_from_edge_of_screen, loss_dist_from_top_of_screen+a*(defines.PAD_DIST+defines.MAX_UNIT_GRAPHIC_SIZE))
-			a_loss_str = commonfunctions.break_up_large_numbers(str(a_loss_list[a]))
+			a_loss_str = common_functions.break_up_large_numbers(str(a_loss_list[a]))
 			if tag != "000":
 				try:
 					a_loss_str += '/'+str(round(a_loss_list[a]/WAR.a_loss_list[a]*100, 2))+'%'
 				except ZeroDivisionError:
 					pass
 			if attacker_losses[a*3+1] > 0:
-				a_loss_str += " ("+commonfunctions.break_up_large_numbers(str(attacker_losses[a*3+1]))+')'
+				a_loss_str += " ("+common_functions.break_up_large_numbers(str(attacker_losses[a*3+1]))+')'
 			loss_text = stats_font.render(a_loss_str, True, defines.C_WHITE)
 			loss_text_loc = loss_text.get_rect()
 			loss_text_loc.topleft = (loss_dist_from_edge_of_screen+defines.MAX_UNIT_GRAPHIC_SIZE+defines.PAD_DIST, curr_graphic_loc.y)
 			a_losses_to_blit += [[curr_graphic, curr_graphic_loc], [loss_text, loss_text_loc]]
 		window.blits(a_losses_to_blit)
 		# Attacker Total
-		a_total_str = commonfunctions.break_up_large_numbers(str(sum(attacker_losses)))
+		a_total_str = common_functions.break_up_large_numbers(str(sum(attacker_losses)))
 		if tag != "000":
 			try:
 				a_total_str += '/'+str(round(sum(attacker_losses)/sum(WAR.attacker_losses)*100, 2))+"%"
 			except ZeroDivisionError:
 				pass
-		a_total_str += " ("+commonfunctions.break_up_large_numbers(str(a_attrition_losses))+")"
+		a_total_str += " ("+common_functions.break_up_large_numbers(str(a_attrition_losses))+")"
 		a_total_text = stats_font.render(a_total_str, True, defines.C_WHITE)
 		a_total_text_loc = a_total_text.get_rect()
 		a_total_text_loc.y = curr_graphic_loc.y+defines.MAX_UNIT_GRAPHIC_SIZE+defines.PAD_DIST
@@ -527,27 +527,27 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 			curr_graphic = all_graphics_list[d]
 			curr_graphic_loc = curr_graphic.get_rect()
 			curr_graphic_loc.topright = (window.get_width()-loss_dist_from_edge_of_screen, loss_dist_from_top_of_screen+d*(defines.PAD_DIST+defines.MAX_UNIT_GRAPHIC_SIZE))
-			d_loss_str = commonfunctions.break_up_large_numbers(str(d_loss_list[d]))
+			d_loss_str = common_functions.break_up_large_numbers(str(d_loss_list[d]))
 			if tag != "000":
 				try:
 					d_loss_str = str(round(d_loss_list[d]/WAR.d_loss_list[d]*100, 2))+"%/"+d_loss_str
 				except ZeroDivisionError:
 					pass
 			if defender_losses[d*3+1] > 0:
-				d_loss_str = '('+commonfunctions.break_up_large_numbers(str(defender_losses[d*3+1]))+") "+d_loss_str
+				d_loss_str = '('+common_functions.break_up_large_numbers(str(defender_losses[d*3+1]))+") "+d_loss_str
 			loss_text = stats_font.render(d_loss_str, True, defines.C_WHITE)
 			loss_text_loc = loss_text.get_rect()
 			loss_text_loc.topright = (window.get_width()-(loss_dist_from_edge_of_screen+defines.MAX_UNIT_GRAPHIC_SIZE+defines.PAD_DIST), curr_graphic_loc.y)
 			d_losses_to_blit += [[curr_graphic, curr_graphic_loc], [loss_text, loss_text_loc]]
 		window.blits(d_losses_to_blit)
 		# Defender Total
-		d_total_str = commonfunctions.break_up_large_numbers(str(sum(defender_losses)))
+		d_total_str = common_functions.break_up_large_numbers(str(sum(defender_losses)))
 		if tag != "000":
 			try:
 				d_total_str = str(round(sum(defender_losses)/sum(WAR.defender_losses)*100, 2))+"%/"+d_total_str
 			except ZeroDivisionError:
 				pass
-		d_total_str = '('+commonfunctions.break_up_large_numbers(str(d_attrition_losses))+") "+d_total_str
+		d_total_str = '('+common_functions.break_up_large_numbers(str(d_attrition_losses))+") "+d_total_str
 		d_total_text = stats_font.render(d_total_str, True, defines.C_WHITE)
 		d_total_text_loc = d_total_text.get_rect()
 		d_total_text_loc.y = curr_graphic_loc.y+defines.MAX_UNIT_GRAPHIC_SIZE+defines.PAD_DIST
@@ -556,7 +556,7 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 
 	# The absolute total casualty count
 	if tag == "000":
-		abs_total_str = "Overall losses of "+commonfunctions.break_up_large_numbers(str(sum(attacker_losses[:9])+sum(defender_losses[:9])))+" men, "+commonfunctions.break_up_large_numbers(str(sum(attacker_losses[9:])+sum(defender_losses[9:])))+" ships"
+		abs_total_str = "Overall losses of "+common_functions.break_up_large_numbers(str(sum(attacker_losses[:9])+sum(defender_losses[:9])))+" men, "+common_functions.break_up_large_numbers(str(sum(attacker_losses[9:])+sum(defender_losses[9:])))+" ships"
 		abs_total_text = stats_font.render(abs_total_str, True, defines.C_WHITE)
 		abs_total_text_loc = abs_total_text.get_rect()
 		abs_total_text_loc.midtop = (int(window.get_width()/2), d_total_text_loc.bottom+defines.PAD_DIST*4)
@@ -577,7 +577,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	flag_width = defines.FLAG_WIDTH
 
 	# Primary Belligerants' Flags
-	prim_att_flag = commonfunctions.load_flag(prim_att, WAR)
+	prim_att_flag = common_functions.load_flag(prim_att, WAR)
 	prim_att_flag_loc = prim_att_flag.get_rect()
 	prim_att_flag_loc.topleft = (defines.PAD_DIST, defines.PAD_DIST)
 	window.blit(prim_att_flag, prim_att_flag_loc)
@@ -585,7 +585,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	if WAR.outcome == "2":
 		pygame.draw.rect(window, defines.C_GOLD, prim_att_flag_loc, defines.NAV_BUTTON_BORDER_WIDTH)
 
-	prim_def_flag = commonfunctions.load_flag(prim_def, WAR)
+	prim_def_flag = common_functions.load_flag(prim_def, WAR)
 	prim_def_flag_loc = prim_def_flag.get_rect()
 	prim_def_flag_loc.topleft = (window.get_width()-flag_width-defines.PAD_DIST, defines.PAD_DIST)
 	window.blit(prim_def_flag, prim_def_flag_loc)
@@ -608,9 +608,9 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	window.blit(prim_def_name, prim_def_name_loc)	
 
 	# Dates of the war
-	war_dates_text = commonfunctions.date_conversion(WAR.start_date)+" - "
+	war_dates_text = common_functions.date_conversion(WAR.start_date)+" - "
 	if not WAR.ongoing:
-		war_dates_text += commonfunctions.date_conversion(WAR.end_date)
+		war_dates_text += common_functions.date_conversion(WAR.end_date)
 	else:
 		war_dates_text += "present"
 	war_dates = small_font.render(war_dates_text,True, defines.C_LGRAY)
@@ -620,7 +620,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	window.blit(war_dates, war_dates_loc)
 
 	# War outcome
-	war_outcome_str = commonfunctions.lookup_outcome(WAR.outcome)
+	war_outcome_str = common_functions.lookup_outcome(WAR.outcome)
 	war_outcome = small_font.render(war_outcome_str, True, defines.C_GOLD)
 	war_outcome_loc = war_outcome.get_rect()
 	war_outcome_loc.y = war_dates_loc.bottom+defines.PAD_DIST
@@ -639,7 +639,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	padding_before_small_flags = flag_height+defines.PAD_DIST*3+prim_att_name_loc.height
 	for a in range(CURR_POSITION, len(add_attackers)):
 		a_loc = a-CURR_POSITION
-		curr_flag = pygame.transform.scale(commonfunctions.load_flag(add_attackers[a], WAR), (flag_half_width, flag_half_height))
+		curr_flag = pygame.transform.scale(common_functions.load_flag(add_attackers[a], WAR), (flag_half_width, flag_half_height))
 		curr_flag_loc = curr_flag.get_rect()
 		curr_flag_loc.x = defines.PAD_DIST
 		curr_flag_loc.y = (a_loc*(defines.PAD_DIST+flag_half_height))+padding_before_small_flags
@@ -669,7 +669,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	# Other defenders
 	for d in range(CURR_POSITION, len(add_defenders)):
 		d_loc = d-CURR_POSITION
-		curr_flag = pygame.transform.scale(commonfunctions.load_flag(add_defenders[d], WAR), (flag_half_width, flag_half_height))
+		curr_flag = pygame.transform.scale(common_functions.load_flag(add_defenders[d], WAR), (flag_half_width, flag_half_height))
 		curr_flag_loc = curr_flag.get_rect()
 		curr_flag_loc.right = window.get_width() - defines.PAD_DIST
 		curr_flag_loc.y = (d_loc*(defines.PAD_DIST+flag_half_height))+flag_height+defines.PAD_DIST*3+prim_def_name_loc.height
