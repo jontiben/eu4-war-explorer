@@ -44,7 +44,7 @@ def get_full_country_name(tag: str) -> str:
 				if name[0] == ' ':
 					return name[1:]
 				return name
-	return "000"
+	return tag
 
 def date_conversion(date: str) -> str:
 	# Takes a normally-formatted date string and turns it into

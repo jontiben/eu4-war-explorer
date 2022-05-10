@@ -5,7 +5,7 @@ import pygame
 import os
 import eu4pathfinder
 
-
+# 
 # Paths
 EU4_FOLDER = eu4pathfinder.EU4_FOLDER
 PATH_TO_COUNTRIES_FOLDER = eu4pathfinder.PATH_TO_COUNTRIES_FOLDER
@@ -13,17 +13,17 @@ PATH_TO_FLAGS_FOLDER = eu4pathfinder.PATH_TO_FLAGS_FOLDER
 PATH_TO_BACKUP_FLAG = eu4pathfinder.PATH_TO_BACKUP_FLAG
 EU4_SAVE_DIR = eu4pathfinder.EU4_SAVE_DIR
 
-MAP_TERRAIN_PATH = os.path.join(os.curdir,"graphics\\mapterrain.png")
-MAP_BORDERS_PATH = os.path.join(os.curdir,"graphics\\mapprovinces.png")
-MAP_RIVERS_PATH = os.path.join(os.curdir,"graphics\\maprivers.png")
+MAP_TERRAIN_PATH = os.path.join(os.curdir,"graphics/mapterrain.png")
+MAP_BORDERS_PATH = os.path.join(os.curdir,"graphics/mapprovinces.png")
+MAP_RIVERS_PATH = os.path.join(os.curdir,"graphics/maprivers.png")
 
-INFANTRY_GRAPHIC = os.path.join(os.curdir,"graphics\\infantry_icon.png")
-CAVALRY_GRAPHIC = os.path.join(os.curdir,"graphics\\cavalry_icon.png")
-ARTILLERY_GRAPHIC = os.path.join(os.curdir,"graphics\\artillery_icon.png")
-TRA_GRAPHIC = os.path.join(os.curdir,"graphics\\transport_icon.png")
-GAL_GRAPHIC = os.path.join(os.curdir,"graphics\\galley_icon.png")
-LS_GRAPHIC = os.path.join(os.curdir,"graphics\\light_ship_icon.png")
-HS_GRAPHIC = os.path.join(os.curdir,"graphics\\big_ship_icon.png")
+INFANTRY_GRAPHIC = os.path.join(os.curdir,"graphics/infantry_icon.png")
+CAVALRY_GRAPHIC = os.path.join(os.curdir,"graphics/cavalry_icon.png")
+ARTILLERY_GRAPHIC = os.path.join(os.curdir,"graphics/artillery_icon.png")
+TRA_GRAPHIC = os.path.join(os.curdir,"graphics/transport_icon.png")
+GAL_GRAPHIC = os.path.join(os.curdir,"graphics/galley_icon.png")
+LS_GRAPHIC = os.path.join(os.curdir,"graphics/light_ship_icon.png")
+HS_GRAPHIC = os.path.join(os.curdir,"graphics/big_ship_icon.png")
 
 
 # Colors
@@ -38,6 +38,27 @@ C_RED = (255, 48, 48)
 #C_INTERFACE = (40,10,10)
 C_INTERFACE = (10,25,60)
 #C_INTERFACE = (36,52,72)
+
+# Casualty vector info
+CASUALTY_VECTOR_LENGTH = 21 # Length (number of values) of the casualty (loss) vector in the savefile
+ATTRITION_OFFSET = 1 # Amount the attrition casualty count is offset from the start of the casualty type group (triplet) 
+GROUP_SIZE = 3 # Number of values corresponding to each type of unit
+
+# Casualty vector locations
+INF_START = 0
+INF_END =   3
+CAV_START = INF_END
+CAV_END =   6
+ART_START = CAV_END
+ART_END =   9
+HS_START =  ART_END
+HS_END =    12
+LS_START =  HS_END
+LS_END =    15
+GAL_START = LS_END
+GAL_END =   18
+TRA_START = GAL_END
+TRA_END =   21
 
 # Measurements
 PAD_DIST = 10 # Pixels

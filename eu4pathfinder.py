@@ -4,7 +4,11 @@
 import tkinter as tk
 from tkinter import filedialog
 import os
+import platform
 import debugfunctions
+
+operating_system = platform.system()
+debugfunctions.debug_out(f"OS is {operating_system} {platform.release()}", "INFO")
 
 def find_eu4_folder():
 	debugfunctions.debug_out("Prompting user to select EU4 directory...")
@@ -15,7 +19,12 @@ def find_eu4_folder():
 	return folder_name
 
 debugfunctions.debug_out("Detecting EU4 directory in [C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV]...")
-EU4_FOLDER = "C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV"
+if operating_system == "Linux":
+	EU4_FOLDER = os.path.expanduser('~')+".local/share/Steam/steamapps/common/Europa Universalis IV"
+elif operating_system == "Darwin": # OSX
+	EU4_FOLDER = os.path.expanduser('~')+"/Library/Application Support/Steam/SteamApps/common/Europa Universalis IV"
+else:
+	EU4_FOLDER = "C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV"
 if not os.path.isdir(EU4_FOLDER):
 	debugfunctions.debug_out("EU4 directory not found")
 	EU4_FOLDER = ""
@@ -27,6 +36,9 @@ PATH_TO_COUNTRIES_FOLDER = EU4_FOLDER+"/history/countries"
 PATH_TO_FLAGS_FOLDER = EU4_FOLDER+"/gfx/flags"
 PATH_TO_BACKUP_FLAG = PATH_TO_FLAGS_FOLDER+"/colonial_patriot_rebels.tga"
 
-EU4_SAVE_DIR = os.path.expanduser("~")+"/Documents/Paradox Interactive/Europa Universalis IV/save games"
+if operating_system == "Linux":
+	EU4_SAVE_DIR = os.path.expanduser('~')+".local/share/Paradox Interactive/Europa Universalis IV/save games"
+else: # I haven't tested this but it *should* work for OSX as well
+	EU4_SAVE_DIR = os.path.expanduser('~')+"/Documents/Paradox Interactive/Europa Universalis IV/save games"
 if not os.path.isdir(EU4_SAVE_DIR):
-	EU4_SAVE_DIR = os.path.expanduser("~")
+	EU4_SAVE_DIR = os.path.expanduser('~')

@@ -5,14 +5,13 @@ import codecs
 import re
 import os
 import zipfile
+import operator
 
 import commonfunctions
 import debugfunctions
 import defines
 
 alt_names = {} # Dictionary of names for countries created at runtime
-
-### Currently doesn't handle active/ongoing wars
 
 class Battle:
 	def __init__(self, line_loc, name, surface, date, location, result, iteration,
@@ -116,10 +115,11 @@ class Participant:
 
 	def check_dates(self) -> None:
 		# *Occasionally* participants slip through with no self.quit_date
-		# This is probably because they were annexed in a separate peace
+		# If the war has ended this is probably because they were annexed 
+		# in a separate peace
 		self.quit_date = "annexed"
-		### I wonder if there's an easy way to recover the date on which they were annexed?
-		### ... I don't think so.
+		# I wonder if there's an easy way to recover the date on which they were annexed?
+		# ... I don't think so.
 
 		# Sometimes this happens too?
 		if self.join_date == None:
@@ -130,11 +130,11 @@ class Participant:
 		try: 
 			self.losses = [int(j) for j in self.losses] 
 		except: 
-			self.losses = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			self.losses = [0 for i in range(defines.CASUALTY_VECTOR_LENGTH)]
 			debugfunctions.debug_out(f"Couldn't find losses for {self.name} in war [{self.war_name}]. Defaulting to zero.", event_type="WARN")
 		for k in range(2, len(self.losses), 3):
 			if self.losses[k] != 0:
-				debugfunctions.debug_out(f"Nonzero third digit found in losses for {self.name} in war [{self.war_name}]. This is very unusual; please let this utility's creator know if you ever see this and send him the save file.", event_type="WARN")
+				debugfunctions.debug_out(f"Nonzero third digit found in losses for {self.name} in war [{self.war_name}]. This is very unusual; please let this utility's creator know if you ever see this and send him the save file.", event_type="INFO")
 		# HOW LOSSES WORK: (as far as I can tell)
 		# Example: 11403 7835 0 1265 2756 0 8000 5671 0 0 0 0 2 0 0 0 0 0 0 0 0
 		# It's broken into groups of three digits. The first three are infantry, second cavalry, third artillery,
@@ -145,15 +145,15 @@ class Participant:
 		# inf: [11,403; 7,835*; 0] cav: [1,265; 2,756*; 0] art: [8,000; 5,671*; 0] hs: [0; 0*; 0]
 		# ls: [2; 0*; 0] gal:[0; 0*; 0] tra:[0; 0*; 0] (attrition has the asterisk)
 		loss = self.losses # Just for convenience
-		self.inf_losses = sum(loss[:3])
-		self.cav_losses = sum(loss[3:6])
-		self.art_losses = sum(loss[6:9])
-		self.hs_losses = sum(loss[9:12])
-		self.ls_losses = sum(loss[12:15])
-		self.gal_losses = sum(loss[15:18])
-		self.tra_losses = sum(loss[18:21])
+		self.inf_losses = sum(loss[defines.INF_START:defines.INF_END])
+		self.cav_losses = sum(loss[defines.CAV_START:defines.CAV_END])
+		self.art_losses = sum(loss[defines.ART_START:defines.ART_END])
+		self.hs_losses = sum(loss[defines.HS_START:defines.HS_END])
+		self.ls_losses = sum(loss[defines.LS_START:defines.LS_END])
+		self.gal_losses = sum(loss[defines.GAL_START:defines.GAL_END])
+		self.tra_losses = sum(loss[defines.TRA_START:defines.TRA_END])
 		self.loss_list = [self.inf_losses, self.cav_losses, self.art_losses, self.hs_losses, self.ls_losses, self.gal_losses, self.tra_losses]
-		self.attrition_losses = sum([loss[i] for i in range(len(loss)) if (i+2) % 3 == 0])
+		self.attrition_losses = sum(loss[defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
 
 class War:
@@ -162,7 +162,7 @@ class War:
 		self.viable = True # If there's a problem with the data provided in the save file (e.g. no participants in the Ottoman-Albanian war)
 		# this can be set to false.
 
-		self.start_point = start_point # First line of the war (should look like "previous_war={")
+		self.start_point = start_point # First line of the war (should look like "previous_war={ or active_war={")
 		self.end_point = end_point # Line with the war's closing bracket
 
 		# Initializing variables to None so you can easily see what this function is supposed to set
@@ -170,7 +170,8 @@ class War:
 		self.cb_target = None
 		self.outcome = None
 		self.start_date = "None"
-		self.end_date = "None"
+		self.end_date = "Ongoing"
+		self.start_days = 0
 		# OUTCOMES:
 		# 1 - draw
 		# 2 - victory for attackers
@@ -181,6 +182,7 @@ class War:
 		self.events = [] # List of tuples: (days, date, event)
 		self.primary_attacker = "000"
 		self.primary_defender = "000"
+		self.ongoing = False # Is the war an "active_war" (True) or a "previous_war" (False)?
 
 		self.battles = [] # All the battles recorded for the war, in chronological order
 		
@@ -257,7 +259,6 @@ class War:
 			self.set_primary_participants()
 			self.find_battles()
 			self.get_total_losses()
-			self.get_events()
 
 		if self.viable == True:
 			original_attacker = None
@@ -268,28 +269,40 @@ class War:
 
 			if original_attacker != None:
 				self.start_date = self.participants[original_attacker].join_date
-				self.end_date = self.participants[original_attacker].quit_date
+				self.start_days = commonfunctions.date_to_days(self.start_date)
+				if self.participants[original_attacker].quit_date != "annexed":
+					self.end_date = self.participants[original_attacker].quit_date
+				else:
+					self.ongoing = True
 			else:
 				debugfunctions.debug_out(f"No original attacker found for war [{self.title}]. Skipping war.",event_type="WARN")
-		
+			
+			self.get_events()
 
 	def get_events(self) -> None:
+		# Events are tuples formatted (event day #, formatted event date, event name, event type)
 		try:
 			start_days = commonfunctions.date_to_days(self.start_date)
-			end_days = commonfunctions.date_to_days(self.end_date)
 			self.events.append((start_days, self.start_date, self.participants[self.primary_attacker].longname+" declared war on "+self.participants[self.primary_defender].longname, "start"))
-			self.events.append((end_days, self.end_date, "War ended", "end"))
+			if not self.ongoing:
+				end_days = commonfunctions.date_to_days(self.end_date)
+				self.events.append((end_days, self.end_date, "War ended", "end"))
+			else:
+				end_days = commonfunctions.date_to_days(present_date)
+				self.events.append((end_days, present_date, "Present", "end"))
+			
 			for participant in self.participants.keys():
 				curr_join_days = commonfunctions.date_to_days(self.participants[participant].join_date)
 				curr_quit_days = commonfunctions.date_to_days(self.participants[participant].quit_date)
 				if curr_join_days-start_days > 1:
 					self.events.append((curr_join_days, self.participants[participant].join_date, self.participants[participant].side+"er "+self.participants[participant].longname+" joined the war", "join"))
-				if curr_quit_days != end_days:
+				if curr_quit_days != end_days or self.ongoing:
 					self.events.append((curr_quit_days, self.participants[participant].quit_date, self.participants[participant].side+"er "+self.participants[participant].longname+" left the war", "quit"))
 			for battle in self.battles:
 				self.events.append((commonfunctions.date_to_days(battle.date), battle.date, battle.fullname, "battle"))
 
 			self.events.sort(key=first_element)
+
 		except Exception as exception:
 			self.viable = False
 			debugfunctions.debug_out(f"Exception [{exception}] occurred when building event list for [{self.title}]. Skipping war.",event_type="WARN")
@@ -342,11 +355,11 @@ class War:
 	def get_total_losses(self):
 		# Does a bunch of arithmetic
 		# Also cleans up nations that have had no losses added
-		self.attacker_losses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
-		self.defender_losses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
+		self.attacker_losses = [0 for i in range(defines.CASUALTY_VECTOR_LENGTH)]
+		self.defender_losses = [0 for i in range(defines.CASUALTY_VECTOR_LENGTH)]
 		for participant in self.participants.keys():
 			if self.participants[participant].losses == None:
-				self.participants[participant].losses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
+				self.participants[participant].losses = [0 for i in range(defines.CASUALTY_VECTOR_LENGTH)]
 			if self.participants[participant].side == "attack":
 				for element in range(len(self.participants[participant].losses)):
 					self.attacker_losses[element] += self.participants[participant].losses[element]
@@ -355,26 +368,26 @@ class War:
 					self.defender_losses[element] += self.participants[participant].losses[element]
 	
 		loss = self.attacker_losses
-		self.a_inf_losses = sum(loss[:3])
-		self.a_cav_losses = sum(loss[3:6])
-		self.a_art_losses = sum(loss[6:9])
-		self.a_hs_losses = sum(loss[9:12])
-		self.a_ls_losses = sum(loss[12:15])
-		self.a_gal_losses = sum(loss[15:18])
-		self.a_tra_losses = sum(loss[18:21])
+		self.a_inf_losses = sum(loss[defines.INF_START:defines.INF_END])
+		self.a_cav_losses = sum(loss[defines.CAV_START:defines.CAV_END])
+		self.a_art_losses = sum(loss[defines.ART_START:defines.ART_END])
+		self.a_hs_losses = sum(loss[defines.HS_START:defines.HS_END])
+		self.a_ls_losses = sum(loss[defines.LS_START:defines.LS_END])
+		self.a_gal_losses = sum(loss[defines.GAL_START:defines.GAL_END])
+		self.a_tra_losses = sum(loss[defines.TRA_START:defines.TRA_END])
 		self.a_loss_list = [self.a_inf_losses, self.a_cav_losses, self.a_art_losses, self.a_hs_losses, self.a_ls_losses, self.a_gal_losses, self.a_tra_losses]
-		self.a_attrition_losses = sum([loss[i] for i in range(len(loss)) if (i+2) % 3 == 0])
+		self.a_attrition_losses = sum(loss[defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
 		loss = self.defender_losses
-		self.d_inf_losses = sum(loss[:3])
-		self.d_cav_losses = sum(loss[3:6])
-		self.d_art_losses = sum(loss[6:9])
-		self.d_hs_losses = sum(loss[9:12])
-		self.d_ls_losses = sum(loss[12:15])
-		self.d_gal_losses = sum(loss[15:18])
-		self.d_tra_losses = sum(loss[18:21])
+		self.d_inf_losses = sum(loss[defines.INF_START:defines.INF_END])
+		self.d_cav_losses = sum(loss[defines.CAV_START:defines.CAV_END])
+		self.d_art_losses = sum(loss[defines.ART_START:defines.ART_END])
+		self.d_hs_losses = sum(loss[defines.HS_START:defines.HS_END])
+		self.d_ls_losses = sum(loss[defines.LS_START:defines.LS_END])
+		self.d_gal_losses = sum(loss[defines.GAL_START:defines.GAL_END])
+		self.d_tra_losses = sum(loss[defines.TRA_START:defines.TRA_END])
 		self.d_loss_list = [self.d_inf_losses, self.d_cav_losses, self.d_art_losses, self.d_hs_losses, self.d_ls_losses, self.d_gal_losses, self.d_tra_losses]
-		self.d_attrition_losses = sum([loss[i] for i in range(len(loss)) if (i+2) % 3 == 0])
+		self.d_attrition_losses = sum(loss[defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
 
 def parse_combatant_block(start_point: int, end_point: int) -> list: 
@@ -471,6 +484,11 @@ def get_curr_player_countries() -> list:
 				PLAYER_COUNTRIES.append(get_line_data(check_tag_num))
 
 
+# Gets the present date (formatted like "date=XXXX.XX.XX")
+def get_present_date() -> str:
+	return get_line_data(1)
+
+
 def find_colonial_names() -> None:
 	global alt_names
 	for check_colonial_num in range(len(file_lines)):
@@ -488,7 +506,7 @@ def find_colonial_names() -> None:
 
 
 def locate_wars(filename) -> list:
-	global file_lines
+	global file_lines, present_date
 	debugfunctions.debug_out(f"Attempting to open [{filename}]")
 	try:
 		savefile = codecs.open(filename, encoding="latin_1").read()
@@ -507,6 +525,8 @@ def locate_wars(filename) -> list:
 			os.remove("ai")
 		debugfunctions.debug_out("Savefile successfully decompressed.")
 
+	present_date = get_present_date()
+
 	war_list = []
 	get_curr_player_countries()
 	if len(PLAYER_COUNTRIES) == 0:
@@ -518,15 +538,16 @@ def locate_wars(filename) -> list:
 	debugfunctions.debug_out(f"Current player nations are {all_player_nations}", event_type="INFO")
 	find_colonial_names()
 	for i in range(int(len(file_lines)*0.7),len(file_lines)): #!!!!!! (You can set this to like 0.98 for speed loading in testing but it will cut off a lot of early wars)
-		if file_lines[i] == "previous_war={":
+		if file_lines[i] == "previous_war={" or file_lines[i] == "active_war={":
 			start_point = i
 			end_point = define_bracket_block(start_point)
 			i = end_point+1
 			new_war = War(start_point, end_point)
 			if new_war.viable == True:
 				war_list.append(new_war)
+	war_list = sorted(war_list, key=operator.attrgetter("start_days"))
 	debugfunctions.debug_out("Finished reading savefile war data")
 	debugfunctions.debug_out(f"{str(len(war_list))} viable wars discovered", event_type="INFO")
 	if len(war_list) == 0:
 		debugfunctions.debug_out("No viable wars discovered!", event_type="ERROR")
-	return war_list
+	return (war_list, present_date)
