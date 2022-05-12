@@ -194,7 +194,6 @@ def list_loop(window, font, small_font, war_list, event, force_update=False):
 						if button[2].collidepoint(mouse_pos):
 							if button[0] == "war":
 								return button[1]
-				### Have options to sort by total casualty count
 		elif event.type == pygame.KEYDOWN:
 			if event.unicode in VALID_CHARS:
 				search_text += event.unicode.upper()

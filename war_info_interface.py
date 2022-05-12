@@ -8,9 +8,6 @@ import common_functions
 
 #MAX_BATTLE_OFFSET = 8 # Max amount (in pixels on the original-scale map) to randomly offset the centerpoint of each battle to one side
 
-### Won't load war info/battle info screens when it can't load the flags
-### need some more exceptions
-
 terrain_map = pygame.image.load(defines.MAP_TERRAIN_PATH)
 river_map = pygame.image.load(defines.MAP_RIVERS_PATH)
 border_map = pygame.image.load(defines.MAP_BORDERS_PATH)
@@ -31,10 +28,6 @@ SCROLL_SIZE = 1
 TIMELINE_SCROLL_SIZE = 25 # Pixels here
 
 def render_timeline(window, font, small_font, light_font, stats_font, present_date):
-	### MAKE LINKS FROM BATTLE TITLES
-	### Show date and days since war begun
-	### Markers every x days since war beginning or every x months
-
 	window.fill(defines.C_INTERFACE)
 
 	halfheight = int((window.get_height()-defines.NAV_BUTTON_HEIGHT)/2)
@@ -278,7 +271,6 @@ def render_one_battle(window, font, small_font, light_font, stats_font):
 	# Attacking Forces
 	for u in range(force_length):
 		if BATTLE.surface == "land":
-			### Technically this scales them incorrectly (this is most noticeable on ships) but I don't care right now
 			curr_graphic = pygame.transform.scale(land_graphics_list[u],(defines.SMALL_UNIT_GRAPHIC_SIZE, defines.SMALL_UNIT_GRAPHIC_SIZE))
 		else:
 			curr_graphic = pygame.transform.scale(sea_graphics_list[u],(defines.SMALL_UNIT_GRAPHIC_SIZE, defines.SMALL_UNIT_GRAPHIC_SIZE))	
@@ -329,7 +321,6 @@ def render_one_battle(window, font, small_font, light_font, stats_font):
 	pygame.display.update()
 
 def render_battles(window, font, small_font, light_font, stats_font):
-	### Button to sort by casualties instead?
 	global CLICKABLE_LIST
 
 	map_bottom = int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())
@@ -731,7 +722,6 @@ def info_loop(window, font, small_font, light_font, stats_font, event, present_d
 			elif event.button == 5:
 				if CURRENT_SCREEN == "info": 
 					if CURR_POSITION < max(WAR.attacker_count, WAR.defender_count)-SCROLL_SIZE-1:
-						### Maybe improve this so that you can't scroll down at all if all the belligerents are visible
 						CURR_POSITION += SCROLL_SIZE
 				elif CURRENT_SCREEN == "battles":
 					if CURR_POSITION < len(WAR.battles)-SCROLL_SIZE-1:

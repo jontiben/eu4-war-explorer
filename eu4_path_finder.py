@@ -24,7 +24,7 @@ if operating_system == "Linux":
 	EU4_FOLDER = os.path.expanduser('~')+".local/share/Steam/steamapps/common/Europa Universalis IV"
 elif operating_system == "Darwin": # OSX
 	EU4_FOLDER = os.path.expanduser('~')+"/Library/Application Support/Steam/SteamApps/common/Europa Universalis IV"
-else:
+else: # Windows
 	EU4_FOLDER = "C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV"
 if not os.path.isdir(EU4_FOLDER):
 	debug_functions.debug_out("EU4 directory not found")
