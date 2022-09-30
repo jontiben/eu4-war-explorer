@@ -14,7 +14,7 @@ import defines
 alt_names = {} # Dictionary of names for countries created at runtime
 
 class Battle:
-	def __init__(self, line_loc, name, surface, date, location, result, iteration,
+	def __init__(self, line_loc, name: str, surface: str, date: str, location, result, iteration: int,
 		attacker, attacking_force: list, attacking_losses: int, attacking_general,
 		defender, defending_force: list, defending_losses: int, defending_general):
 		
@@ -23,8 +23,9 @@ class Battle:
 		self.date = date
 		self.location = location # Province ID
 		self.result = result # "yes" = attacker won, "no" = defender won
-		self.iteration = iteration+' ' # Number of battle (1st, 2nd, 3rd, etc.) fought with the same name in this war
-		# Plus a space because I'm lazy
+		self.iteration = iteration 
+		self.str_iteration = common_functions.return_ordinal_number(str(curr_iteration))+' ' # Number of battle (1st, 2nd, 3rd, etc.) fought with the
+		# same name in this war, plus a space because I'm lazy
 		self.fullname = "NONE"
 
 		self.attacker = attacker # A tag
@@ -51,22 +52,19 @@ class Battle:
 				self.defending_general = "None"
 
 	def update_name(self, other_battles):
-		instances = 0
-		for battle in other_battles:
-			if battle == self.name:
-				instances += 1
+		instances = len(battle for battle in other_battles if battle == self.name)
 
-		if self.iteration == "1st " and instances < 2:
-			self.iteration = ""
+		if self.iteration == 1 and instances < 2:
+			self.str_iteration = ""
 
 		if self.surface == "land":
 			self.fullname = self.iteration+"Battle of "+self.name
 		else:
 			words = self.name.split(' ')
 			if words[-1] != "Bay" and words[-1] != "Island" and words[0] != "Cape" and words[-1] != "Bank":
-				self.fullname = self.iteration+"Battle of the "+self.name
+				self.fullname = self.str_iteration+"Battle of the "+self.name
 			else:
-				self.fullname = self.iteration+"Battle of "+self.name
+				self.fullname = self.str_iteration+"Battle of "+self.name
 
 		#if self.fullname == "NONE":
 		#	debug_functions.debug_out(f"No name found for battle at line {str(line_loc)}", event_type="WARN")
@@ -114,8 +112,7 @@ class Participant:
 		self.check_dates()
 
 	def check_dates(self) -> None:
-		# *Occasionally* participants slip through with no self.quit_date
-		# If the war has ended this is probably because they were annexed 
+		# *Occasionally* participants slip through with no self.quit_date, if the war has ended this is probably because they were annexed 
 		# in a separate peace
 		self.quit_date = "annexed"
 		# I wonder if there's an easy way to recover the date on which they were annexed?
@@ -140,7 +137,9 @@ class Participant:
 		# It's broken into groups of three digits. The first three are infantry, second cavalry, third artillery,
 		# fourth heavy ships, fifth light ships, sixth galleys, seventh transports. The first number in a group
 		# refers to the number lost in combat, the second to attrition, and I'm not sure about the third (I've
-		# never seen it anything other than 0)
+		# never seen it anything other than 0). Captured ships count double for the country that lost them in the
+		# battle, but don't count at all in final war losses. Losses taken against rebels while fighting in a war
+		# get added to the war's total casualties.
 		# That same loss line broken up:
 		# inf: [11,403; 7,835*; 0] cav: [1,265; 2,756*; 0] art: [8,000; 5,671*; 0] hs: [0; 0*; 0]
 		# ls: [2; 0*; 0] gal:[0; 0*; 0] tra:[0; 0*; 0] (attrition has the asterisk)
@@ -160,7 +159,7 @@ class War:
 	def __init__(self, start_point: int, end_point: int):
 
 		self.viable = True # If there's a problem with the data provided in the save file (e.g. no participants in the Ottoman-Albanian war)
-		# this can be set to false.
+		# this can be set to false and the war won't be included.
 
 		self.start_point = start_point # First line of the war (should look like "previous_war={ or active_war={")
 		self.end_point = end_point # Line with the war's closing bracket
@@ -169,13 +168,13 @@ class War:
 		self.cassus_belli = None
 		self.cb_target = None
 		self.outcome = None
-		self.start_date = "None"
-		self.end_date = "Ongoing"
-		self.start_days = 0
 		# OUTCOMES:
 		# 1 - draw
 		# 2 - victory for attackers
 		# 3 - victory for defenders
+		self.start_date = "None"
+		self.end_date = "Ongoing"
+		self.start_days = 0
 		self.attack_total_warscore = 0 # total attacker warscore
 		self.defend_total_warscore = 0
 		self.has_player = False # Includes a current player nation
@@ -307,7 +306,8 @@ class War:
 			self.viable = False
 			debug_functions.debug_out(f"Exception [{exception}] occurred when building event list for [{self.title}]. Skipping war.",event_type="WARN")
 
-	def find_battles(self) -> None: 
+	def find_battles(self) -> None:
+		# Battles are only recorded in the save if they have at least 1,000 total losses (for land battles) or 2 ships lost (for naval battles)
 		for check_battle_num in range(self.history_start,self.history_end):
 			if clean_tabs(check_battle_num) == "battle={":
 				battle_date = clean_date(check_battle_num-1)
@@ -322,7 +322,6 @@ class War:
 						for b in range(len(self.battles)):
 							if self.battles[b].name == battle_name:
 								curr_iteration += 1
-						battle_iteration = common_functions.return_ordinal_number(str(curr_iteration))
 					elif get_line_key(n) == "location=":
 						battle_location = get_line_data(n)
 					elif get_line_key(n) == "result=":
@@ -335,7 +334,7 @@ class War:
 					battle_surface = attacker_info[0]
 				else:
 					battle_surface = defender_info[0]
-				self.battles.append(Battle(check_battle_num, battle_name, battle_surface, battle_date, battle_location, battle_result, battle_iteration,
+				self.battles.append(Battle(check_battle_num, battle_name, battle_surface, battle_date, battle_location, battle_result, curr_iteration,
 					attacker_info[3], attacker_info[1], attacker_info[2], attacker_info[4],
 					defender_info[3], defender_info[1], defender_info[2], defender_info[4]))
 		battle_name_list = []
