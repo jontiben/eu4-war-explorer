@@ -24,7 +24,7 @@ class Battle:
 		self.location = location # Province ID
 		self.result = result # "yes" = attacker won, "no" = defender won
 		self.iteration = iteration 
-		self.str_iteration = common_functions.return_ordinal_number(str(curr_iteration))+' ' # Number of battle (1st, 2nd, 3rd, etc.) fought with the
+		self.str_iteration = common_functions.return_ordinal_number(str(iteration))+' ' # Number of battle (1st, 2nd, 3rd, etc.) fought with the
 		# same name in this war, plus a space because I'm lazy
 		self.fullname = "NONE"
 
@@ -52,13 +52,13 @@ class Battle:
 				self.defending_general = "None"
 
 	def update_name(self, other_battles):
-		instances = len(battle for battle in other_battles if battle == self.name)
+		instances = len([battle for battle in other_battles if battle == self.name])
 
 		if self.iteration == 1 and instances < 2:
 			self.str_iteration = ""
 
 		if self.surface == "land":
-			self.fullname = self.iteration+"Battle of "+self.name
+			self.fullname = self.str_iteration+"Battle of "+self.name
 		else:
 			words = self.name.split(' ')
 			if words[-1] != "Bay" and words[-1] != "Island" and words[0] != "Cape" and words[-1] != "Bank":
@@ -522,6 +522,10 @@ def locate_wars(filename) -> list:
 			os.remove("gamestate")
 			os.remove("meta")
 			os.remove("ai")
+			try:
+				os.remove("rnw.zip") # Handling random new worlds
+			except:
+				pass
 		debug_functions.debug_out("Savefile successfully decompressed.")
 
 	present_date = get_present_date()
