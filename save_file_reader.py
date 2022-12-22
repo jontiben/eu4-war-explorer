@@ -1,5 +1,8 @@
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+# documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above
+# copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 import codecs
 import re
@@ -540,6 +543,22 @@ def find_colonial_names() -> None:
                             break
 
 
+def get_meta_data(local_file_lines) -> list:
+    meta_data_out = ["", []]  # Mod locations,
+    for l, line in enumerate(local_file_lines):
+        if line == "mods_enabled_names={":
+            #
+            for i in range(l, define_bracket_block(l)):
+                if clean_tabs(l) == "{":
+                    meta_data_out[1].append((get_line_data(l+1), get_line_data(l+2)))
+            break
+        elif "checksum=" in line:
+            # End of meta file/section
+            meta_data_out[0] = get_line_data(l)
+            break
+    return meta_data_out
+
+
 def locate_wars(filename) -> tuple[list[War], str] | None:
     global file_lines, present_date
     debug_functions.debug_out(f"Attempting to open [{filename}]")
@@ -549,6 +568,7 @@ def locate_wars(filename) -> tuple[list[War], str] | None:
         debug_functions.debug_out(f"Savefile opening failed with exception [{exception}]")
         return None
     file_lines = savefile.split("\n")
+    meta_savefile, meta_file_lines = None, None
     if file_lines[0] != "EU4txt":  # Compressed save
         short_name = filename.split('/')[-1]
         debug_functions.debug_out(f"Savefile [{short_name}] is compressed. Decompressing...")
@@ -556,6 +576,8 @@ def locate_wars(filename) -> tuple[list[War], str] | None:
             zip.extractall()
             savefile = codecs.open("gamestate", encoding="latin_1").read()
             file_lines = savefile.split("\n")
+            meta_savefile = codecs.open("meta", encoding="latin_1").read()
+            meta_file_lines = meta_savefile.split("\n")
             os.remove("gamestate")
             os.remove("meta")
             os.remove("ai")
@@ -577,6 +599,10 @@ def locate_wars(filename) -> tuple[list[War], str] | None:
     all_player_nations = all_player_nations[:-2]
     debug_functions.debug_out(f"Current player nations are {all_player_nations}", event_type="INFO")
     find_colonial_names()
+    if meta_savefile is None:
+        meta_data = get_meta_data(file_lines)
+    else:
+        meta_data = get_meta_data(meta_file_lines)
     for i in range(int(len(file_lines) * 0.7), len(file_lines)):  # !!!!!! (You can set this to like 0.98 for speed
         # loading in testing, but it will cut off a lot of early wars)
         if file_lines[i] == "previous_war={" or file_lines[i] == "active_war={":
