@@ -1,12 +1,16 @@
-#Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-#The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+# documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above
+# copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 import pygame
 import math
 import defines
 import common_functions
 
-#MAX_BATTLE_OFFSET = 8 # Max amount (in pixels on the original-scale map) to randomly offset the centerpoint of each battle to one side
+# MAX_BATTLE_OFFSET = 8 # Max amount (in pixels on the original-scale map) to randomly offset the centerpoint of each
+# battle to one side in order to avoid overlaps.
 
 terrain_map = pygame.image.load(defines.MAP_TERRAIN_PATH)
 river_map = pygame.image.load(defines.MAP_RIVERS_PATH)
@@ -321,7 +325,7 @@ def render_one_battle(window, font, small_font, light_font, stats_font):
 	pygame.display.update()
 
 def render_battles(window, font, small_font, light_font, stats_font):
-	global CLICKABLE_LIST
+	global clickable_list
 
 	map_bottom = int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())
 	window.fill(defines.C_INTERFACE, (0, map_bottom, window.get_width(), window.get_height()-map_bottom))
@@ -365,7 +369,7 @@ def render_battles(window, font, small_font, light_font, stats_font):
 		date_text_loc.centery = battle_title_loc.centery
 		battles_to_blit.append([date_text, date_text_loc])
 		dividing_lines = pygame.draw.rect(window, defines.C_GOLD, (-10, battle_title_loc.y-2, window.get_width()+20, battle_title_loc.height+2), defines.SMALL_BORDER_WIDTH)
-		CLICKABLE_LIST.append(["battle", curr_battle, dividing_lines])
+		clickable_list.append(["battle", curr_battle, dividing_lines])
 	window.blits(battles_to_blit)
 
 	render_screen_buttons(window, font)
@@ -374,16 +378,16 @@ def render_battles(window, font, small_font, light_font, stats_font):
 	pygame.display.update()
 
 def render_map_buttons(window, small_font, title_bar):
-	global CLICKABLE_LIST
+	global clickable_list
 
 	river_button_loc = (int(window.get_width()*0.6), title_bar.top+defines.PAD_DIST, defines.NAV_BUTTON_HEIGHT+defines.PAD_DIST*2, defines.NAV_BUTTON_HEIGHT-defines.PAD_DIST*2)
 	if "rivers" in MAP_TYPES:
 		river_backing = pygame.draw.rect(window, defines.C_LGRAY, river_button_loc)
-		CLICKABLE_LIST.append(["unmap", "rivers", river_backing])
+		clickable_list.append(["unmap", "rivers", river_backing])
 		river_toggle = pygame.draw.rect(window, defines.C_GOLD, river_button_loc, defines.NAV_BUTTON_BORDER_WIDTH)
 	else:
 		river_toggle = pygame.draw.rect(window, defines.C_GOLD, river_button_loc, defines.NAV_BUTTON_BORDER_WIDTH)
-		CLICKABLE_LIST.append(["map", "rivers", river_toggle])
+		clickable_list.append(["map", "rivers", river_toggle])
 	river_label = small_font.render("RIVER", True, defines.C_GOLD)
 	river_label_loc = river_label.get_rect()
 	river_label_loc.center = river_toggle.center
@@ -392,18 +396,18 @@ def render_map_buttons(window, small_font, title_bar):
 	border_button_loc = (river_toggle.right+defines.PAD_DIST, title_bar.top+defines.PAD_DIST, defines.NAV_BUTTON_HEIGHT+defines.PAD_DIST*2, defines.NAV_BUTTON_HEIGHT-defines.PAD_DIST*2)
 	if "borders" in MAP_TYPES:
 		border_backing = pygame.draw.rect(window, defines.C_LGRAY, border_button_loc)
-		CLICKABLE_LIST.append(["unmap", "borders", border_backing])
+		clickable_list.append(["unmap", "borders", border_backing])
 		border_toggle = pygame.draw.rect(window, defines.C_GOLD, border_button_loc, defines.NAV_BUTTON_BORDER_WIDTH)
 	else:
 		border_toggle = pygame.draw.rect(window, defines.C_GOLD, border_button_loc, defines.NAV_BUTTON_BORDER_WIDTH)
-		CLICKABLE_LIST.append(["map", "borders", border_toggle])
+		clickable_list.append(["map", "borders", border_toggle])
 	border_label = small_font.render("PROV.", True, defines.C_GOLD)
 	border_label_loc = border_label.get_rect()
 	border_label_loc.center = border_toggle.center
 	window.blit(border_label, border_label_loc)
 
 def render_screen_buttons(window, font):
-	global CLICKABLE_LIST, CURRENT_SCREEN
+	global clickable_list, current_screen
 
 	button_height = defines.NAV_BUTTON_HEIGHT
 	button_border_width = defines.NAV_BUTTON_BORDER_WIDTH
@@ -412,12 +416,12 @@ def render_screen_buttons(window, font):
 	button_loc1 = (0, window.get_height()-button_height, int(window.get_width()/2+1), button_height)
 	pygame.draw.rect(window, defines.C_INTERFACE, button_loc1)
 	button_rectangle1 = pygame.draw.rect(window, defines.C_GOLD, button_loc1, button_border_width)
-	if CURRENT_SCREEN == "info":
+	if current_screen == "info":
 		button_str1 = "View Battles"
-		CLICKABLE_LIST.append(["switch_window","battles",button_rectangle1])
-	elif CURRENT_SCREEN == "battles" or CURRENT_SCREEN == "timeline":
+		clickable_list.append(["switch_window","battles",button_rectangle1])
+	elif current_screen == "battles" or current_screen == "timeline":
 		button_str1 = "View Stats"
-		CLICKABLE_LIST.append(["switch_window","info",button_rectangle1])
+		clickable_list.append(["switch_window","info",button_rectangle1])
 	button_text1 = font.render(button_str1, True, defines.C_GOLD)
 	button_text_loc1 = button_text1.get_rect()
 	button_text_loc1.center = button_rectangle1.center
@@ -427,12 +431,12 @@ def render_screen_buttons(window, font):
 	button_loc2 = (int(window.get_width()/2), window.get_height()-button_height, int(window.get_width()/2+1), button_height)
 	pygame.draw.rect(window, defines.C_INTERFACE, button_loc2)
 	button_rectangle2 = pygame.draw.rect(window, defines.C_GOLD, button_loc2, button_border_width)
-	if CURRENT_SCREEN == "info" or CURRENT_SCREEN == "battles":
+	if current_screen == "info" or current_screen == "battles":
 		button_str2 = "View Timeline"
-		CLICKABLE_LIST.append(["switch_window","timeline",button_rectangle2])
-	elif CURRENT_SCREEN == "timeline":
+		clickable_list.append(["switch_window","timeline",button_rectangle2])
+	elif current_screen == "timeline":
 		button_str2 = "View Battles"
-		CLICKABLE_LIST.append(["switch_window","battles",button_rectangle2])
+		clickable_list.append(["switch_window","battles",button_rectangle2])
 	button_text2 = font.render(button_str2, True, defines.C_GOLD)
 	button_text_loc2 = button_text2.get_rect()
 	button_text_loc2.center = button_rectangle2.center
@@ -554,7 +558,7 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 		window.blit(abs_total_text, abs_total_text_loc)
 
 def render_war(window, font, small_font, light_font, stats_font, tag="000"):
-	global CLICKABLE_LIST
+	global clickable_list
 	window.fill(defines.C_INTERFACE)
 
 	# War title
@@ -572,7 +576,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	prim_att_flag_loc = prim_att_flag.get_rect()
 	prim_att_flag_loc.topleft = (defines.PAD_DIST, defines.PAD_DIST)
 	window.blit(prim_att_flag, prim_att_flag_loc)
-	CLICKABLE_LIST.append(["flag",prim_att,prim_att_flag_loc])
+	clickable_list.append(["flag",prim_att,prim_att_flag_loc])
 	if WAR.outcome == "2":
 		pygame.draw.rect(window, defines.C_GOLD, prim_att_flag_loc, defines.NAV_BUTTON_BORDER_WIDTH)
 
@@ -580,7 +584,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	prim_def_flag_loc = prim_def_flag.get_rect()
 	prim_def_flag_loc.topleft = (window.get_width()-flag_width-defines.PAD_DIST, defines.PAD_DIST)
 	window.blit(prim_def_flag, prim_def_flag_loc)
-	CLICKABLE_LIST.append(["flag",prim_def,prim_def_flag_loc])
+	clickable_list.append(["flag",prim_def,prim_def_flag_loc])
 	if WAR.outcome == "3":
 		pygame.draw.rect(window, defines.C_GOLD, prim_def_flag_loc, defines.NAV_BUTTON_BORDER_WIDTH)
 
@@ -635,7 +639,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 		curr_flag_loc.x = defines.PAD_DIST
 		curr_flag_loc.y = (a_loc*(defines.PAD_DIST+flag_half_height))+padding_before_small_flags
 		window.blit(curr_flag, curr_flag_loc)
-		CLICKABLE_LIST.append(["flag",add_attackers[a],curr_flag_loc])
+		clickable_list.append(["flag",add_attackers[a],curr_flag_loc])
 
 		a_text = small_font.render(participants[add_attackers[a]].longname, True, defines.C_WHITE)
 		a_text_loc = a_text.get_rect()
@@ -665,7 +669,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 		curr_flag_loc.right = window.get_width() - defines.PAD_DIST
 		curr_flag_loc.y = (d_loc*(defines.PAD_DIST+flag_half_height))+flag_height+defines.PAD_DIST*3+prim_def_name_loc.height
 		window.blit(curr_flag, curr_flag_loc)
-		CLICKABLE_LIST.append(["flag",add_defenders[d],curr_flag_loc])
+		clickable_list.append(["flag",add_defenders[d],curr_flag_loc])
 
 		d_text = small_font.render(participants[add_defenders[d]].longname, True, defines.C_WHITE)
 		d_text_loc = d_text.get_rect()
@@ -693,10 +697,10 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 
 
 def info_loop(window, font, small_font, light_font, stats_font, event, present_date, force_update=False):
-	global CLICKABLE_LIST
+	global clickable_list
 	global LOADED_TAG
 	global SOMETHING_FOCUSED
-	global CURRENT_SCREEN
+	global current_screen
 	global CURR_POSITION
 	global BATTLE
 	global MAP_TYPES
@@ -709,28 +713,28 @@ def info_loop(window, font, small_font, light_font, stats_font, event, present_d
 					LOADED_TAG = "000"
 					SOMETHING_FOCUSED = False
 					BATTLE = None
-					if CURRENT_SCREEN == "battles":
+					if current_screen == "battles":
 						render_map(window, font, small_font, light_font, stats_font)
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 4: # 4 and 5 are the scroll wheel
-				if CURRENT_SCREEN == "timeline":
+				if current_screen == "timeline":
 					if CURR_POSITION > TIMELINE_SCROLL_SIZE-defines.PAD_DIST:
 						CURR_POSITION -= TIMELINE_SCROLL_SIZE
 				else:
 					if CURR_POSITION > SCROLL_SIZE-1:
 						CURR_POSITION -= SCROLL_SIZE
 			elif event.button == 5:
-				if CURRENT_SCREEN == "info": 
+				if current_screen == "info": 
 					if CURR_POSITION < max(WAR.attacker_count, WAR.defender_count)-SCROLL_SIZE-1:
 						CURR_POSITION += SCROLL_SIZE
-				elif CURRENT_SCREEN == "battles":
+				elif current_screen == "battles":
 					if CURR_POSITION < len(WAR.battles)-SCROLL_SIZE-1:
 						CURR_POSITION += SCROLL_SIZE
-				elif CURRENT_SCREEN == "timeline":
+				elif current_screen == "timeline":
 					CURR_POSITION += TIMELINE_SCROLL_SIZE
 			elif event.button == 1:
 				mouse_pos = pygame.mouse.get_pos()
-				for button in CLICKABLE_LIST:
+				for button in clickable_list:
 					if button[2].collidepoint(mouse_pos):
 						if button[0] == "flag":
 							LOADED_TAG = button[1]
@@ -742,8 +746,8 @@ def info_loop(window, font, small_font, light_font, stats_font, event, present_d
 						elif button[0] == "switch_window":
 							CURR_POSITION = 0
 							SOMETHING_FOCUSED = False
-							CURRENT_SCREEN = button[1]
-							if CURRENT_SCREEN == "battles":
+							current_screen = button[1]
+							if current_screen == "battles":
 								render_map(window, font, small_font, light_font, stats_font)
 							break # Necessary to stop it flipping back and forth infinitely
 						elif button[0] == "map":
@@ -755,10 +759,10 @@ def info_loop(window, font, small_font, light_font, stats_font, event, present_d
 							render_map(window, font, small_font, light_font, stats_font)
 							break
 
-		CLICKABLE_LIST = []
-		if CURRENT_SCREEN == "info":
+		clickable_list = []
+		if current_screen == "info":
 			render_war(window, font, small_font, light_font, stats_font, tag=LOADED_TAG)
-		elif CURRENT_SCREEN == "battles":
+		elif current_screen == "battles":
 			if force_update:
 				render_map(window, font, small_font, light_font, stats_font)
 			else:
@@ -766,7 +770,7 @@ def info_loop(window, font, small_font, light_font, stats_font, event, present_d
 					render_battles(window, font, small_font, light_font, stats_font)
 				else:
 					render_one_battle(window, font, small_font, light_font, stats_font)
-		elif CURRENT_SCREEN == "timeline":
+		elif current_screen == "timeline":
 			render_timeline(window, font, small_font, light_font, stats_font, present_date)
 
 		return None
@@ -775,16 +779,16 @@ def init(window, font, small_font, light_font, stats_font, war):
 	global WAR, BATTLE
 	global prim_att, prim_def, add_attackers, add_defenders, participants
 	global SOMETHING_FOCUSED, LOADED_TAG
-	global CURRENT_SCREEN, CLICKABLE_LIST, CURR_POSITION
+	global current_screen, clickable_list, CURR_POSITION
 	global MAP_TYPES
 
-	CLICKABLE_LIST = []
+	clickable_list = []
 	SOMETHING_FOCUSED = False
 	CURR_POSITION = 0
 	LOADED_TAG = "000"
 	WAR = war
 	BATTLE = None
-	CURRENT_SCREEN = "info" # Info or battles
+	current_screen = "info" # Info or battles
 	MAP_TYPES = []
 
 	participants = WAR.participants
