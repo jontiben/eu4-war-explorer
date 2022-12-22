@@ -540,14 +540,14 @@ def find_colonial_names() -> None:
                             break
 
 
-def locate_wars(filename) -> tuple[list[War], str]:
+def locate_wars(filename) -> tuple[list[War], str] | None:
     global file_lines, present_date
     debug_functions.debug_out(f"Attempting to open [{filename}]")
     try:
         savefile = codecs.open(filename, encoding="latin_1").read()
     except Exception as exception:
         debug_functions.debug_out(f"Savefile opening failed with exception [{exception}]")
-        quit()
+        return None
     file_lines = savefile.split("\n")
     if file_lines[0] != "EU4txt":  # Compressed save
         short_name = filename.split('/')[-1]

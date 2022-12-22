@@ -83,6 +83,7 @@ def open_file():
 
 
 def init():
+    global do_quit
     try:
         # Loads a new map and runs save_file_reader.py
         global has_updated_for_resize
@@ -113,6 +114,9 @@ def init():
             has_updated_for_resize = True
 
             save_file_reader_out = save_file_reader.locate_wars(curr_filename)
+            if save_file_reader_out is None:
+                do_quit = True
+                return
             war_list = save_file_reader_out[0]
             present_date = save_file_reader_out[1]
 
