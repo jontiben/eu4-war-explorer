@@ -55,6 +55,19 @@ def get_full_country_name(tag: str) -> str:
     return tag
 
 
+def get_all_country_names(countries_folder = defines.PATH_TO_COUNTRIES_FOLDER) -> list:
+    all_countries = []
+    for files in os.walk(countries_folder):
+        for filename in files[-1]:
+            if filename[:3] == filename[:3].upper():  # Only filenames starting with three uppercase letters (or numbers)
+                tag = filename[:3]
+                name = filename[:-4].split('-')[1]
+                if name[0] == ' ':
+                    name = name[1:]
+                all_countries.append((tag, name))
+    return all_countries
+
+
 def date_conversion(date: str) -> str:
     # Takes a normally-formatted date string and turns it into
     # DD Month YYYY

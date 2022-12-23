@@ -75,7 +75,8 @@ def open_file():
                                                filetypes=[('eu4 save files', '*.eu4')])
     except:
         debug_functions.debug_out(
-            f"Exception [{traceback.format_exc()}] while prompting the user to select a file, user likely closed the file dialog without making a selection.")
+            f"Exception [{traceback.format_exc()}] while prompting the user to select a file, user likely closed the "
+            f"file dialog without making a selection.")
         do_quit = True
         return None
     root.destroy()

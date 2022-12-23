@@ -93,15 +93,15 @@ class Participant:
 
         # Setting up the full name for the nation
         self.longname = None
-        if not common_functions.is_created_nation(self.name):
+        if self.name in alt_names.keys():
+            if alt_names[self.name] is None:
+                self.longname = self.name
+            else:
+                self.longname = alt_names[self.name]
+        elif not common_functions.is_created_nation(self.name):
             self.longname = common_functions.get_full_country_name(self.name)
         else:  # Easier to handle this in here than in common_functions.py because the savefile is already open
-            if self.name in alt_names.keys():
-                if alt_names[self.name] is None:
-                    self.longname = self.name
-                else:
-                    self.longname = alt_names[self.name]
-            elif self.name[0] == 'F':  # Tribal Federation
+            if self.name[0] == 'F':  # Tribal Federation
                 if self.level == "primary" and self.side == "attack":  ### Confirm works
                     self.longname = war_name.split(' ')[1] + ' ' + war_name.split(' ')[2]
                 else:
@@ -461,6 +461,26 @@ def parse_combatant_block(start_point: int, end_point: int) -> list:
     return out_list
 
 
+def check_mods(mod_list) -> None:
+    global alt_names
+    for mod in mod_list:
+        mod_path = mod[0].split('/')[1]
+        debug_functions.debug_out(f"Found mod {mod[1]}")
+        current_mod_file = open(f"{defines.EU4_MODS}/{mod_path}", 'r')
+        current_mod_lines = current_mod_file.readlines()
+        current_mod_file.close()
+        mod_data_path = None
+        for line in current_mod_lines:
+            if line[:5] == "path=":
+                mod_data_path = line[6:-2]
+        if mod_data_path is None:
+            debug_functions.debug_out(f"Failed to find path for mod {mod[1]}", event_type="WARN")
+        elif os.path.isdir(mod_data_path+"/history/countries"):
+            tag_names = common_functions.get_all_country_names(countries_folder=mod_data_path+"/history/countries")
+            for tag in tag_names:
+                alt_names[tag[0]] = tag[1]
+
+
 # The following are mostly utility functions.
 def first_element(input_list: list):
     return input_list[0]
@@ -544,13 +564,12 @@ def find_colonial_names() -> None:
 
 
 def get_meta_data(local_file_lines) -> list:
-    meta_data_out = ["", []]  # Mod locations,
+    meta_data_out = ["", []]  # Checksum, Mod locations,
     for l, line in enumerate(local_file_lines):
         if line == "mods_enabled_names={":
-            #
             for i in range(l, define_bracket_block(l)):
-                if clean_tabs(l) == "{":
-                    meta_data_out[1].append((get_line_data(l+1), get_line_data(l+2)))
+                if clean_tabs(i) == "{":
+                    meta_data_out[1].append((get_line_data(i+1), get_line_data(i+2)))
             break
         elif "checksum=" in line:
             # End of meta file/section
@@ -598,11 +617,13 @@ def locate_wars(filename) -> tuple[list[War], str] | None:
         all_player_nations += nat + ", "
     all_player_nations = all_player_nations[:-2]
     debug_functions.debug_out(f"Current player nations are {all_player_nations}", event_type="INFO")
-    find_colonial_names()
     if meta_savefile is None:
         meta_data = get_meta_data(file_lines)
     else:
+        file_lines = meta_file_lines + file_lines
         meta_data = get_meta_data(meta_file_lines)
+    find_colonial_names()
+    check_mods(meta_data[1])
     for i in range(int(len(file_lines) * 0.7), len(file_lines)):  # !!!!!! (You can set this to like 0.98 for speed
         # loading in testing, but it will cut off a lot of early wars)
         if file_lines[i] == "previous_war={" or file_lines[i] == "active_war={":

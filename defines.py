@@ -11,6 +11,7 @@ import eu4_path_finder
 # 
 # Paths
 EU4_FOLDER = eu4_path_finder.EU4_FOLDER
+EU4_MODS = eu4_path_finder.EU4_MODS
 PATH_TO_COUNTRIES_FOLDER = eu4_path_finder.PATH_TO_COUNTRIES_FOLDER
 PATH_TO_FLAGS_FOLDER = eu4_path_finder.PATH_TO_FLAGS_FOLDER
 PATH_TO_BACKUP_FLAG = eu4_path_finder.PATH_TO_BACKUP_FLAG
