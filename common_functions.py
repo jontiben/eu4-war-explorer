@@ -11,6 +11,8 @@ import pygame
 
 import debug_functions
 
+flags_dict = {}
+
 
 def return_ordinal_number(number: str) -> str:
     # Converts a number to its ordinal form
@@ -112,9 +114,22 @@ def date_to_days(date: str) -> int:
 
 
 def load_flag(tag: str, war):
-    try:
-        flag = pygame.image.load(war.participants[tag].flag_path)
-    except:
-        flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
-        debug_functions.debug_out(f"Failed to open flag for tag {tag}", event_type="WARN")
+    global flags_dict
+    if tag in flags_dict.keys():
+        flag = pygame.image.load(flags_dict[tag])
+    else:
+        try:
+            flag = pygame.image.load(war.participants[tag].flag_path)
+        except:
+            flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
+            debug_functions.debug_out(f"Failed to open flag for tag {tag}", event_type="WARN")
     return flag
+
+
+def load_modded_flags(mod_folder) -> None:
+    global flags_dict
+    flag_directory = f"{mod_folder}/gfx/flags"
+    for files in os.walk(flag_directory):
+        for filename in files[-1]:
+            flags_dict[filename[:3]] = flag_directory+f"/{filename}"
+
