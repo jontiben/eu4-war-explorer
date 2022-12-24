@@ -102,10 +102,10 @@ class Participant:
             self.longname = common_functions.get_full_country_name(self.name)
         else:  # Easier to handle this in here than in common_functions.py because the savefile is already open
             if self.name[0] == 'F':  # Tribal Federation
-                if self.level == "primary" and self.side == "attack":  ### Confirm works
+                if self.level == "primary" and self.side == "attack":
                     self.longname = war_name.split(' ')[1] + ' ' + war_name.split(' ')[2]
                 else:
-                    self.longname = "Federation"
+                    self.longname = f"Federation {self.name}"
             if self.longname is None:
                 # Last resort
                 if "against" in war_name and side == "defend" and level == "primary":
@@ -116,6 +116,8 @@ class Participant:
                         event_type="WARN")
                     self.longname = self.name
                     alt_names[name] = None  # Usually when a colonial nation has been annexed
+        if "Federation" in self.longname:
+            self.longname = self.longname.replace("The ", '').replace("the ", '')
         self.longname = self.longname[0].upper() + self.longname[1:]
         self.check_dates()
 

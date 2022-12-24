@@ -126,7 +126,7 @@ def init():
             MAP_RIVERS = pygame.image.load(defines.MAP_RIVERS_PATH)
             MAP_BORDERS = pygame.image.load(defines.MAP_BORDERS_PATH)
             MIDPOINTS_PATH = defines.MIDPOINTS_PATH
-            if map_mod_location is not None: ### MAKE SURE RANDOM GRAPHICS MODS DON'T OVERWRITE THIS
+            if map_mod_location is not None:
                 MAP_TERRAIN = pygame.image.load(map_mod_location+"/terrain.bmp")
                 try:
                     MAP_RIVERS = pygame.image.load(map_mod_location+"/rivers.bmp")
