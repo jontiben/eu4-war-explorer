@@ -464,6 +464,7 @@ def parse_combatant_block(start_point: int, end_point: int) -> list:
 
 
 def check_mods(mod_list) -> str | None:
+    print(mod_list)
     global alt_names
     modded_map_path = None
     for mod in mod_list:
@@ -578,7 +579,20 @@ def get_meta_data(local_file_lines) -> list:
         if line == "mods_enabled_names={":
             for i in range(l, define_bracket_block(l)):
                 if clean_tabs(i) == "{":
-                    meta_data_out[1].append((get_line_data(i+1), get_line_data(i+2)))
+                    path = get_line_data(i+1)
+                    if os.path.isfile(defines.EU4_MODS + '/' + path.split('/')[1]):
+                        meta_data_out[1].append((get_line_data(i+1), get_line_data(i+2)))
+                    else:
+                        debug_functions.debug_out(f"Failed to find .mod file at path [{defines.EU4_MODS + '/' + path.split('/')[1]}]", event_type="WARN")
+            break
+        elif line == "mod_enabled={":  # I think mod_enabled is the old name for this
+            for i in range(l+1, define_bracket_block(l)):
+                if clean_tabs(i) != "}":
+                    path = clean_tabs(i).replace('\"', "")
+                    if os.path.isfile(defines.EU4_MODS + '/' + path.split('/')[1]):
+                        meta_data_out[1].append((path, path.split('_')[1][:-4]))
+                    else:
+                        debug_functions.debug_out(f"Failed to find .mod file at path [{defines.EU4_MODS + '/' + path.split('/')[1]}]", event_type="WARN")
             break
         elif "checksum=" in line:
             # End of meta file/section

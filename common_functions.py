@@ -122,7 +122,8 @@ def load_flag(tag: str, war):
             flag = pygame.image.load(war.participants[tag].flag_path)
         except:
             flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
-            debug_functions.debug_out(f"Failed to open flag for tag {tag}", event_type="WARN")
+            if not is_created_nation(tag):
+                debug_functions.debug_out(f"Failed to open flag for tag {tag}", event_type="WARN")
     return flag
 
 
