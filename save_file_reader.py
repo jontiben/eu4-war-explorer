@@ -461,7 +461,7 @@ def parse_combatant_block(start_point: int, end_point: int) -> list:
     return out_list
 
 
-def check_mods(mod_list) -> None:
+def check_mods(mod_list) -> str | None:
     global alt_names
     for mod in mod_list:
         mod_path = mod[0].split('/')[1]
@@ -482,6 +482,9 @@ def check_mods(mod_list) -> None:
                 alt_names[tag[0]] = tag[1]
         if os.path.isdir(mod_data_path+"/gfx/flags"):
             common_functions.load_modded_flags(mod_data_path)
+        if os.path.isfile(mod_data_path+"/map/terrain.bmp"):
+            return mod_data_path+"/map"
+    return None
 
 
 # The following are mostly utility functions.
@@ -581,7 +584,7 @@ def get_meta_data(local_file_lines) -> list:
     return meta_data_out
 
 
-def locate_wars(filename) -> tuple[list[War], str] | None:
+def locate_wars(filename) -> tuple[list[War], str, str] | None:
     global file_lines, present_date
     debug_functions.debug_out(f"Attempting to open [{filename}]")
     try:
@@ -626,7 +629,7 @@ def locate_wars(filename) -> tuple[list[War], str] | None:
         file_lines = meta_file_lines + file_lines
         meta_data = get_meta_data(meta_file_lines)
     find_colonial_names()
-    check_mods(meta_data[1])
+    map_mod_location = check_mods(meta_data[1])
     for i in range(int(len(file_lines) * 0.7), len(file_lines)):  # !!!!!! (You can set this to like 0.98 for speed
         # loading in testing, but it will cut off a lot of early wars)
         if file_lines[i] == "previous_war={" or file_lines[i] == "active_war={":
@@ -640,5 +643,5 @@ def locate_wars(filename) -> tuple[list[War], str] | None:
     debug_functions.debug_out("Finished reading savefile war data")
     debug_functions.debug_out(f"{str(len(war_list))} viable wars discovered", event_type="INFO")
     if len(war_list) == 0:
-        debug_functions.debug_out("No viable wars discovered!", event_type="ERROR")
-    return (war_list, present_date)
+        debug_functions.debug_out("No viable wars discovered! (something's wrong)", event_type="ERROR")
+    return (war_list, present_date, map_mod_location)

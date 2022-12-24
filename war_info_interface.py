@@ -12,10 +12,6 @@ import common_functions
 # MAX_BATTLE_OFFSET = 8 # Max amount (in pixels on the original-scale map) to randomly offset the centerpoint of each
 # battle to one side in order to avoid overlaps.
 
-terrain_map = pygame.image.load(defines.MAP_TERRAIN_PATH)
-river_map = pygame.image.load(defines.MAP_RIVERS_PATH)
-border_map = pygame.image.load(defines.MAP_BORDERS_PATH)
-
 infantry_graphic = pygame.image.load(defines.INFANTRY_GRAPHIC)
 cavalry_graphic = pygame.image.load(defines.CAVALRY_GRAPHIC)
 artillery_graphic = pygame.image.load(defines.ARTILLERY_GRAPHIC)
@@ -31,7 +27,7 @@ sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 SCROLL_SIZE = 1
 TIMELINE_SCROLL_SIZE = 25 # Pixels here
 
-def render_timeline(window, font, small_font, light_font, stats_font, present_date):
+def render_timeline(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, present_date):
 	window.fill(defines.C_INTERFACE)
 
 	halfheight = int((window.get_height()-defines.NAV_BUTTON_HEIGHT)/2)
@@ -87,7 +83,7 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 
 	pygame.display.update()
 
-def render_map(window, font, small_font, light_font, stats_font):
+def render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path):
 	window.fill(defines.C_INTERFACE)
 
 	sized_terrain_map = pygame.transform.scale(terrain_map, (int(window.get_width()), 
@@ -96,9 +92,9 @@ def render_map(window, font, small_font, light_font, stats_font):
 	sized_terrain_map_loc = sized_terrain_map.get_rect() # For convenience later
 
 	if "rivers" in MAP_TYPES:
-		sized_rivers_map = pygame.transform.scale(river_map, (int(window.get_width()), 
+		sized_river_map = pygame.transform.scale(river_map, (int(window.get_width()),
 			int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())))
-		window.blit(sized_rivers_map, (0, 0))
+		window.blit(sized_river_map, (0, 0))
 
 	if "borders" in MAP_TYPES:
 		sized_borders_map = pygame.transform.scale(border_map, (int(window.get_width()), 
@@ -107,7 +103,7 @@ def render_map(window, font, small_font, light_font, stats_font):
 
 
 	province_dict = {}
-	province_mids_file = open("midpointlist.csv",'r')
+	province_mids_file = open(province_mids_path,'r')
 	lines = province_mids_file.readlines()
 
 	for line in lines:
@@ -149,11 +145,11 @@ def render_map(window, font, small_font, light_font, stats_font):
 		else:
 			pygame.draw.circle(window, defines.C_WHITE, (mod_x, mod_y), 2)
 	if not SOMETHING_FOCUSED:
-		render_battles(window, font, small_font, light_font, stats_font)
+		render_battles(window, font, small_font, light_font, stats_font, terrain_map)
 	else:
-		render_one_battle(window, font, small_font, light_font, stats_font)
+		render_one_battle(window, font, small_font, light_font, stats_font, terrain_map)
 
-def render_one_battle(window, font, small_font, light_font, stats_font):
+def render_one_battle(window, font, small_font, light_font, stats_font, terrain_map):
 	map_bottom = int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())
 	window.fill(defines.C_INTERFACE, (0, map_bottom, window.get_width(), window.get_height()-map_bottom))
 
@@ -324,7 +320,7 @@ def render_one_battle(window, font, small_font, light_font, stats_font):
 
 	pygame.display.update()
 
-def render_battles(window, font, small_font, light_font, stats_font):
+def render_battles(window, font, small_font, light_font, stats_font, terrain_map):
 	global clickable_list
 
 	map_bottom = int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())
@@ -696,7 +692,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 
 
 
-def info_loop(window, font, small_font, light_font, stats_font, event, present_date, force_update=False):
+def info_loop(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path, event, present_date, force_update=False):
 	global clickable_list
 	global LOADED_TAG
 	global SOMETHING_FOCUSED
@@ -714,7 +710,7 @@ def info_loop(window, font, small_font, light_font, stats_font, event, present_d
 					SOMETHING_FOCUSED = False
 					BATTLE = None
 					if current_screen == "battles":
-						render_map(window, font, small_font, light_font, stats_font)
+						render_map(window, font, small_font, light_font,  stats_font, terrain_map, river_map, border_map, province_mids_path)
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 4: # 4 and 5 are the scroll wheel
 				if current_screen == "timeline":
@@ -742,21 +738,21 @@ def info_loop(window, font, small_font, light_font, stats_font, event, present_d
 						elif button[0] == "battle":
 							SOMETHING_FOCUSED = True
 							BATTLE = button[1]
-							render_map(window, font, small_font, light_font, stats_font)	
+							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
 						elif button[0] == "switch_window":
 							CURR_POSITION = 0
 							SOMETHING_FOCUSED = False
 							current_screen = button[1]
 							if current_screen == "battles":
-								render_map(window, font, small_font, light_font, stats_font)
+								render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
 							break # Necessary to stop it flipping back and forth infinitely
 						elif button[0] == "map":
 							MAP_TYPES.append(button[1])
-							render_map(window, font, small_font, light_font, stats_font)
+							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
 							break
 						elif button[0] == "unmap":
 							MAP_TYPES.pop(MAP_TYPES.index(button[1])) #.remove() doesn't work for some reason. I haven't slept in 28 hours.
-							render_map(window, font, small_font, light_font, stats_font)
+							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
 							break
 
 		clickable_list = []
@@ -764,18 +760,18 @@ def info_loop(window, font, small_font, light_font, stats_font, event, present_d
 			render_war(window, font, small_font, light_font, stats_font, tag=LOADED_TAG)
 		elif current_screen == "battles":
 			if force_update:
-				render_map(window, font, small_font, light_font, stats_font)
+				render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
 			else:
 				if not SOMETHING_FOCUSED:
-					render_battles(window, font, small_font, light_font, stats_font)
+					render_battles(window, font, small_font, light_font, stats_font, terrain_map)
 				else:
-					render_one_battle(window, font, small_font, light_font, stats_font)
+					render_one_battle(window, font, small_font, light_font, stats_font, terrain_map)
 		elif current_screen == "timeline":
 			render_timeline(window, font, small_font, light_font, stats_font, present_date)
 
 		return None
 
-def init(window, font, small_font, light_font, stats_font, war):
+def init(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, war):
 	global WAR, BATTLE
 	global prim_att, prim_def, add_attackers, add_defenders, participants
 	global SOMETHING_FOCUSED, LOADED_TAG

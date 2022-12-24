@@ -1,0 +1,3 @@
+This folder is for storing the calculated province midpoints from map mods as they are loaded. Initial calculation of
+province midpoints can take up to 90 seconds depending on your computer, but when you load a savefile running the same
+mod in the future the program will be able to find the midpoints (stored in a .csv file) here.

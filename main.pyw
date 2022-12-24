@@ -7,8 +7,9 @@
 import pygame
 import tkinter as tk
 from tkinter import filedialog
-import traceback
+import traceback, os
 
+import midpoint_calculator
 import save_file_reader
 import war_info_interface
 import war_list_interface
@@ -89,6 +90,7 @@ def init():
         # Loads a new map and runs save_file_reader.py
         global has_updated_for_resize
         global curr_filename, mode, war_list, present_date
+        global MAP_TERRAIN, MAP_RIVERS, MAP_BORDERS, MIDPOINTS_PATH
         try_counts = 0
         while curr_filename is None:
             # This is necessary because sometimes tkinter exits with a "catastrophic error." This is
@@ -120,10 +122,32 @@ def init():
                 return
             war_list = save_file_reader_out[0]
             present_date = save_file_reader_out[1]
+            map_mod_location = save_file_reader_out[2]
+            MAP_TERRAIN = pygame.image.load(defines.MAP_TERRAIN_PATH)
+            MAP_RIVERS = pygame.image.load(defines.MAP_RIVERS_PATH)
+            MAP_BORDERS = pygame.image.load(defines.MAP_BORDERS_PATH)
+            MIDPOINTS_PATH = defines.MIDPOINTS_PATH
+            if map_mod_location is not None: ### MAKE SURE RANDOM GRAPHICS MODS DON'T OVERWRITE THIS
+                MAP_TERRAIN = pygame.image.load(map_mod_location+"/terrain.bmp")
+                try:
+                    MAP_RIVERS = pygame.image.load(map_mod_location+"/rivers.bmp")
+                    MAP_BORDERS = pygame.image.load(map_mod_location+"/provinces.bmp")
+                except:
+                    debug_functions.debug_out(f"Could not find a rivers or borders map for the modded map folder "
+                                              f"located at {map_mod_location}", event_type="WARN")
+                if os.path.isfile(map_mod_location+"/provinces.bmp") and os.path.isfile(map_mod_location+"/definition.csv"):
+                    path_to_test_for = os.getcwd()+f"/mod_data/{map_mod_location.split('/')[-2]}midpointlist.csv"
+                    if os.path.isfile(path_to_test_for):
+                        debug_functions.debug_out(f"Found previously generated province midpoint list for mod", event_type="INFO")
+                        MIDPOINTS_PATH = path_to_test_for
+                    else:
+                        debug_functions.debug_out(f"Modded map found, generating new province midpoints list...")
+                        MIDPOINTS_PATH = midpoint_calculator.get_midpoints(map_mod_location)
+                        debug_functions.debug_out(f"Province midpoints list generated at {MIDPOINTS_PATH}")
 
             mode = "list"
 
-            debug_mode_out()
+            #debug_mode_out()
             war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, None, force_update=True)
             pygame.display.update()
             pygame.display.set_caption(caption_root + " - " + curr_filename.split('/')[-1])
@@ -145,14 +169,16 @@ def render_scene(event):
                     return
                 else:
                     mode = "info"
-                    debug_mode_out()
-                    war_info_interface.init(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, list_out)
+                    #debug_mode_out()
+                    war_info_interface.init(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, MAP_TERRAIN,
+                                            MAP_RIVERS, MAP_BORDERS, list_out)
         elif mode == "info":
-            poss_prev_window = war_info_interface.info_loop(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, event,
+            poss_prev_window = war_info_interface.info_loop(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT,
+                                                            MAP_TERRAIN, MAP_RIVERS, MAP_BORDERS, MIDPOINTS_PATH, event,
                                                             present_date, force_update=(not has_updated_for_resize))
             if poss_prev_window is not None:
                 mode = "list"
-                debug_mode_out()
+                #debug_mode_out()
                 war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=True)
         has_updated_for_resize = True
     except:
