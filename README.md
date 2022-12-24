@@ -20,7 +20,6 @@ Mods that change the map or affect province IDs will cause battles to either not
 Planned features are:
 - The ability to sort wars and battles by total casualty count
 - More information on the timeline
-- Better support for modded saves
 - Some sort of indicator whenever you can press ESC to return to a window
 
 This project was written entirely in Python using Pygame for the UI. Other external libraries used are math, codecs, re, os, zipfile (used for decompressing compressed savefiles), tkinter (used for the file selection dialog), and datetime.
