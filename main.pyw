@@ -84,7 +84,6 @@ def open_file():
     return file_name
 
 def init():
-
     global do_quit
     try:
         # Loads a new map and runs save_file_reader.py

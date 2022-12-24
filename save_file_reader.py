@@ -463,6 +463,7 @@ def parse_combatant_block(start_point: int, end_point: int) -> list:
 
 def check_mods(mod_list) -> str | None:
     global alt_names
+    modded_map_path = None
     for mod in mod_list:
         mod_path = mod[0].split('/')[1]
         debug_functions.debug_out(f"Found mod {mod[1]}")
@@ -483,8 +484,8 @@ def check_mods(mod_list) -> str | None:
         if os.path.isdir(mod_data_path+"/gfx/flags"):
             common_functions.load_modded_flags(mod_data_path)
         if os.path.isfile(mod_data_path+"/map/terrain.bmp"):
-            return mod_data_path+"/map"
-    return None
+            modded_map_path = mod_data_path+"/map"
+    return modded_map_path
 
 
 # The following are mostly utility functions.
