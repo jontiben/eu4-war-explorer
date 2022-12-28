@@ -464,7 +464,6 @@ def parse_combatant_block(start_point: int, end_point: int) -> list:
 
 
 def check_mods(mod_list) -> str | None:
-    print(mod_list)
     global alt_names
     modded_map_path = None
     for mod in mod_list:

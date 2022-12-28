@@ -70,8 +70,6 @@ FLAG_HEIGHT = 128  # Pixels
 FLAG_WIDTH = 128  # Pixels
 MAX_UNIT_GRAPHIC_SIZE = 43  # Pixels. Both dimensions are 43.
 SMALL_UNIT_GRAPHIC_SIZE = int(MAX_UNIT_GRAPHIC_SIZE * 0.7)
-PROVINCE_MAP_WIDTH = 5632  # Pixels, width of provinces.bmp
-PROVINCE_MAP_HEIGHT = 2048  # Pixels
 
 NAV_BUTTON_HEIGHT = 50  # Pixels
 NAV_BUTTON_BORDER_WIDTH = 4  # Thickness, in pixels

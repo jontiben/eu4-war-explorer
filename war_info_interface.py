@@ -84,6 +84,7 @@ def render_timeline(window, font, small_font, light_font, stats_font, terrain_ma
 	pygame.display.update()
 
 def render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path):
+	global MAP_SIZE
 	window.fill(defines.C_INTERFACE)
 
 	sized_terrain_map = pygame.transform.scale(terrain_map, (int(window.get_width()), 
@@ -122,8 +123,8 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		# Translucent circles scaled based on battle loss count
 		curr_x = province_dict[battle.location][0]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
 		curr_y = province_dict[battle.location][1]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
-		mod_x = int(curr_x*(window.get_width()/defines.PROVINCE_MAP_WIDTH))
-		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/defines.PROVINCE_MAP_HEIGHT))
+		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
+		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
 		battle_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
 		if battle.surface == "land":
 			battle_scale = int(math.sqrt((battle.attacking_losses+battle.defending_losses)*defines.BATTLE_CIRCLE_SCALING_FACTOR))
@@ -138,8 +139,8 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 	for battle in WAR.battles:
 		curr_x = province_dict[battle.location][0]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
 		curr_y = province_dict[battle.location][1]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
-		mod_x = int(curr_x*(window.get_width()/defines.PROVINCE_MAP_WIDTH))
-		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/defines.PROVINCE_MAP_HEIGHT))
+		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
+		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
 		if battle.surface == "land":
 			pygame.draw.circle(window, defines.C_BLACK, (mod_x, mod_y), 2)
 		else:
@@ -777,6 +778,7 @@ def init(window, font, small_font, light_font, stats_font, terrain_map, river_ma
 	global SOMETHING_FOCUSED, LOADED_TAG
 	global current_screen, clickable_list, CURR_POSITION
 	global MAP_TYPES
+	global MAP_SIZE
 
 	clickable_list = []
 	SOMETHING_FOCUSED = False
@@ -786,6 +788,8 @@ def init(window, font, small_font, light_font, stats_font, terrain_map, river_ma
 	BATTLE = None
 	current_screen = "info" # Info or battles
 	MAP_TYPES = []
+
+	MAP_SIZE = (terrain_map.get_width(), terrain_map.get_height())
 
 	participants = WAR.participants
 
