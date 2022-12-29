@@ -27,7 +27,7 @@ sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 SCROLL_SIZE = 1
 TIMELINE_SCROLL_SIZE = 25 # Pixels here
 
-def render_timeline(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, present_date):
+def render_timeline(window, font, small_font, light_font, stats_font, present_date):
 	window.fill(defines.C_INTERFACE)
 
 	halfheight = int((window.get_height()-defines.NAV_BUTTON_HEIGHT)/2)
