@@ -116,6 +116,7 @@ def date_to_days(date: str) -> int:
 
 def load_flag(tag: str, war):
     global flags_dict
+    flag_tag = None
     if tag in flags_dict.keys():
         flag = pygame.image.load(flags_dict[tag])
     else:
