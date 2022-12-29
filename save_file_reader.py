@@ -16,6 +16,7 @@ import debug_functions
 import defines
 
 alt_names = {}  # Dictionary of names for countries created at runtime
+nation_info_locations = {}
 
 
 class Battle:
@@ -89,7 +90,18 @@ class Participant:
         self.quit_date = quit_date
         self.losses = losses
 
-        self.flag_path = defines.PATH_TO_FLAGS_FOLDER + '/' + name + ".tga"
+        self.flag_tag = None  # Colonies, used for locating the parent flag with loaded mods
+
+        if self.name[0] == 'C' and common_functions.is_created_nation(self.name):
+            colonial_info = self.get_colonial_info()
+            self.flag_path = defines.PATH_TO_FLAGS_FOLDER + '/' + colonial_info[0] + ".tga"
+            self.flag_tag = colonial_info[0]
+            self.country_color = colonial_info[1]
+            if self.flag_tag == "":
+                self.flag_tag = None
+        else:
+            self.flag_path = defines.PATH_TO_FLAGS_FOLDER + '/' + self.name + ".tga"
+            self.country_color = (150, 150, 150)  # EU4 default
 
         # Setting up the full name for the nation
         self.longname = None
@@ -171,6 +183,18 @@ class Participant:
         self.loss_list = [self.inf_losses, self.cav_losses, self.art_losses, self.hs_losses, self.ls_losses,
                           self.gal_losses, self.tra_losses]
         self.attrition_losses = sum(loss[defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
+
+    def get_colonial_info(self):
+        output = ["", [150, 150, 150]]
+        if self.name in nation_info_locations.keys():
+            for l in range (nation_info_locations[self.name], define_bracket_block(nation_info_locations[self.name])):
+                if "colonial_parent" in file_lines[l]:
+                    output[0] = file_lines[l].split('=')[1].strip().replace('"', '')
+                elif "country_color" in file_lines[l]:
+                    colors = clean_tabs(l+1).split(' ')[:3]
+                    for c, color in enumerate(colors):
+                        output[1][c] = int(color)
+        return output  # No colonial parent found
 
 
 class War:
@@ -601,7 +625,7 @@ def get_meta_data(local_file_lines) -> list:
 
 
 def locate_wars(filename) -> tuple[list[War], str, str] | None:
-    global file_lines, present_date
+    global file_lines, present_date, nation_info_locations
     debug_functions.debug_out(f"Attempting to open [{filename}]")
     try:
         savefile = codecs.open(filename, encoding="latin_1").read()
@@ -646,6 +670,12 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
         meta_data = get_meta_data(meta_file_lines)
     find_colonial_names()
     map_mod_location = check_mods(meta_data[1])
+    for j in range(len(file_lines)):
+        if len(file_lines[j]) == 6:
+            if file_lines[j][:2] == "	C":
+                if file_lines[j][4:6] == "={":
+                    if "has_set_government_name" in file_lines[j+1] or "pillaged_capital_state" in file_lines[j+1]:  # Edge case? Maybe others?
+                        nation_info_locations[file_lines[j][1:4]] = j
     for i in range(int(len(file_lines) * 0.7), len(file_lines)):  # !!!!!! (You can set this to like 0.98 for speed
         # loading in testing, but it will cut off a lot of early wars)
         if file_lines[i] == "previous_war={" or file_lines[i] == "active_war={":

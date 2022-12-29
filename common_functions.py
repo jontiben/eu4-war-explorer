@@ -8,6 +8,7 @@ import re
 import os
 import defines
 import pygame
+import traceback
 
 import debug_functions
 
@@ -118,12 +119,19 @@ def load_flag(tag: str, war):
     if tag in flags_dict.keys():
         flag = pygame.image.load(flags_dict[tag])
     else:
-        try:
-            flag = pygame.image.load(war.participants[tag].flag_path)
-        except:
-            flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
-            if not is_created_nation(tag):
-                debug_functions.debug_out(f"Failed to open flag for tag {tag}", event_type="WARN")
+        flag_tag = war.participants[tag].flag_tag
+        if flag_tag is not None and flag_tag in flags_dict.keys():
+            flag = pygame.image.load(flags_dict[flag_tag])
+        else:
+            try:
+                flag = pygame.image.load(war.participants[tag].flag_path)
+            except:
+                flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
+                if not is_created_nation(tag):
+                    debug_functions.debug_out(f"Failed to open flag for tag {tag}", event_type="WARN")
+    if flag_tag is not None:
+        colors = war.participants[tag].country_color
+        pygame.draw.rect(flag, colors, (int(flag.get_width()/2), 0, int(flag.get_width()/2), flag.get_height()))
     return flag
 
 
