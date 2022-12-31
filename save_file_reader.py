@@ -670,21 +670,21 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
         meta_data = get_meta_data(meta_file_lines)
     find_colonial_names()
     map_mod_location = check_mods(meta_data[1])
-    for j in range(len(file_lines)):
-        if len(file_lines[j]) == 6:
-            if file_lines[j][:2] == "	C":
-                if file_lines[j][4:6] == "={":
-                    if "has_set_government_name" in file_lines[j+1] or "pillaged_capital_state" in file_lines[j+1]:  # Edge case? Maybe others?
-                        nation_info_locations[file_lines[j][1:4]] = j
-    for i in range(int(len(file_lines) * 0.7), len(file_lines)):  # !!!!!! (You can set this to like 0.98 for speed
+    for i in range(len(file_lines)):
+        if len(file_lines[i]) == 6:
+            if file_lines[i][:2] == "	C":
+                if file_lines[i][4:6] == "={":
+                    if "has_set_government_name" in file_lines[i+1] or "pillaged_capital_state" in file_lines[i+1]:  # Edge case? Maybe others?
+                        nation_info_locations[file_lines[i][1:4]] = i
+        elif i > int(len(file_lines) * 0.7):  # !!!!!! (You can set this to like 0.98 for speed
         # loading in testing, but it will cut off a lot of early wars)
-        if file_lines[i] == "previous_war={" or file_lines[i] == "active_war={":
-            start_point = i
-            end_point = define_bracket_block(start_point)
-            i = end_point + 1
-            new_war = War(start_point, end_point)
-            if new_war.viable:
-                war_list.append(new_war)
+            if file_lines[i] == "previous_war={" or file_lines[i] == "active_war={":
+                start_point = i
+                end_point = define_bracket_block(start_point)
+                i = end_point + 1
+                new_war = War(start_point, end_point)
+                if new_war.viable:
+                    war_list.append(new_war)
     war_list = sorted(war_list, key=operator.attrgetter("start_days"))
     debug_functions.debug_out("Finished reading savefile war data")
     debug_functions.debug_out(f"{str(len(war_list))} viable wars discovered", event_type="INFO")

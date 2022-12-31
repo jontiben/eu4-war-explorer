@@ -147,7 +147,7 @@ def init():
             mode = "list"
 
             #debug_mode_out()
-            war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, None, force_update=True)
+            war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, None, force_update=True, force_reset_list=True)
             pygame.display.update()
             pygame.display.set_caption(caption_root + " - " + curr_filename.split('/')[-1])
 

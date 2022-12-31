@@ -25,11 +25,19 @@ SCROLL_SIZE = 2  # Amount each click of the scroll wheel moves the list
 has_rendered = False  # To trigger rendering of the list when the program is first initialized. Kind of lazy.
 new_war_list = None
 mode = "all"  # "all" or "player" (types of nations shown)
+sorting = "date"  # "cas" for casualties, "date" for chronological
 
 prev_position = 0
 current_position = 0  # The topmost bar in the list
 
 search_text = ""
+
+
+def get_war_casualties(war) -> int:  # Utility function
+    try:
+        return sum(war.a_loss_list) + sum(war.d_loss_list)
+    except:
+        return 0
 
 
 def draw_list_controls(window, font, small_font):
@@ -77,11 +85,33 @@ def draw_list_controls(window, font, small_font):
     window.blit(open_button_label, open_button_label_loc)
     list_controls.append(["open", "", open_button])
 
+    # Sort by date/casualties
+    sort_str = "Sort by casualties:"
+    sort_obj = font.render(sort_str, True, defines.C_GOLD)
+    sort_loc = sort_obj.get_rect()
+    sort_loc.midleft = (player_button_toggle.right + defines.PAD_DIST, button_back_rectangle.centery)
+    window.blit(sort_obj, sort_loc)
+
+    # Sort toggle button
+    sort_button_loc = (sort_loc.right + defines.PAD_DIST, button_back_rectangle.top + defines.PAD_DIST,
+                         button_width, defines.NAV_BUTTON_HEIGHT - defines.PAD_DIST * 2)
+    if sorting == "cas":
+        sort_button_backing = pygame.draw.rect(window, defines.C_LGRAY, sort_button_loc)
+        list_controls.append(["date", "sorting", sort_button_backing])
+        sort_button_toggle = pygame.draw.rect(window, defines.C_GOLD, sort_button_loc, button_border_width)
+    else:
+        sort_button_toggle = pygame.draw.rect(window, defines.C_GOLD, sort_button_loc, button_border_width)
+        list_controls.append(["cas", "sorting", sort_button_toggle])
+    sort_button_label = small_font.render("SORT", True, defines.C_GOLD)
+    sort_button_label_loc = sort_button_label.get_rect()
+    sort_button_label_loc.center = sort_button_toggle.center
+    window.blit(sort_button_label, sort_button_label_loc)
+
     # The search bar
     search_bar_info_str = "Search nations:"
     search_bar_info = font.render(search_bar_info_str, True, defines.C_GOLD)
     search_bar_info_loc = search_bar_info.get_rect()
-    search_bar_info_loc.midleft = (player_button_toggle.right + defines.PAD_DIST, player_button_toggle.centery)
+    search_bar_info_loc.midleft = (sort_button_toggle.right + defines.PAD_DIST, sort_button_label_loc.centery)
     window.blit(search_bar_info, search_bar_info_loc)
 
     search_bar_x = search_bar_info_loc.right + defines.PAD_DIST
@@ -96,7 +126,7 @@ def draw_list_controls(window, font, small_font):
     else:
         search_text_rendered = small_font.render(search_text, True, defines.C_WHITE)
     search_text_loc = search_text_rendered.get_rect()
-    search_text_loc.midleft = (search_bar.x + defines.PAD_DIST, search_bar.centery)
+    search_text_loc.midleft = (search_bar.x, search_bar.centery)
     window.blit(search_text_rendered, search_text_loc)
 
 
@@ -156,14 +186,14 @@ def get_player_war_list(war_list):
     return new_list
 
 
-def list_loop(window, font, small_font, war_list, event, force_update=False):
+def list_loop(window, font, small_font, war_list, event, force_update=False, force_reset_list=False):
     global prev_position, current_position
     global has_rendered
-    global mode
+    global mode, sorting
     global new_war_list, search_text
     prev_position = current_position
     changed_text = False
-    if new_war_list is None:
+    if new_war_list is None or force_reset_list:
         new_war_list = war_list
     if event is not None:
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -190,6 +220,9 @@ def list_loop(window, font, small_font, war_list, event, force_update=False):
                         elif button[0] == "open":
                             current_position = 0
                             return "open"
+                        elif button[1] == "sorting":
+                            sorting = button[0]
+                            changed_text = True
                         current_position = 0
                         force_update = True
                         break
@@ -203,7 +236,7 @@ def list_loop(window, font, small_font, war_list, event, force_update=False):
                 search_text += event.unicode.upper()
             elif event.key == 8:  # Backspace
                 search_text = search_text[:-1]
-            elif event.key == 127:  # DEL (deletes everything)
+            elif event.key == 127 or event.key == 27:  # DEL or ESC (deletes everything)
                 search_text = ""
             force_update = True
             changed_text = True
@@ -227,6 +260,12 @@ def list_loop(window, font, small_font, war_list, event, force_update=False):
                     else:
                         if search_text == war.participants[participant].name.upper():
                             new_war_list.append(war)
+
+
+    if sorting == "cas":
+        new_war_list = sorted(new_war_list, key=lambda x: get_war_casualties(x))
+        new_war_list.reverse()
+
 
     if prev_position != current_position or force_update or not has_rendered:
         # Only render if the position has changed (scrolled), main.py wants to force it to (when
