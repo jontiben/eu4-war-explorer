@@ -195,6 +195,8 @@ def list_loop(window, font, small_font, war_list, event, force_update=False, for
     changed_text = False
     if new_war_list is None or force_reset_list:
         new_war_list = war_list
+    if force_reset_list and mode == "player":
+        new_war_list = get_player_war_list(war_list)
     if event is not None:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 4:  # 4 and 5 are the scroll wheel

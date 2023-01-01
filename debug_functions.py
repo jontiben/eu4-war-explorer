@@ -7,7 +7,7 @@
 from datetime import datetime
 
 
-def debug_out(event_text: str, event_type: object = None) -> None:
+def debug_out(event_text: str, event_type: str = None) -> None:
     # Outputs the time plus the event type and event to a text file.
     time = datetime.now().time()
     if event_type is not None:

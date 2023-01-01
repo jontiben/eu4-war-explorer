@@ -7,7 +7,7 @@
 import pygame
 import tkinter as tk
 from tkinter import filedialog
-import traceback, os
+import traceback, os, platform
 
 import midpoint_calculator
 import save_file_reader
@@ -209,5 +209,6 @@ def main():
 
 if __name__ == "__main__":
     debug_functions.debug_out(f"Started EU4 Savefile Explorer version {VERSION}")
+    debug_functions.debug_out(f"OS is {platform.system()} {platform.release()}", event_type="INFO")
     init()
     main()

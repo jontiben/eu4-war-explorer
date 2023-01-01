@@ -12,8 +12,6 @@ import platform
 import debug_functions
 
 operating_system = platform.system()
-debug_functions.debug_out(f"OS is {operating_system} {platform.release()}", "INFO")
-
 
 def find_eu4_folder():
     debug_functions.debug_out("Prompting user to select EU4 directory...")
@@ -59,7 +57,6 @@ if operating_system == "Linux":
 else:  # I haven't tested this but it *should* work for OSX as well
     EU4_SAVE_DIR = os.path.expanduser('~') + "/Documents/Paradox Interactive/Europa Universalis IV/save games"
     EU4_MODS = os.path.expanduser('~') + "/Documents/Paradox Interactive/Europa Universalis IV/mod"
-    print(EU4_MODS)
 if not os.path.isdir(EU4_SAVE_DIR):
     EU4_SAVE_DIR = os.path.expanduser('~')
 if not os.path.isdir(EU4_MODS):
