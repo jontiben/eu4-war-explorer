@@ -32,8 +32,6 @@ def find_eu4_mods():
     return folder_name
 
 
-debug_functions.debug_out(
-    "Detecting EU4 directory in [C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV]...")
 if operating_system == "Linux":
     EU4_FOLDER = os.path.expanduser('~') + ".local/share/Steam/steamapps/common/Europa Universalis IV"
 elif operating_system == "Darwin":  # OSX

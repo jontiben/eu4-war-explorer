@@ -4,11 +4,17 @@
 # and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above
 # copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-import pygame
 import os
+
 import eu4_path_finder
 
-# 
+config_file = open("config.cfg",'r')
+lines = config_file.readlines()
+config_file.close()
+
+def get_config_data(line):
+    return line.strip().split("=")[1].replace(' ','')
+
 # Paths
 EU4_FOLDER = eu4_path_finder.EU4_FOLDER
 EU4_MODS = eu4_path_finder.EU4_MODS
@@ -71,6 +77,12 @@ FLAG_WIDTH = 128  # Pixels
 MAX_UNIT_GRAPHIC_SIZE = 43  # Pixels. Both dimensions are 43.
 SMALL_UNIT_GRAPHIC_SIZE = int(MAX_UNIT_GRAPHIC_SIZE * 0.7)
 
+try:
+    START_WIDTH = int(get_config_data(lines[0]))
+    START_HEIGHT = int(get_config_data(lines[1]))
+except:
+    START_WIDTH = 1000
+    START_HEIGHT = 800
 NAV_BUTTON_HEIGHT = 50  # Pixels
 NAV_BUTTON_BORDER_WIDTH = 4  # Thickness, in pixels
 SMALL_BORDER_WIDTH = int(NAV_BUTTON_BORDER_WIDTH / 4)

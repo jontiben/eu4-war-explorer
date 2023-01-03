@@ -17,7 +17,7 @@ import defines
 import debug_functions
 
 ### VERSION
-VERSION = "1.0"
+VERSION = "1.0a"
 
 do_quit = False
 mode = "list"
@@ -38,8 +38,8 @@ clear_debug_file()
 pygame.init()
 
 screen_info = pygame.display.Info()
-start_width = int(screen_info.current_w * 0.75)
-start_height = int(screen_info.current_h * 0.85)
+start_width = int(defines.START_WIDTH)
+start_height = int(defines.START_HEIGHT)
 window = pygame.display.set_mode((start_width, start_height), pygame.RESIZABLE)
 caption_root = "EU4 War Explorer - " + VERSION
 pygame.display.set_caption(caption_root)

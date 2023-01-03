@@ -6,10 +6,9 @@
 
 import re
 import os
+
 import defines
 import pygame
-import traceback
-
 import debug_functions
 
 flags_dict = {}
