@@ -33,7 +33,7 @@ def find_eu4_mods():
 
 
 if operating_system == "Linux":
-    EU4_FOLDER = os.path.expanduser('~') + ".local/share/Steam/steamapps/common/Europa Universalis IV"
+    EU4_FOLDER = os.path.expanduser('~') + "/.steam/steam/steamapps/common/Europa Universalis IV"
 elif operating_system == "Darwin":  # OSX
     EU4_FOLDER = os.path.expanduser('~') + "/Library/Application Support/Steam/SteamApps/common/Europa Universalis IV"
 else:  # Windows
@@ -50,8 +50,8 @@ PATH_TO_FLAGS_FOLDER = EU4_FOLDER + "/gfx/flags"
 PATH_TO_BACKUP_FLAG = PATH_TO_FLAGS_FOLDER + "/colonial_patriot_rebels.tga"
 
 if operating_system == "Linux":
-    EU4_SAVE_DIR = os.path.expanduser('~') + ".local/share/Paradox Interactive/Europa Universalis IV/save games"
-    EU4_MODS = os.path.expanduser('~') + ".local/share/Paradox Interactive/Europa Universalis IV/mod"
+    EU4_SAVE_DIR = os.path.expanduser('~') + "/Documents/Paradox Interactive/Europa Universalis IV/save games"
+    EU4_MODS = os.path.expanduser('~') + "/Documents/Paradox Interactive/Europa Universalis IV/mod"
 else:  # I haven't tested this but it *should* work for OSX as well
     EU4_SAVE_DIR = os.path.expanduser('~') + "/Documents/Paradox Interactive/Europa Universalis IV/save games"
     EU4_MODS = os.path.expanduser('~') + "/Documents/Paradox Interactive/Europa Universalis IV/mod"
