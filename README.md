@@ -1,5 +1,8 @@
-EU4 War Explorer
+## EU4 War Explorer
 created by jontiben
+
+![eu4-war-explorer-demo](https://user-images.githubusercontent.com/25780026/211480392-eda28992-3b5e-4c65-aaa5-a14dadff79d1.png)
+
 
 This application reads EU4 savefiles (ending in the file extension .eu4) for information about past wars and then presents it in an easily readable format. It features:
 - A searchable list of every finished war in the savefile (searchable by elements of the war title or by tags involved)
@@ -7,6 +10,7 @@ This application reads EU4 savefiles (ending in the file extension .eu4) for inf
 - A list of battles fought in the war plotted on a map
 - A breakdown of forces and losses for each battle
 - A scrollable timeline showing major events over the course of the war
+- Full mod support
 
 Navigation is done exclusively through clicking, the ESC key, and typing to search on the war list screen.
 
@@ -18,6 +22,6 @@ Planned features are:
 - More information on the timeline
 - Some sort of indicator whenever you can press ESC to return to a window
 
-This project was written entirely in Python using Pygame for the UI. Other external libraries used are math, codecs, re, os, zipfile (used for decompressing compressed savefiles), tkinter (used for the file selection dialog), and datetime.
+This project was written entirely in Python using Pygame and tkinter for the UI and PIL for modded map processing.
 
 To contact me, please send me a friend request on discord where I am jontiben#7855.
