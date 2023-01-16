@@ -91,6 +91,10 @@ TIMELINE_WIDTH = 10
 MINOR_TIME_LINE_WIDTH = 5
 TIMELINE_POS = 5  # Number of positions above and below the timeline for text
 MIN_TIMELINE_HEIGHT = NAV_BUTTON_HEIGHT  # Height of the lowest timeline bar
+TIMELINE_LENGTH_MULTIPLIER = 2.25
 
 BATTLE_CIRCLE_SCALING_FACTOR = 0.1
 SEA_BATTLE_SCALING_FACTOR = 200  # Applied on top of the above number
+
+SCROLL_SIZE = 1
+TIMELINE_SCROLL_SIZE = 64 # Pixels here

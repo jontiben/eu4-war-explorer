@@ -24,8 +24,6 @@ all_graphics_list = [infantry_graphic, cavalry_graphic, artillery_graphic,
 land_graphics_list = [infantry_graphic, cavalry_graphic, artillery_graphic]
 sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 
-SCROLL_SIZE = 1
-TIMELINE_SCROLL_SIZE = 25 # Pixels here
 
 def render_timeline(window, font, small_font, light_font, stats_font, present_date):
 	window.fill(defines.C_INTERFACE)
@@ -37,51 +35,54 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 		war_length = common_functions.date_to_days(WAR.end_date) - start_days
 	else:
 		war_length = common_functions.date_to_days(present_date) - start_days
-	timeline = pygame.draw.line(window, defines.C_GOLD, (defines.PAD_DIST-CURR_POSITION, halfheight), (war_length+defines.PAD_DIST-CURR_POSITION, halfheight), defines.TIMELINE_WIDTH)
+	timeline_length = war_length * defines.TIMELINE_LENGTH_MULTIPLIER
+	timeline = pygame.draw.line(window, defines.C_GOLD, (defines.PAD_DIST-CURR_POSITION, halfheight), (timeline_length+defines.PAD_DIST-CURR_POSITION, halfheight), defines.TIMELINE_WIDTH)
 
 	portion_distance = (window.get_height()-defines.NAV_BUTTON_HEIGHT)/(defines.TIMELINE_POS*2+1)
 
 	to_render = []
-	rect_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA, 32)
-	rect_surface = rect_surface.convert_alpha() # < ^ Workaround
+	render_rects = []
 	for e in range(len(WAR.events)):
 		event = WAR.events[e]
 		act_e = int(e/2)
-		x_pos = (event[0]-start_days)+defines.PAD_DIST-CURR_POSITION
-		start_point = (x_pos, halfheight)
-		if event[3] == "join" or event[3] == "quit":
-			info_text = font.render(event[2], True, defines.C_LGRAY)
-		elif event[3] == "battle":
-			info_text = font.render(event[2], True, defines.C_RED)
-		else:
-			info_text = font.render(event[2], True, defines.C_WHITE)
-		info_text_loc = info_text.get_rect()
-		date_text = light_font.render(event[1], True, defines.C_LGRAY)
-		date_text_loc = date_text.get_rect()
-		if e % 2 == 0: # Above the line
-			end_point = (x_pos, halfheight - (defines.TIMELINE_POS-(act_e % defines.TIMELINE_POS))*portion_distance + defines.PAD_DIST)
-			info_text_loc.y = end_point[1]
-			date_text_loc.y = info_text_loc.bottom-defines.PAD_DIST
-		else: # Below the line
-			end_point = (x_pos, halfheight + (defines.TIMELINE_POS-(act_e % defines.TIMELINE_POS))*portion_distance - defines.PAD_DIST)
-			info_text_loc.bottom = end_point[1]
-			date_text_loc.bottom = info_text_loc.y+defines.PAD_DIST
-		info_text_loc.x = end_point[0] + defines.PAD_DIST
-		date_text_loc.x = info_text_loc.x
-		line = pygame.draw.line(window, defines.C_GOLD, start_point, end_point, defines.MINOR_TIME_LINE_WIDTH)
-		pygame.draw.rect(rect_surface, defines.C_INTERFACE, (info_text_loc.x, info_text_loc.y, info_text_loc.width, info_text_loc.height))
-		pygame.draw.rect(rect_surface, defines.C_INTERFACE, (date_text_loc.x, date_text_loc.y, date_text_loc.width, date_text_loc.height))
+		x_pos = ((event[0]-start_days)*defines.TIMELINE_LENGTH_MULTIPLIER)+defines.PAD_DIST-CURR_POSITION
+		if -360 < x_pos < window.get_width():
+			start_point = (x_pos, halfheight)
+			if event[3] == "join" or event[3] == "quit":
+				info_text = font.render(event[2], True, defines.C_LGRAY)
+			elif event[3] == "battle":
+				info_text = font.render(event[2], True, defines.C_RED)
+			else:
+				info_text = font.render(event[2], True, defines.C_WHITE)
+			info_text_loc = info_text.get_rect()
+			date_text = light_font.render(event[1], True, defines.C_LGRAY)
+			date_text_loc = date_text.get_rect()
+			if e % 2 == 0: # Above the line
+				end_point = (x_pos, halfheight - (defines.TIMELINE_POS-(act_e % defines.TIMELINE_POS))*portion_distance + defines.PAD_DIST)
+				info_text_loc.y = end_point[1]
+				date_text_loc.y = info_text_loc.bottom-defines.PAD_DIST
+			else: # Below the line
+				end_point = (x_pos, halfheight + (defines.TIMELINE_POS-(act_e % defines.TIMELINE_POS))*portion_distance - defines.PAD_DIST)
+				info_text_loc.bottom = end_point[1]
+				date_text_loc.bottom = info_text_loc.y+defines.PAD_DIST
+			info_text_loc.x = end_point[0] + defines.PAD_DIST
+			date_text_loc.x = info_text_loc.x
+			line = pygame.draw.line(window, defines.C_GOLD, start_point, end_point, defines.MINOR_TIME_LINE_WIDTH)
 
+			render_rects.append((defines.C_INTERFACE, (info_text_loc.x-int(defines.PAD_DIST/2), info_text_loc.y, info_text_loc.width, info_text_loc.height)))
+			render_rects.append((defines.C_INTERFACE, (date_text_loc.x-int(defines.PAD_DIST/2), date_text_loc.y, date_text_loc.width, date_text_loc.height)))
+			to_render.append((info_text, info_text_loc))
+			to_render.append((date_text, date_text_loc))
 
-		to_render.append((info_text, info_text_loc))
-		to_render.append((date_text, date_text_loc))
-
-	window.blit(rect_surface, rect_surface.get_rect())
-	window.blits(to_render)
+	for t in range(0, len(render_rects), 2):
+		pygame.draw.rect(window, render_rects[t][0], render_rects[t][1])
+		pygame.draw.rect(window, render_rects[t+1][0], render_rects[t+1][1])
+		window.blit(to_render[t][0], to_render[t][1])
+		window.blit(to_render[t+1][0], to_render[t+1][1])
 
 	render_screen_buttons(window, font)
-
 	pygame.display.update()
+
 
 def render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path):
 	global MAP_SIZE
@@ -715,20 +716,20 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 4: # 4 and 5 are the scroll wheel
 				if current_screen == "timeline":
-					if CURR_POSITION > TIMELINE_SCROLL_SIZE-defines.PAD_DIST:
-						CURR_POSITION -= TIMELINE_SCROLL_SIZE
+					if CURR_POSITION > defines.TIMELINE_SCROLL_SIZE-defines.PAD_DIST:
+						CURR_POSITION -= defines.TIMELINE_SCROLL_SIZE
 				else:
-					if CURR_POSITION > SCROLL_SIZE-1:
-						CURR_POSITION -= SCROLL_SIZE
+					if CURR_POSITION > defines.SCROLL_SIZE-1:
+						CURR_POSITION -= defines.SCROLL_SIZE
 			elif event.button == 5:
 				if current_screen == "info": 
-					if CURR_POSITION < max(WAR.attacker_count, WAR.defender_count)-SCROLL_SIZE-1:
-						CURR_POSITION += SCROLL_SIZE
+					if CURR_POSITION < max(WAR.attacker_count, WAR.defender_count)-defines.SCROLL_SIZE-1:
+						CURR_POSITION += defines.SCROLL_SIZE
 				elif current_screen == "battles":
-					if CURR_POSITION < len(WAR.battles)-SCROLL_SIZE-1:
-						CURR_POSITION += SCROLL_SIZE
+					if CURR_POSITION < len(WAR.battles)-defines.SCROLL_SIZE-1:
+						CURR_POSITION += defines.SCROLL_SIZE
 				elif current_screen == "timeline":
-					CURR_POSITION += TIMELINE_SCROLL_SIZE
+					CURR_POSITION += defines.TIMELINE_SCROLL_SIZE
 			elif event.button == 1:
 				mouse_pos = pygame.mouse.get_pos()
 				for button in clickable_list:
