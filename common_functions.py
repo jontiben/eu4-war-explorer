@@ -79,10 +79,7 @@ def date_conversion(date: str) -> str:
                   "September", "October", "November", "December"]
     date = date.split('.')
     year = date[0]
-    try:
-        month = month_list[int(date[1]) - 1]
-    except:
-        print("ERROR", date)
+    month = month_list[int(date[1]) - 1]
     day = date[2]
     return day + " " + month + " " + year
 

@@ -149,10 +149,10 @@ class Participant:
     def consolidate_losses(self) -> None:
         try:
             self.losses = [int(j) for j in self.losses]
-        except:
+        except Exception as exception:
             self.losses = [0 for i in range(defines.CASUALTY_VECTOR_LENGTH)]
             debug_functions.debug_out(
-                f"Couldn't find losses for {self.name} in war [{self.war_name}]. Defaulting to zero.",
+                f"Couldn't find losses for {self.name} in war [{self.war_name}] with exception [{exception}]. Defaulting to zero.",
                 event_type="WARN")
         for k in range(2, len(self.losses), 3):
             if self.losses[k] != 0:
@@ -227,7 +227,9 @@ class War:
 
         self.battles = []  # All the battles recorded for the war, in chronological order
 
-        self.title = get_line_data(start_point + 1)
+        self.title = get_line_data(start_point)
+        if len(self.title) < 3:
+            self.title = get_line_data(start_point+1)
         if self.title == "":
             self.viable = False  # For some reason the game generates 0-length wars with no participants early on
             # in the list of historical wars. These don't have titles.
@@ -279,7 +281,7 @@ class War:
                     self.attack_total_warscore += float(get_line_data(check_participants_num + 1))
                 else:
                     self.defend_total_warscore += float(get_line_data(check_participants_num + 1))
-                self.participants[curr_tag].losses = get_line_data(check_participants_num + 5)[:-1].split(' ')
+                self.participants[curr_tag].losses = get_line_data(check_participants_num + 5).split(' ')
                 self.participants[curr_tag].consolidate_losses()
         for key in self.participants.keys():
             if self.participants[key].name in PLAYER_COUNTRIES:
@@ -684,7 +686,9 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
             check_file_line = file_lines[i].strip()
             if check_file_line == "previous_war={" or check_file_line == "active_war={" or check_file_line == "previous_war=" or check_file_line == "active_war=":
                 # non-bracket variants are found in old saves
-                start_point = i+1
+                start_point = i
+                if '{' not in file_lines[i]:
+                    start_point += 1
                 end_point = define_bracket_block(start_point)
                 i = end_point + 1
                 new_war = War(start_point, end_point)
