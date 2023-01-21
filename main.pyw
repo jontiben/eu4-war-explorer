@@ -196,7 +196,7 @@ def main():
                     # pygame.VIDEORESIZE events. That's why I'm dealing with the important things (quitting and
                     # resizing) out here. All other inputs eventually get passed to the various modules and they can
                     # figure out what to do with them.
-                    disp_resize(event.size)
+                    disp_resize(event.size) 
                     has_updated_for_resize = False
                 else:
                     render_scene(event)

@@ -368,8 +368,10 @@ class War:
         # Battles are only recorded in the save if they have at least 1,000 total losses (for land battles) or 2
         # ships lost (for naval battles)
         for check_battle_num in range(self.history_start, self.history_end):
-            if clean_tabs(check_battle_num) == "battle={":
+            if clean_tabs(check_battle_num) == "battle={" or clean_tabs(check_battle_num) == "battle=":
                 battle_date = clean_date(check_battle_num - 1)
+                if battle_date == '':
+                    battle_date = clean_date(check_battle_num - 2) # Old save compatibility
                 battle_start_point = check_battle_num
                 battle_end_point = define_bracket_block(check_battle_num)
                 attacker_info = []
@@ -385,9 +387,9 @@ class War:
                         battle_location = get_line_data(n)
                     elif get_line_key(n) == "result=":
                         battle_result = get_line_data(n)
-                    elif clean_tabs(n) == "attacker={":
+                    elif clean_tabs(n) == "attacker={" or clean_tabs(n) == "attacker=":
                         attacker_info = parse_combatant_block(n, define_bracket_block(n))
-                    elif clean_tabs(n) == "defender={":
+                    elif clean_tabs(n) == "defender={" or clean_tabs(n) == "defender=":
                         defender_info = parse_combatant_block(n, define_bracket_block(n))
                 if len(attacker_info) <= 0:
                     battle_surface = defender_info[0]
@@ -554,7 +556,7 @@ def define_bracket_block(start_point: int) -> int:
             bracket_count += 1
         if '}' in file_lines[check_bracket_num]:
             bracket_count -= 1
-        if bracket_count == 0:
+        if bracket_count == 0 and check_bracket_num > start_point:
             return check_bracket_num  # Returns the line number it ends on
     return -1  # Error, no end
 
@@ -634,7 +636,7 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
         return None
     file_lines = savefile.split("\n")
     meta_savefile, meta_file_lines = None, None
-    if file_lines[0] != "EU4txt":  # Compressed save
+    if file_lines[0].strip() != "EU4txt":  # Compressed save
         short_name = filename.split('/')[-1]
         debug_functions.debug_out(f"Savefile [{short_name}] is compressed. Decompressing...")
         with zipfile.ZipFile(filename, 'r') as zip:
@@ -653,7 +655,8 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
         debug_functions.debug_out("Savefile successfully decompressed.")
 
     present_date = get_present_date()
-
+    for l in range(len(file_lines)): # Necessary for compabtibility with older saves
+        file_lines[l] = file_lines[l].strip()
     war_list = []
     get_curr_player_countries()
     if len(PLAYER_COUNTRIES) == 0:
@@ -678,8 +681,10 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
                         nation_info_locations[file_lines[i][1:4]] = i
         elif i > int(len(file_lines) * 0.7):  # !!!!!! (You can set this to like 0.98 for speed
         # loading in testing, but it will cut off a lot of early wars)
-            if file_lines[i] == "previous_war={" or file_lines[i] == "active_war={":
-                start_point = i
+            check_file_line = file_lines[i].strip()
+            if check_file_line == "previous_war={" or check_file_line == "active_war={" or check_file_line == "previous_war=" or check_file_line == "active_war=":
+                # non-bracket variants are found in old saves
+                start_point = i+1
                 end_point = define_bracket_block(start_point)
                 i = end_point + 1
                 new_war = War(start_point, end_point)
