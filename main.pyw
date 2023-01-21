@@ -122,6 +122,10 @@ def init():
             war_list = save_file_reader_out[0]
             present_date = save_file_reader_out[1]
             map_mod_location = save_file_reader_out[2]
+            checksum = save_file_reader_out[3]
+            game_version = save_file_reader_out[4]
+            debug_functions.debug_out(f"Game version is {game_version}", event_type="INFO")
+            debug_functions.debug_out(f"Checksum is {checksum}", event_type="INFO")
             MAP_TERRAIN = pygame.image.load(defines.MAP_TERRAIN_PATH)
             MAP_RIVERS = pygame.image.load(defines.MAP_RIVERS_PATH)
             MAP_BORDERS = pygame.image.load(defines.MAP_BORDERS_PATH)

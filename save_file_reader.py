@@ -601,9 +601,13 @@ def find_colonial_names() -> None:
 
 
 def get_meta_data(local_file_lines) -> list:
-    meta_data_out = ["", []]  # Checksum, Mod locations,
+    meta_data_out = ["", [], ""]  # Checksum, Mod locations, Game version,
     for l, line in enumerate(local_file_lines):
-        if line == "mods_enabled_names={":
+        if line == "savegame_version=":
+            meta_data_out[2] = f"{get_line_data(l + 2)}.{get_line_data(l + 3)}.{get_line_data(l + 4)}"
+        elif line == "savegame_version={":
+            meta_data_out[2] = f"{get_line_data(l + 1)}.{get_line_data(l + 2)}.{get_line_data(l + 3)}"
+        elif line == "mods_enabled_names={":
             for i in range(l, define_bracket_block(l)):
                 if clean_tabs(i) == "{":
                     path = get_line_data(i+1)
@@ -611,7 +615,7 @@ def get_meta_data(local_file_lines) -> list:
                         meta_data_out[1].append((get_line_data(i+1), get_line_data(i+2)))
                     else:
                         debug_functions.debug_out(f"Failed to find .mod file at path [{defines.EU4_MODS + '/' + path.split('/')[1]}]", event_type="WARN")
-            break
+                    break
         elif line == "mod_enabled={":  # I think mod_enabled is the old name for this
             for i in range(l+1, define_bracket_block(l)):
                 if clean_tabs(i) != "}":
@@ -620,7 +624,7 @@ def get_meta_data(local_file_lines) -> list:
                         meta_data_out[1].append((path, path.split('_')[1][:-4]))
                     else:
                         debug_functions.debug_out(f"Failed to find .mod file at path [{defines.EU4_MODS + '/' + path.split('/')[1]}]", event_type="WARN")
-            break
+                    break
         elif "checksum=" in line:
             # End of meta file/section
             meta_data_out[0] = get_line_data(l)
@@ -674,7 +678,9 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
         file_lines = meta_file_lines + file_lines
         meta_data = get_meta_data(meta_file_lines)
     find_colonial_names()
+    checksum = meta_data[0]
     map_mod_location = check_mods(meta_data[1])
+    game_version = meta_data[2]
     for i in range(len(file_lines)):
         if len(file_lines[i]) == 6:
             if file_lines[i][:2] == "	C":
@@ -699,4 +705,4 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
     debug_functions.debug_out(f"{str(len(war_list))} viable wars discovered", event_type="INFO")
     if len(war_list) == 0:
         debug_functions.debug_out("No viable wars discovered! (something's wrong)", event_type="ERROR")
-    return (war_list, present_date, map_mod_location)
+    return (war_list, present_date, map_mod_location, checksum, game_version)
