@@ -587,9 +587,9 @@ def get_present_date() -> str:
 def find_colonial_names() -> None:
     global alt_names
     for check_colonial_num in range(len(file_lines)):
-        if len(file_lines[check_colonial_num]) == 6:
-            if file_lines[check_colonial_num][4:6] == "={":
-                if common_functions.is_created_nation(file_lines[check_colonial_num][1:4]):
+        if len(file_lines[check_colonial_num]) == 5:
+            if file_lines[check_colonial_num][3:5] == "={":
+                if common_functions.is_created_nation(file_lines[check_colonial_num][:3]):
                     new_key = get_line_key(check_colonial_num)[:-1]
                     start_point = check_colonial_num
                     end_point = define_bracket_block(check_colonial_num)
@@ -682,11 +682,11 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
     map_mod_location = check_mods(meta_data[1])
     game_version = meta_data[2]
     for i in range(len(file_lines)):
-        if len(file_lines[i]) == 6:
-            if file_lines[i][:2] == "	C":
-                if file_lines[i][4:6] == "={":
+        if len(file_lines[i]) == 5:
+            if file_lines[i][:1] == "C":
+                if file_lines[i][3:5] == "={":
                     if "has_set_government_name" in file_lines[i+1] or "pillaged_capital_state" in file_lines[i+1]:  # Edge case? Maybe others?
-                        nation_info_locations[file_lines[i][1:4]] = i
+                        nation_info_locations[file_lines[i][0:3]] = i
         elif i > int(len(file_lines) * 0.7):  # !!!!!! (You can set this to like 0.98 for speed
         # loading in testing, but it will cut off a lot of early wars)
             check_file_line = file_lines[i].strip()
