@@ -8,8 +8,9 @@ import pygame
 import math
 import defines
 import common_functions
+#import random
 
-# MAX_BATTLE_OFFSET = 8 # Max amount (in pixels on the original-scale map) to randomly offset the centerpoint of each
+#MAX_BATTLE_OFFSET = 8 # Max amount (in pixels on the original-scale map) to randomly offset the centerpoint of each
 # battle to one side in order to avoid overlaps.
 
 infantry_graphic = pygame.image.load(defines.INFANTRY_GRAPHIC)
@@ -24,6 +25,7 @@ all_graphics_list = [infantry_graphic, cavalry_graphic, artillery_graphic,
 land_graphics_list = [infantry_graphic, cavalry_graphic, artillery_graphic]
 sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 
+battle_type = "casualties"
 
 def render_timeline(window, font, small_font, light_font, stats_font, present_date):
 	window.fill(defines.C_INTERFACE)
@@ -120,8 +122,23 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		battle_list = [BATTLE]
 		circle_color = defines.C_ORANGE
 
+	latest_battle_days = 1
+	first_battle_days = None
+	if BATTLE is None:
+		for battle in battle_list:
+			current_battle_days = common_functions.date_to_days(battle.date)
+			if first_battle_days == None:
+				first_battle_days = current_battle_days
+			if current_battle_days > latest_battle_days:
+				latest_battle_days = current_battle_days
+			if current_battle_days < first_battle_days:
+				first_battle_days = current_battle_days
+		latest_battle_days -= first_battle_days
+
+
 	for battle in battle_list:
 		# Translucent circles scaled based on battle loss count
+
 		curr_x = province_dict[battle.location][0]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
 		curr_y = province_dict[battle.location][1]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
 		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
@@ -132,14 +149,22 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 			
 		else: # Sea
 			battle_scale = int(math.sqrt((battle.attacking_losses+battle.defending_losses)*defines.BATTLE_CIRCLE_SCALING_FACTOR*defines.SEA_BATTLE_SCALING_FACTOR))
-		
-		pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), battle_scale)
+		if battle_type == "date" and BATTLE is None:
+			battle_days = common_functions.date_to_days(battle.date) - first_battle_days
+			red = int((battle_days/latest_battle_days)*255)
+			blue = int((1-(battle_days/latest_battle_days))*255)
+			circle_color = (red, 0, blue, 220)
+
+		if battle_type == "casualties":
+			pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), battle_scale)
+		elif battle_type == "date":
+			pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), 8)
 		window.blit(battle_surface,(0, 0)) # Done individually to make the circles layer properly
 		#battle_center_list.append([mod_x, mod_y, battle.surface])
 
 	for battle in WAR.battles:
 		curr_x = province_dict[battle.location][0]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
-		curr_y = province_dict[battle.location][1]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
+		curr_y = province_dict[battle.location][1]#random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
 		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
 		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
 		if battle.surface == "land":
@@ -403,6 +428,20 @@ def render_map_buttons(window, small_font, title_bar):
 	border_label_loc = border_label.get_rect()
 	border_label_loc.center = border_toggle.center
 	window.blit(border_label, border_label_loc)
+
+	battle_date_loc = (border_toggle.right+defines.PAD_DIST*4, title_bar.top+defines.PAD_DIST, defines.NAV_BUTTON_HEIGHT+defines.PAD_DIST*2, defines.NAV_BUTTON_HEIGHT-defines.PAD_DIST*2)
+	if battle_type == "date":
+		bd_backing = pygame.draw.rect(window, defines.C_LGRAY, battle_date_loc)
+		clickable_list.append(["off_bd", "date", bd_backing])
+		bd_toggle = pygame.draw.rect(window, defines.C_GOLD, battle_date_loc, defines.NAV_BUTTON_BORDER_WIDTH)
+	else:
+		bd_toggle = pygame.draw.rect(window, defines.C_GOLD, battle_date_loc, defines.NAV_BUTTON_BORDER_WIDTH)
+		clickable_list.append(["on_bd", "date", bd_toggle])
+	bd_label = small_font.render("DATE", True, defines.C_GOLD)
+	bd_label_loc = bd_label.get_rect()
+	bd_label_loc.center = bd_toggle.center
+	window.blit(bd_label, bd_label_loc)
+
 
 def render_screen_buttons(window, font):
 	global clickable_list, current_screen
@@ -696,6 +735,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 
 def info_loop(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path, event, present_date, force_update=False):
 	global clickable_list
+	global battle_type
 	global LOADED_TAG
 	global SOMETHING_FOCUSED
 	global current_screen
@@ -756,6 +796,17 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 							MAP_TYPES.pop(MAP_TYPES.index(button[1])) #.remove() doesn't work for some reason. I haven't slept in 28 hours.
 							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
 							break
+						elif button[0] == "on_bd":
+							battle_type = "date"
+							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map,
+									   border_map, province_mids_path)
+							break
+						elif button[0] == "off_bd":
+							battle_type = "casualties"
+							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map,
+									   border_map, province_mids_path)
+							break
+
 
 		clickable_list = []
 		if current_screen == "info":

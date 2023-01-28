@@ -22,7 +22,7 @@ nation_info_locations = {}
 class Battle:
     def __init__(self, line_loc, name: str, surface: str, date: str, location, result, iteration: int,
                  attacker, attacking_force: list, attacking_losses: int, attacking_general,
-                 defender, defending_force: list, defending_losses: int, defending_general):
+                 defender, defending_force: list, defending_losses: int, defending_general,):
 
         self.name = name
         self.surface = surface  # "land" or "sea"
