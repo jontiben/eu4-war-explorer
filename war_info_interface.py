@@ -409,7 +409,7 @@ def render_battles(window, font, small_font, light_font, stats_font, terrain_map
 def render_map_buttons(window, small_font, title_bar):
 	global clickable_list
 
-	river_button_loc = (int(window.get_width()*0.6), title_bar.top+defines.PAD_DIST, defines.NAV_BUTTON_HEIGHT+defines.PAD_DIST*2, defines.NAV_BUTTON_HEIGHT-defines.PAD_DIST*2)
+	river_button_loc = (int(window.get_width()*0.5), title_bar.top+defines.PAD_DIST, defines.NAV_BUTTON_HEIGHT+defines.PAD_DIST*2, defines.NAV_BUTTON_HEIGHT-defines.PAD_DIST*2)
 	if "rivers" in MAP_TYPES:
 		river_backing = pygame.draw.rect(window, defines.C_LGRAY, river_button_loc)
 		clickable_list.append(["unmap", "rivers", river_backing])
