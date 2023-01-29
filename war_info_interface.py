@@ -826,6 +826,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 							return_to_battles = True
 							SOMETHING_FOCUSED = False
 							current_screen = button[1]
+							BATTLE = None
 							if current_screen == "battles":
 								render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
 							break # Necessary to stop it flipping back and forth infinitely
