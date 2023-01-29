@@ -94,8 +94,9 @@ MIN_TIMELINE_HEIGHT = NAV_BUTTON_HEIGHT  # Height of the lowest timeline bar
 TIMELINE_LENGTH_MULTIPLIER = 2.25
 
 BATTLE_CENTER_SIZE = 2 # Pixels radius
+DATE_COLOR_SIZE = 8 # Pixels radius
 BATTLE_CIRCLE_SCALING_FACTOR = 0.075
-SEA_BATTLE_SCALING_FACTOR = 200  # Applied on top of the above number
+SEA_BATTLE_SCALING_FACTOR = 300  # Applied on top of the above number
 
 SCROLL_SIZE = 1
 TIMELINE_SCROLL_SIZE = 64 # Pixels here

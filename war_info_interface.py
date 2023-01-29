@@ -138,8 +138,10 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		latest_battle_days -= first_battle_days
 
 	battle_center_size = defines.BATTLE_CENTER_SIZE
+	date_color_size = defines.DATE_COLOR_SIZE
 	if output_map:
 		battle_center_size *= 2
+		date_color_size *= 1.5
 	for battle in battle_list:
 		# Translucent circles scaled based on battle loss count
 
@@ -162,7 +164,7 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		if battle_type == "casualties":
 			pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), battle_scale)
 		elif battle_type == "date":
-			pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), 8)
+			pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), date_color_size)
 		window.blit(battle_surface,(0, 0)) # Done individually to make the circles layer properly
 		#battle_center_list.append([mod_x, mod_y, battle.surface])
 
