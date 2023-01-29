@@ -24,6 +24,7 @@ mode = "list"
 war_list = []
 has_updated_for_resize = False
 curr_filename = None
+list_position = 0
 
 
 def clear_debug_file():
@@ -160,7 +161,7 @@ def init():
 
 
 def render_scene(event):
-    global window, mode, has_updated_for_resize, curr_filename
+    global window, mode, has_updated_for_resize, curr_filename, list_position
     try:
         if mode == "list":  # The window/scene that's active
             list_out = war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, event,
@@ -173,8 +174,9 @@ def render_scene(event):
                 else:
                     mode = "info"
                     #debug_mode_out()
+                    list_position = list_out[1]
                     war_info_interface.init(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, MAP_TERRAIN,
-                                            MAP_RIVERS, MAP_BORDERS, list_out)
+                                            MAP_RIVERS, MAP_BORDERS, list_out[0])
         elif mode == "info":
             poss_prev_window = war_info_interface.info_loop(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT,
                                                             MAP_TERRAIN, MAP_RIVERS, MAP_BORDERS, MIDPOINTS_PATH, event,
@@ -182,7 +184,7 @@ def render_scene(event):
             if poss_prev_window is not None:
                 mode = "list"
                 #debug_mode_out()
-                war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=True)
+                war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=True, force_reset_list=False, position=list_position)
         has_updated_for_resize = True
     except:
         debug_functions.debug_out(f"Exception [{traceback.format_exc()}] on rendering scene [{mode}]")

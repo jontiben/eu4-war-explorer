@@ -189,11 +189,13 @@ def get_player_war_list(war_list):
     return new_list
 
 
-def list_loop(window, font, small_font, war_list, event, force_update=False, force_reset_list=False):
+def list_loop(window, font, small_font, war_list, event, force_update=False, force_reset_list=False, position=None):
     global prev_position, current_position
     global has_rendered
     global mode, sorting
     global new_war_list, search_text
+    if position is not None:
+        current_position = position
     prev_position = current_position
     changed_text = False
     if new_war_list is None or force_reset_list:
@@ -235,16 +237,20 @@ def list_loop(window, font, small_font, war_list, event, force_update=False, for
                     for button in clickable_list:
                         if button[2].collidepoint(mouse_pos):
                             if button[0] == "war":
-                                return button[1]
+                                return button[1], current_position
         elif event.type == pygame.KEYDOWN:
             if event.unicode in VALID_CHARS:
                 search_text += event.unicode.upper()
+                changed_text = True
             elif event.key == 8:  # Backspace
                 search_text = search_text[:-1]
+                changed_text = True
             elif event.key == 127 or event.key == 27:  # DEL or ESC (deletes everything)
+                if len(search_text) > 0:
+                    changed_text = True
                 search_text = ""
             force_update = True
-            changed_text = True
+
 
     # Update war list for search string
     if changed_text:
