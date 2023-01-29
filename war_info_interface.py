@@ -749,7 +749,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 
 def export_map(map):
 	from datetime import datetime
-	filename = f"exported_maps/ewe_battles_{str(datetime.now().time()).replace(':','').split('.')[-1]}.{defines.MAP_OUTPUT_FORMAT}"
+	filename = f"exported_maps/ewe_battles_{str(datetime.now().time()).replace(':','').split('.')[0]}.{defines.MAP_OUTPUT_FORMAT}"
 	try:
 		debug_functions.debug_out(f"Exporting map to image")
 		pygame.image.save(map, filename)
