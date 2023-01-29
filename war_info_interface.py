@@ -323,10 +323,15 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 		curr_count_loc.bottomleft = (curr_graphic_loc.right+defines.PAD_DIST, curr_graphic_loc.bottom)
 		window.blit(curr_count, curr_count_loc)
 	# Total
-	att_total = stats_font.render(common_functions.break_up_large_numbers(sum(BATTLE.attacking_force)), True, defines.C_WHITE)
+	att_total = stats_font.render(common_functions.break_up_large_numbers(sum(BATTLE.attacking_force))+" total", True, defines.C_WHITE)
 	att_total_loc = att_total.get_rect()
-	att_total_loc.bottomleft = (defines.PAD_DIST*2+defines.SMALL_UNIT_GRAPHIC_SIZE, curr_graphic_loc.bottom+defines.SMALL_UNIT_GRAPHIC_SIZE+defines.PAD_DIST)
+	if BATTLE.surface == "land":
+		att_total_loc.bottomleft = (defines.PAD_DIST*2+defines.SMALL_UNIT_GRAPHIC_SIZE,
+									curr_graphic_loc.bottom+defines.SMALL_UNIT_GRAPHIC_SIZE+defines.PAD_DIST)
+	else:
+		att_total_loc.bottomleft = (curr_count_loc.right + defines.PAD_DIST * 4, curr_count_loc.bottom)
 	window.blit(att_total, att_total_loc)
+
 	# Losses
 	att_losses = stats_font.render(common_functions.break_up_large_numbers(BATTLE.attacking_losses)+" losses", True, defines.C_WHITE)
 	att_losses_loc = att_losses.get_rect()
@@ -338,7 +343,7 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 		if BATTLE.surface == "land":
 			curr_graphic = pygame.transform.scale(land_graphics_list[u],(defines.SMALL_UNIT_GRAPHIC_SIZE, defines.SMALL_UNIT_GRAPHIC_SIZE))
 		else:
-			curr_graphic = pygame.transform.scale(sea_graphics_list[u],(defines.SMALL_UNIT_GRAPHIC_SIZE, defines.SMALL_UNIT_GRAPHIC_SIZE))	
+			curr_graphic = pygame.transform.scale(sea_graphics_list[u],(defines.SMALL_UNIT_GRAPHIC_SIZE, defines.SMALL_UNIT_GRAPHIC_SIZE))
 		curr_graphic_loc = curr_graphic.get_rect()
 		curr_graphic_loc.topright = (window.get_width()-defines.PAD_DIST, att_commander_loc.bottom+defines.PAD_DIST*2+(defines.SMALL_UNIT_GRAPHIC_SIZE+defines.PAD_DIST)*u)
 		window.blit(curr_graphic, curr_graphic_loc)
@@ -347,10 +352,15 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 		curr_count_loc.bottomright = (curr_graphic_loc.left-defines.PAD_DIST, curr_graphic_loc.bottom)
 		window.blit(curr_count, curr_count_loc)
 	# Total
-	def_total = stats_font.render(common_functions.break_up_large_numbers(sum(BATTLE.defending_force)), True, defines.C_WHITE)
+	def_total = stats_font.render(common_functions.break_up_large_numbers(sum(BATTLE.defending_force))+" total", True, defines.C_WHITE)
 	def_total_loc = def_total.get_rect()
-	def_total_loc.bottomright = (window.get_width()-defines.PAD_DIST*2-defines.SMALL_UNIT_GRAPHIC_SIZE, curr_graphic_loc.bottom+defines.SMALL_UNIT_GRAPHIC_SIZE+defines.PAD_DIST)
+	if BATTLE.surface == "land":
+		def_total_loc.bottomright = (window.get_width()-defines.PAD_DIST*2-defines.SMALL_UNIT_GRAPHIC_SIZE,
+									 curr_graphic_loc.bottom+defines.SMALL_UNIT_GRAPHIC_SIZE+defines.PAD_DIST)
+	else:
+		def_total_loc.bottomright = (curr_count_loc.left - defines.PAD_DIST * 4, curr_graphic_loc.bottom)
 	window.blit(def_total, def_total_loc)
+
 	# Losses
 	def_losses = stats_font.render(common_functions.break_up_large_numbers(BATTLE.defending_losses)+" losses", True, defines.C_WHITE)
 	def_losses_loc = def_losses.get_rect()
