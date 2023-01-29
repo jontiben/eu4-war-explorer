@@ -139,7 +139,7 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 
 	battle_center_size = defines.BATTLE_CENTER_SIZE
 	if output_map:
-		battle_center_size *= 1.5
+		battle_center_size *= 2
 	for battle in battle_list:
 		# Translucent circles scaled based on battle loss count
 
