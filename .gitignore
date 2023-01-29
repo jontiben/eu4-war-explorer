@@ -133,3 +133,5 @@ debug.txt
 .idea/
 mod_data/*
 !mod_data/mod_data.txt
+exported_maps/*
+!exported_maps/exported_maps.txt

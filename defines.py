@@ -40,7 +40,7 @@ HS_GRAPHIC = os.path.join(os.curdir, "graphics/big_ship_icon.png")
 C_WHITE = (255, 255, 255)
 C_TRANS_WHITE = (255, 255, 0, 56)
 C_ORANGE = (255, 128, 0, 200)
-C_TRANS_ORANGE = (255, 128, 0, 50)
+C_TRANS_ORANGE = (255, 128, 0, 60)
 C_LGRAY = (160, 160, 160)
 C_BLACK = (0, 0, 0)
 C_GOLD = (255, 205, 36)
@@ -93,8 +93,11 @@ TIMELINE_POS = 5  # Number of positions above and below the timeline for text
 MIN_TIMELINE_HEIGHT = NAV_BUTTON_HEIGHT  # Height of the lowest timeline bar
 TIMELINE_LENGTH_MULTIPLIER = 2.25
 
-BATTLE_CIRCLE_SCALING_FACTOR = 0.05
+BATTLE_CENTER_SIZE = 2 # Pixels radius
+BATTLE_CIRCLE_SCALING_FACTOR = 0.075
 SEA_BATTLE_SCALING_FACTOR = 200  # Applied on top of the above number
 
 SCROLL_SIZE = 1
 TIMELINE_SCROLL_SIZE = 64 # Pixels here
+
+MAP_OUTPUT_FORMAT = get_config_data(lines[3])

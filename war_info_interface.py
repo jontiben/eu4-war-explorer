@@ -8,6 +8,7 @@ import pygame
 import math
 import defines
 import common_functions
+import debug_functions
 #import random
 
 #MAX_BATTLE_OFFSET = 8 # Max amount (in pixels on the original-scale map) to randomly offset the centerpoint of each
@@ -20,7 +21,7 @@ tra_graphic = pygame.image.load(defines.TRA_GRAPHIC)
 gal_graphic = pygame.image.load(defines.GAL_GRAPHIC)
 ls_graphic = pygame.image.load(defines.LS_GRAPHIC)
 hs_graphic = pygame.image.load(defines.HS_GRAPHIC)
-all_graphics_list = [infantry_graphic, cavalry_graphic, artillery_graphic, 
+all_graphics_list = [infantry_graphic, cavalry_graphic, artillery_graphic,
 					hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 land_graphics_list = [infantry_graphic, cavalry_graphic, artillery_graphic]
 sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
@@ -86,7 +87,8 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 	pygame.display.update()
 
 
-def render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path):
+def render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path,
+			   output_map = False):
 	global MAP_SIZE
 	window.fill(defines.C_INTERFACE)
 
@@ -135,7 +137,9 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 				first_battle_days = current_battle_days
 		latest_battle_days -= first_battle_days
 
-
+	battle_center_size = defines.BATTLE_CENTER_SIZE
+	if output_map:
+		battle_center_size *= 1.5
 	for battle in battle_list:
 		# Translucent circles scaled based on battle loss count
 
@@ -168,9 +172,11 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
 		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
 		if battle.surface == "land":
-			pygame.draw.circle(window, defines.C_BLACK, (mod_x, mod_y), 2)
+			pygame.draw.circle(window, defines.C_BLACK, (mod_x, mod_y), battle_center_size)
 		else:
-			pygame.draw.circle(window, defines.C_WHITE, (mod_x, mod_y), 2)
+			pygame.draw.circle(window, defines.C_WHITE, (mod_x, mod_y), battle_center_size)
+	if output_map:
+		return window
 	if not SOMETHING_FOCUSED:
 		render_battles(window, font, small_font, light_font, stats_font, terrain_map)
 	else:
@@ -441,6 +447,14 @@ def render_map_buttons(window, small_font, title_bar):
 	bd_label_loc = bd_label.get_rect()
 	bd_label_loc.center = bd_toggle.center
 	window.blit(bd_label, bd_label_loc)
+
+	export_loc = (bd_toggle.right+defines.PAD_DIST*4, title_bar.top+defines.PAD_DIST, defines.NAV_BUTTON_HEIGHT+defines.PAD_DIST*2, defines.NAV_BUTTON_HEIGHT-defines.PAD_DIST*2)
+	export_toggle = pygame.draw.rect(window, defines.C_GOLD, export_loc, defines.NAV_BUTTON_BORDER_WIDTH)
+	clickable_list.append(["export", "map", export_toggle])
+	export_label = small_font.render("SAVE", True, defines.C_GOLD)
+	export_label_loc = export_label.get_rect()
+	export_label_loc.center = export_toggle.center
+	window.blit(export_label, export_label_loc)
 
 
 def render_screen_buttons(window, font):
@@ -733,6 +747,18 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 
 
 
+def export_map(map):
+	from datetime import datetime
+	filename = f"exported_maps/ewe_battles_{str(datetime.now().time()).replace(':','').split('.')[-1]}.{defines.MAP_OUTPUT_FORMAT}"
+	try:
+		debug_functions.debug_out(f"Exporting map to image")
+		pygame.image.save(map, filename)
+		debug_functions.debug_out(f"Successfully exported map to file [{filename}]")
+	except:
+		debug_functions.debug_out(f"Exporting map failed", event_type="ERROR")
+
+
+
 def info_loop(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path, event, present_date, force_update=False):
 	global clickable_list
 	global battle_type
@@ -806,6 +832,14 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map,
 									   border_map, province_mids_path)
 							break
+						elif button[0] == "export":
+							export_window = pygame.Surface((MAP_SIZE))
+							map = render_map(export_window, font, small_font, light_font, stats_font, terrain_map,
+											 river_map, border_map, province_mids_path, output_map=True)
+							export_map(map)
+							break
+
+
 
 
 		clickable_list = []

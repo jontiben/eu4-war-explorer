@@ -1,0 +1,3 @@
+This folder is for storing maps exported from inside the program.
+
+Do not delete this folder.
