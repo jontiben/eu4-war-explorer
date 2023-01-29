@@ -356,7 +356,7 @@ class War:
                                         self.participants[participant].side + "er " + self.participants[
                                             participant].longname + " left the war", "quit"))
             for battle in self.battles:
-                self.events.append((common_functions.date_to_days(battle.date), battle.date, battle.fullname, "battle"))
+                self.events.append((common_functions.date_to_days(battle.date), battle.date, battle.fullname, "battle", battle))
 
             self.events.sort(key=first_element)
 

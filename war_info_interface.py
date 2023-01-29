@@ -27,6 +27,7 @@ land_graphics_list = [infantry_graphic, cavalry_graphic, artillery_graphic]
 sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 
 battle_type = "casualties"
+return_to_battles = True # False takes you back to the timeline
 
 def render_timeline(window, font, small_font, light_font, stats_font, present_date):
 	window.fill(defines.C_INTERFACE)
@@ -77,6 +78,10 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 			to_render.append((info_text, info_text_loc))
 			to_render.append((date_text, date_text_loc))
 
+			if event[3] == "battle":
+				rect = pygame.Rect(info_text_loc.x, info_text_loc.y, info_text_loc.width, info_text_loc.height)
+				clickable_list.append([event[-1], "link", rect])
+
 	for t in range(0, len(render_rects), 2):
 		pygame.draw.rect(window, render_rects[t][0], render_rects[t][1])
 		pygame.draw.rect(window, render_rects[t+1][0], render_rects[t+1][1])
@@ -126,6 +131,7 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 
 	latest_battle_days = 1
 	first_battle_days = None
+	date_color_size = 0
 	if BATTLE is None:
 		for battle in battle_list:
 			current_battle_days = common_functions.date_to_days(battle.date)
@@ -136,9 +142,9 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 			if current_battle_days < first_battle_days:
 				first_battle_days = current_battle_days
 		latest_battle_days -= first_battle_days
+	date_color_size = defines.DATE_COLOR_SIZE
 
 	battle_center_size = defines.BATTLE_CENTER_SIZE
-	date_color_size = defines.DATE_COLOR_SIZE
 	if output_map:
 		battle_center_size *= 2
 		date_color_size *= 1.5
@@ -161,7 +167,7 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 			blue = int((1-(battle_days/latest_battle_days))*255)
 			circle_color = (red, 0, blue, 220)
 
-		if battle_type == "casualties":
+		if battle_type == "casualties" or BATTLE is not None:
 			pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), battle_scale)
 		elif battle_type == "date":
 			pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), date_color_size)
@@ -764,6 +770,7 @@ def export_map(map):
 def info_loop(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path, event, present_date, force_update=False):
 	global clickable_list
 	global battle_type
+	global return_to_battles
 	global LOADED_TAG
 	global SOMETHING_FOCUSED
 	global current_screen
@@ -780,7 +787,12 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 					SOMETHING_FOCUSED = False
 					BATTLE = None
 					if current_screen == "battles":
-						render_map(window, font, small_font, light_font,  stats_font, terrain_map, river_map, border_map, province_mids_path)
+						if not return_to_battles:
+							current_screen = "timeline"
+							return_to_battles = True
+							render_timeline(window, font, small_font, light_font, stats_font, present_date)
+						else:
+							render_map(window, font, small_font, light_font,  stats_font, terrain_map, river_map, border_map, province_mids_path)
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 4: # 4 and 5 are the scroll wheel
 				if current_screen == "timeline":
@@ -811,6 +823,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
 						elif button[0] == "switch_window":
 							CURR_POSITION = 0
+							return_to_battles = True
 							SOMETHING_FOCUSED = False
 							current_screen = button[1]
 							if current_screen == "battles":
@@ -840,6 +853,16 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 											 river_map, border_map, province_mids_path, output_map=True)
 							export_map(map)
 							break
+						elif button[1] == "link":
+							current_screen = "battles"
+							SOMETHING_FOCUSED = True
+							BATTLE = button[0]
+							return_to_battles = False
+							render_map(window, font, small_font, light_font, stats_font, terrain_map,
+									   river_map, border_map, province_mids_path)
+							render_one_battle(window, font, small_font, light_font, stats_font, terrain_map)
+
+
 
 
 
