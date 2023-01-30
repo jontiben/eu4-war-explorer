@@ -12,9 +12,9 @@ This application reads EU4 savefiles (ending in the file extension .eu4) for inf
 - A scrollable timeline showing major events over the course of the war
 - Full mod support
 
-Navigation is done exclusively through clicking, the ESC key, and typing to search on the war list screen.
+Navigation is done exclusively through clicking, scrolling, the ESC key, and typing to search on the war list screen.
 
-Note that the first 11 wars on the battle screen will always be the same on any vanilla EU4 savefile because they took place before the beginning of the game.
+Note that the first 11 wars on the battle screen will always be the same on any vanilla EU4 savefile because they took place before the beginning of the game. The window needs to be at a minimum height of 800 pixels in order to fully display every item on the interface.
 
 
 Planned features are:
