@@ -18,7 +18,10 @@ def get_config_data(line):
 # Paths
 EU4_FOLDER = eu4_path_finder.EU4_FOLDER
 EU4_MODS = eu4_path_finder.EU4_MODS
-PATH_TO_COUNTRIES_FOLDER = eu4_path_finder.PATH_TO_COUNTRIES_FOLDER
+PATH_TO_COUNTRIES_FILE = eu4_path_finder.PATH_TO_COUNTRIES_FILE
+PATH_TO_BACKUP_COUNTRIES_FOLDER = eu4_path_finder.PATH_TO_BACKUP_COUNTRIES_FOLDER # Just in case we run into an issue in
+# the future where a tag/country combo isn't present in 00_countries.txt, this is another place to check for (partial)
+# names (it's the flags folder).
 PATH_TO_FLAGS_FOLDER = eu4_path_finder.PATH_TO_FLAGS_FOLDER
 PATH_TO_BACKUP_FLAG = eu4_path_finder.PATH_TO_BACKUP_FLAG
 EU4_SAVE_DIR = eu4_path_finder.EU4_SAVE_DIR

@@ -507,8 +507,8 @@ def check_mods(mod_list) -> str | None:
         if mod_data_path is None:
             debug_functions.debug_out(f"Failed to find path for mod {mod[1]}", event_type="WARN")
             return
-        if os.path.isdir(mod_data_path+"/history/countries"):
-            tag_names = common_functions.get_all_country_names(countries_folder=mod_data_path+"/history/countries")
+        if os.path.isdir(mod_data_path+"/common/country_tags/"):
+            tag_names = common_functions.get_all_country_names(countries_folder=mod_data_path+"/common/country_tags/")
             for tag in tag_names:
                 alt_names[tag[0]] = tag[1]
         if os.path.isdir(mod_data_path+"/gfx/flags"):

@@ -12,7 +12,7 @@ import pygame
 import debug_functions
 
 flags_dict = {}
-
+tags_dict = {}
 
 def return_ordinal_number(number: str) -> str:
     # Converts a number to its ordinal form
@@ -44,29 +44,71 @@ def is_created_nation(tag: str) -> bool:
 
 
 def get_full_country_name(tag: str) -> str:
+    global tags_dict
     # Takes a three-character tag and returns the full name
     # Case-insensitive
     # KER (Zia) has an incorrect number of spaces in its filename which is why I have to use .split('-')
-    for files in os.walk(defines.PATH_TO_COUNTRIES_FOLDER):
-        for filename in files[-1]:
-            if filename[:3] == tag.upper():
-                name = filename[:-4].split('-')[1]
-                if name[0] == ' ':
-                    return name[1:]
-                return name
+    name = None
+    try:
+        if len(tags_dict) == 0:
+            tags_countries_file = open(defines.PATH_TO_COUNTRIES_FILE, 'r')
+            tc_lines = tags_countries_file.readlines()
+            tags_countries_file.close()
+            for line in tc_lines:
+                if line[0] != '#' and line[0] != '\n':
+                    try:
+                        new_line = line.strip().split(" = ")[-1]
+                        new_line = new_line.replace("\"",'')
+                        new_line = new_line.split('/')[1]
+                        new_line = new_line.split('.')[0]
+                        tags_dict[line[:3]] = new_line
+                    except:
+                        continue
+            name = tags_dict[tag]
+        else:
+            if tag in tags_dict.keys():
+                name = tags_dict[tag]
+        if name is None: # Fallback
+            for files in os.walk(defines.PATH_TO_BACKUP_COUNTRIES_FOLDER):
+                for filename in files[-1]:
+                    if filename[:3] == tag.upper():
+                        name = filename[:-4].split('-')[1]
+                        if name[0] == ' ':
+                            return name[1:]
+                        return name
+        else:
+            return name
+    except:
+        return tag
     return tag
 
 
-def get_all_country_names(countries_folder = defines.PATH_TO_COUNTRIES_FOLDER) -> list:
+def get_all_country_names(countries_folder = defines.PATH_TO_COUNTRIES_FILE[:-16]) -> list:
     all_countries = []
-    for files in os.walk(countries_folder):
-        for filename in files[-1]:
-            if filename[:3] == filename[:3].upper():  # Only filenames starting with three uppercase letters (or numbers)
-                tag = filename[:3]
-                name = filename[:-4].split('-')[1]
-                if name[0] == ' ':
-                    name = name[1:]
-                all_countries.append((tag, name))
+    for file in os.listdir(countries_folder):
+        if os.path.isfile(countries_folder + file):
+            tags_countries_file = open(countries_folder+file, 'r')
+            tc_lines = tags_countries_file.readlines()
+            tags_countries_file.close()
+            for line in tc_lines:
+                if line[0] != '#' and line[0] != '\n':
+                    try:
+                        new_line = line.strip().split(" = ")[-1]
+                        new_line = new_line.replace("\"", '')
+                        new_line = new_line.split('/')[1]
+                        new_line = new_line.split('.')[0]
+                        all_countries.append((line[:3], new_line))
+                    except:
+                        pass
+    if len(all_countries) == 0: # Fallback
+        for files in os.walk(defines.PATH_TO_BACKUP_COUNTRIES_FOLDER):
+            for filename in files[-1]:
+                if filename[:3] == filename[:3].upper():  # Only filenames starting with three uppercase letters (or numbers)
+                    tag = filename[:3]
+                    name = filename[:-4].split('-')[1]
+                    if name[0] == ' ':
+                        name = name[1:]
+                    all_countries.append((tag, name))
     return all_countries
 
 
