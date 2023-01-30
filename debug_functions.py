@@ -6,14 +6,28 @@
 
 from datetime import datetime
 
+save_number = -1
 
 def debug_out(event_text: str, event_type: str = None) -> None:
     # Outputs the time plus the event type and event to a text file.
     time = datetime.now().time()
-    if event_type is not None:
-        fullstring = f"[{time}] {event_type}: {event_text}\n"
+    if save_number > -1:
+        if event_type is not None:
+            fullstring = f"| S{save_number} [{time}] {event_type}: {event_text}\n"
+        else:
+            fullstring = f"| S{save_number} [{time}] *** {event_text}\n"
     else:
-        fullstring = f"[{time}] *** {event_text}\n"
+        if event_type is not None:
+            fullstring = f"[{time}] {event_type}: {event_text}\n"
+        else:
+            fullstring = f"[{time}] *** {event_text}\n"
     out_file = open("debug.txt", 'a')
     out_file.write(fullstring)
+    out_file.close()
+
+def new_save() -> None:
+    global save_number
+    save_number += 1
+    out_file = open("debug.txt", 'a')
+    out_file.write(f"================================ SAVE {save_number} ================================\n")
     out_file.close()

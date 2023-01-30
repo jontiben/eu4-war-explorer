@@ -133,6 +133,18 @@ class Participant:
         self.longname = self.longname[0].upper() + self.longname[1:]
         self.check_dates()
 
+        # In case it doesn't successfully generate a loss list: (I've only ever seen this happen when weird mod
+        # mechanics (((Anbennar))) are involved)
+        self.inf_losses = 0
+        self.cav_losses = 0
+        self.art_losses = 0
+        self.hs_losses = 0
+        self.ls_losses = 0
+        self.gal_losses = 0
+        self.tra_losses = 0
+        self.loss_list = [0, 0, 0, 0, 0, 0, 0]
+        self.attrition_losses = 0
+
     def check_dates(self) -> None:
         # *Occasionally* participants slip through with no self.quit_date, if the war has ended this is probably
         # because they were annexed in a separate peace

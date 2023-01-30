@@ -68,6 +68,7 @@ def debug_mode_out():
 
 def open_file():
     global do_quit
+    debug_functions.new_save()
     # Opens a file using a tkinter dialog
     debug_functions.debug_out("Waiting for the user to select a file...")
     root = tk.Tk()
