@@ -130,6 +130,7 @@ dmypy.json
 
 # Project-specific
 debug.txt
+debug_backup.txt
 .idea/
 mod_data/*
 !mod_data/mod_data.txt
