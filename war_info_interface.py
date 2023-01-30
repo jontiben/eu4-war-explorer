@@ -528,7 +528,7 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 			total_losses = font.render(country_data.longname+" (Attrition) % of Total/Losses:", True, defines.C_WHITE)
 	total_losses_loc = total_losses.get_rect()
 	total_losses_loc.centerx = int(window.get_width()/2)
-	total_losses_loc.top = padding_before_small_flags+defines.PAD_DIST*4
+	total_losses_loc.top = (padding_before_small_flags+defines.PAD_DIST)*(window.get_height()/800)
 	window.blit(total_losses, total_losses_loc)
 
 	# Total Losses
@@ -541,11 +541,13 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 		if tag == "000":
 			a_loss_list = WAR.a_loss_list
 			attacker_losses = WAR.attacker_losses
-			a_attrition_losses = WAR.a_attrition_losses
+			a_land_attrition_losses = WAR.a_land_attrition_losses
+			a_sea_attrition_losses = WAR.a_sea_attrition_losses
 		else:
 			a_loss_list = country_data.loss_list
 			attacker_losses = country_data.losses
-			a_attrition_losses = country_data.attrition_losses
+			a_land_attrition_losses = country_data.land_attrition_losses
+			a_sea_attrition_losses = country_data.sea_attrition_losses
 
 		for a in range(len(a_loss_list)):
 			curr_graphic = all_graphics_list[a]
@@ -565,18 +567,26 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 			a_losses_to_blit += [[curr_graphic, curr_graphic_loc], [loss_text, loss_text_loc]]
 		window.blits(a_losses_to_blit)
 		# Attacker Total
-		a_total_str = common_functions.break_up_large_numbers(str(sum(attacker_losses)))
+		a_total_land_str = common_functions.break_up_large_numbers(str(sum(attacker_losses[:9])))
+		a_total_ship_str = common_functions.break_up_large_numbers(str(sum(attacker_losses[9:])))
 		if tag != "000":
 			try:
-				a_total_str += '/'+str(round(sum(attacker_losses)/sum(WAR.attacker_losses)*100, 2))+"%"
+				a_total_land_str += '/' + str(round(sum(attacker_losses[:9]) / sum(WAR.attacker_losses[:9]) * 100, 2)) + "%"
+				a_total_ship_str += '/' + str(round(sum(attacker_losses[9:]) / sum(WAR.attacker_losses[9:]) * 100, 2)) + "%"
 			except ZeroDivisionError:
 				pass
-		a_total_str += " ("+common_functions.break_up_large_numbers(str(a_attrition_losses))+")"
-		a_total_text = stats_font.render(a_total_str, True, defines.C_WHITE)
-		a_total_text_loc = a_total_text.get_rect()
-		a_total_text_loc.y = curr_graphic_loc.y+defines.MAX_UNIT_GRAPHIC_SIZE+defines.PAD_DIST
-		a_total_text_loc.x = loss_dist_from_edge_of_screen
-		window.blit(a_total_text, a_total_text_loc)
+		a_total_land_str = a_total_land_str+" ("+common_functions.break_up_large_numbers(str(a_land_attrition_losses))+')'
+		a_total_ship_str = a_total_ship_str+" ("+common_functions.break_up_large_numbers(str(a_sea_attrition_losses))+')'
+		a_total_land_text = stats_font.render(a_total_land_str, True, defines.C_WHITE)
+		a_total_land_text_loc = a_total_land_text.get_rect()
+		a_total_land_text_loc.y = curr_graphic_loc.y+defines.MAX_UNIT_GRAPHIC_SIZE+defines.PAD_DIST
+		a_total_land_text_loc.x = loss_dist_from_edge_of_screen
+		window.blit(a_total_land_text, a_total_land_text_loc)
+		a_total_ship_text = stats_font.render(a_total_ship_str, True, defines.C_WHITE)
+		a_total_ship_text_loc = a_total_ship_text.get_rect()
+		a_total_ship_text_loc.y = a_total_land_text_loc.y+defines.MAX_UNIT_GRAPHIC_SIZE
+		a_total_ship_text_loc.x = loss_dist_from_edge_of_screen
+		window.blit(a_total_ship_text, a_total_ship_text_loc)
 
 	# Defenders
 	if tag == "000" or country_data.side == "defend":
@@ -584,11 +594,13 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 		if tag == "000":
 			d_loss_list = WAR.d_loss_list
 			defender_losses = WAR.defender_losses
-			d_attrition_losses = WAR.d_attrition_losses
+			d_land_attrition_losses = WAR.d_land_attrition_losses
+			d_sea_attrition_losses = WAR.d_sea_attrition_losses
 		else:
 			d_loss_list = country_data.loss_list
 			defender_losses = country_data.losses
-			d_attrition_losses = country_data.attrition_losses
+			d_land_attrition_losses = country_data.land_attrition_losses
+			d_sea_attrition_losses = country_data.sea_attrition_losses
 
 		for d in range(len(d_loss_list)):
 			curr_graphic = all_graphics_list[d]
@@ -608,25 +620,33 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 			d_losses_to_blit += [[curr_graphic, curr_graphic_loc], [loss_text, loss_text_loc]]
 		window.blits(d_losses_to_blit)
 		# Defender Total
-		d_total_str = common_functions.break_up_large_numbers(str(sum(defender_losses)))
+		d_total_land_str = common_functions.break_up_large_numbers(str(sum(defender_losses[:9])))
+		d_total_ship_str = common_functions.break_up_large_numbers(str(sum(defender_losses[9:])))
 		if tag != "000":
 			try:
-				d_total_str = str(round(sum(defender_losses)/sum(WAR.defender_losses)*100, 2))+"%/"+d_total_str
+				d_total_land_str = str(round(sum(defender_losses[:9])/sum(WAR.defender_losses[:9])*100, 2))+"%/"+d_total_land_str
+				d_total_ship_str = str(round(sum(defender_losses[9:])/sum(WAR.defender_losses[9:])*100, 2))+"%/"+d_total_ship_str
 			except ZeroDivisionError:
 				pass
-		d_total_str = '('+common_functions.break_up_large_numbers(str(d_attrition_losses))+") "+d_total_str
-		d_total_text = stats_font.render(d_total_str, True, defines.C_WHITE)
-		d_total_text_loc = d_total_text.get_rect()
-		d_total_text_loc.y = curr_graphic_loc.y+defines.MAX_UNIT_GRAPHIC_SIZE+defines.PAD_DIST
-		d_total_text_loc.right = window.get_width()-loss_dist_from_edge_of_screen
-		window.blit(d_total_text, d_total_text_loc)
+		d_total_land_str = '('+common_functions.break_up_large_numbers(str(d_land_attrition_losses))+") "+d_total_land_str
+		d_total_ship_str = '('+common_functions.break_up_large_numbers(str(d_sea_attrition_losses))+") "+d_total_ship_str
+		d_total_land_text = stats_font.render(d_total_land_str, True, defines.C_WHITE)
+		d_total_land_text_loc = d_total_land_text.get_rect()
+		d_total_land_text_loc.y = curr_graphic_loc.y+defines.MAX_UNIT_GRAPHIC_SIZE+defines.PAD_DIST
+		d_total_land_text_loc.right = window.get_width()-loss_dist_from_edge_of_screen
+		window.blit(d_total_land_text, d_total_land_text_loc)
+		d_total_ship_text = stats_font.render(d_total_ship_str, True, defines.C_WHITE)
+		d_total_ship_text_loc = d_total_ship_text.get_rect()
+		d_total_ship_text_loc.y = d_total_land_text_loc.y+defines.MAX_UNIT_GRAPHIC_SIZE
+		d_total_ship_text_loc.right = window.get_width()-loss_dist_from_edge_of_screen
+		window.blit(d_total_ship_text, d_total_ship_text_loc)
 
 	# The absolute total casualty count
 	if tag == "000":
 		abs_total_str = "Overall losses of "+common_functions.break_up_large_numbers(str(sum(attacker_losses[:9])+sum(defender_losses[:9])))+" men, "+common_functions.break_up_large_numbers(str(sum(attacker_losses[9:])+sum(defender_losses[9:])))+" ships"
 		abs_total_text = stats_font.render(abs_total_str, True, defines.C_WHITE)
 		abs_total_text_loc = abs_total_text.get_rect()
-		abs_total_text_loc.midtop = (int(window.get_width()/2), d_total_text_loc.bottom+defines.PAD_DIST*4)
+		abs_total_text_loc.midtop = (int(window.get_width()/2), int(d_total_ship_text_loc.bottom+defines.PAD_DIST*2*(window.get_height()/800)))
 		window.blit(abs_total_text, abs_total_text_loc)
 
 def render_war(window, font, small_font, light_font, stats_font, tag="000"):

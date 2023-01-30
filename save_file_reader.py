@@ -143,7 +143,8 @@ class Participant:
         self.gal_losses = 0
         self.tra_losses = 0
         self.loss_list = [0, 0, 0, 0, 0, 0, 0]
-        self.attrition_losses = 0
+        self.land_attrition_losses = 0
+        self.sea_attrition_losses = 0
 
     def check_dates(self) -> None:
         # *Occasionally* participants slip through with no self.quit_date, if the war has ended this is probably
@@ -194,7 +195,8 @@ class Participant:
         self.tra_losses = sum(loss[defines.TRA_START:defines.TRA_END])
         self.loss_list = [self.inf_losses, self.cav_losses, self.art_losses, self.hs_losses, self.ls_losses,
                           self.gal_losses, self.tra_losses]
-        self.attrition_losses = sum(loss[defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
+        self.land_attrition_losses = sum(loss[:9][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
+        self.sea_attrition_losses = sum(loss[9:][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
     def get_colonial_info(self):
         output = ["", [150, 150, 150]]
@@ -454,7 +456,8 @@ class War:
         self.a_tra_losses = sum(loss[defines.TRA_START:defines.TRA_END])
         self.a_loss_list = [self.a_inf_losses, self.a_cav_losses, self.a_art_losses, self.a_hs_losses, self.a_ls_losses,
                             self.a_gal_losses, self.a_tra_losses]
-        self.a_attrition_losses = sum(loss[defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
+        self.a_land_attrition_losses = sum(loss[:9][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
+        self.a_sea_attrition_losses = sum(loss[9:][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
         loss = self.defender_losses
         self.d_inf_losses = sum(loss[defines.INF_START:defines.INF_END])
@@ -466,7 +469,8 @@ class War:
         self.d_tra_losses = sum(loss[defines.TRA_START:defines.TRA_END])
         self.d_loss_list = [self.d_inf_losses, self.d_cav_losses, self.d_art_losses, self.d_hs_losses, self.d_ls_losses,
                             self.d_gal_losses, self.d_tra_losses]
-        self.d_attrition_losses = sum(loss[defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
+        self.d_land_attrition_losses = sum(loss[:9][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
+        self.d_sea_attrition_losses = sum(loss[9:][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
 
 def parse_combatant_block(start_point: int, end_point: int) -> list:
@@ -508,7 +512,7 @@ def check_mods(mod_list) -> str | None:
     modded_map_path = None
     for mod in mod_list:
         mod_path = mod[0].split('/')[1]
-        debug_functions.debug_out(f"Found mod {mod[1]}")
+        debug_functions.debug_out(f"Found mod [{mod[1]}]")
         current_mod_file = open(f"{defines.EU4_MODS}/{mod_path}", 'r')
         current_mod_lines = current_mod_file.readlines()
         current_mod_file.close()
