@@ -664,7 +664,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	flag_width = defines.FLAG_WIDTH
 
 	# Primary Belligerants' Flags
-	prim_att_flag = common_functions.load_flag(prim_att, WAR)
+	prim_att_flag = pygame.transform.scale(common_functions.load_flag(prim_att, WAR), (flag_width, flag_height))
 	prim_att_flag_loc = prim_att_flag.get_rect()
 	prim_att_flag_loc.topleft = (defines.PAD_DIST, defines.PAD_DIST)
 	window.blit(prim_att_flag, prim_att_flag_loc)
@@ -672,7 +672,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	if WAR.outcome == "2":
 		pygame.draw.rect(window, defines.C_GOLD, prim_att_flag_loc, defines.NAV_BUTTON_BORDER_WIDTH)
 
-	prim_def_flag = common_functions.load_flag(prim_def, WAR)
+	prim_def_flag = pygame.transform.scale(common_functions.load_flag(prim_def, WAR), (flag_width, flag_height))
 	prim_def_flag_loc = prim_def_flag.get_rect()
 	prim_def_flag_loc.topleft = (window.get_width()-flag_width-defines.PAD_DIST, defines.PAD_DIST)
 	window.blit(prim_def_flag, prim_def_flag_loc)

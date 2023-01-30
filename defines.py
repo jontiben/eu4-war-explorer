@@ -105,3 +105,31 @@ SCROLL_SIZE = 1
 TIMELINE_SCROLL_SIZE = 64 # Pixels here
 
 MAP_OUTPUT_FORMAT = get_config_data(lines[3])
+
+# v Alternate names for countries that, internally to EU4, have unusual ones. Only used with vanilla tags.
+ALT_NAMES = {
+    "burgi": "Mamluks",
+    "papal": "Papal States",
+    "akkoyunlu": "Aq Qoyunlu",
+    "hedjaz": "Hejaz",
+    "qarakoyunlu": "Qara Qoyunlu",
+    "kashen": "Karabakh",
+    "greathorde": "Great Horde",
+    "vijayanagara": "Vijayanagar",
+    "lanna": "Lan Na",
+    "muanphuang": "Muan Phuang",
+    "mongyang": "Mong Yang",
+    "daiviet": "Dai Viet",
+    "lanxang": "Lan Xang",
+    "byzantineempire": "Byzantium",
+    "swahili": "Kilwa",
+    "sofalaswa": "Sofala",
+    "muscowy": "Muscovy",
+    "chagataikhanate": "Chagatai",
+    "oirathorde": "Oirat",
+    "mongolkhanate": "Mongolia",
+    "northhaixi": "Haixi",
+    "teutonicorder": "Teutonic Order",
+    "livonianorder": "Livonian Order",
+    "maccarthy": "Munster",
+}

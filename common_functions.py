@@ -77,8 +77,12 @@ def get_full_country_name(tag: str) -> str:
                         name = filename[:-4].split('-')[1]
                         if name[0] == ' ':
                             return name[1:]
+                        if name.lower() in defines.ALT_NAMES.keys():
+                            return defines.ALT_NAMES[name.lower()]
                         return name
         else:
+            if name.lower() in defines.ALT_NAMES.keys():
+                return defines.ALT_NAMES[name.lower()]
             return name
     except:
         debug_functions.debug_out(f"Unable to find full country name for tag {tag}.", event_type="WARN")
