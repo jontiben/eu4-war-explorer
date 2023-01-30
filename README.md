@@ -1,7 +1,7 @@
 ## EU4 War Explorer
 created by jontiben
 
-![eu4-war-explorer-demo](https://user-images.githubusercontent.com/25780026/211480392-eda28992-3b5e-4c65-aaa5-a14dadff79d1.png)
+![image](https://user-images.githubusercontent.com/25780026/215621594-606c4e4a-c926-47df-a8a7-aca29d81b3ed.png)<b>War info screen</b>
 
 
 This application reads EU4 savefiles (ending in the file extension .eu4) for information about past wars and then presents it in an easily readable format. It features:
@@ -25,3 +25,14 @@ Planned features are:
 This project was written entirely in Python using Pygame and tkinter for the UI and PIL for modded map processing.
 
 To contact me, please send me a friend request on discord where I am jontiben#7855.
+
+## Screenshots
+![image](https://user-images.githubusercontent.com/25780026/215621041-c2097bb4-0bdf-4eb7-ac81-f70aa1284135.png)<b>War list sorted by casualties</b>
+![image](https://user-images.githubusercontent.com/25780026/215620791-85f10890-ad74-4354-9f70-6f6646e9f57b.png)<b>War info screen with the Anbennar mod</b>
+![image](https://user-images.githubusercontent.com/25780026/215621101-2b442076-eaf3-4306-957d-48fa14b590a2.png)<b>Battle map and list</b>
+![image](https://user-images.githubusercontent.com/25780026/215621150-74549821-f098-4108-889c-c16845595da7.png)<b>Single battle</b>
+![image](https://user-images.githubusercontent.com/25780026/215621186-83de2638-cfb0-4df5-886e-53f344fa47fb.png)<b>Timeline</b>
+
+
+
+
