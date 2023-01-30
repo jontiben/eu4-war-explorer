@@ -1,7 +1,7 @@
 ## EU4 War Explorer
 created by jontiben
 
-![eu4-war-explorer-demo](https://user-images.githubusercontent.com/25780026/211480392-eda28992-3b5e-4c65-aaa5-a14dadff79d1.png)
+![image](https://user-images.githubusercontent.com/25780026/215621594-606c4e4a-c926-47df-a8a7-aca29d81b3ed.png)<b>War info screen</b>
 
 
 This application reads EU4 savefiles (ending in the file extension .eu4) for information about past wars and then presents it in an easily readable format. It features:
