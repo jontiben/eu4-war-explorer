@@ -69,6 +69,8 @@ def get_full_country_name(tag: str) -> str:
             if tag in tags_dict.keys():
                 name = tags_dict[tag]
         if name is None: # Fallback
+            debug_functions.debug_out(
+                f"Unable to find full country name for tag {tag} in [{defines.PATH_TO_COUNTRIES_FILE}]. Using fallback source.", event_type="WARN")
             for files in os.walk(defines.PATH_TO_BACKUP_COUNTRIES_FOLDER):
                 for filename in files[-1]:
                     if filename[:3] == tag.upper():
@@ -79,6 +81,7 @@ def get_full_country_name(tag: str) -> str:
         else:
             return name
     except:
+        debug_functions.debug_out(f"Unable to find full country name for tag {tag}.", event_type="WARN")
         return tag
     return tag
 
@@ -101,6 +104,7 @@ def get_all_country_names(countries_folder = defines.PATH_TO_COUNTRIES_FILE[:-16
                     except:
                         pass
     if len(all_countries) == 0: # Fallback
+        debug_functions.debug_out(f"Unable to compile countries names dict from [{countries_folder}]. Using fallback source.", event_type="WARN")
         for files in os.walk(defines.PATH_TO_BACKUP_COUNTRIES_FOLDER):
             for filename in files[-1]:
                 if filename[:3] == filename[:3].upper():  # Only filenames starting with three uppercase letters (or numbers)

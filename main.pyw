@@ -84,7 +84,7 @@ def open_file():
     except:
         debug_functions.debug_out(
             f"Exception [{traceback.format_exc()}] while prompting the user to select a file, user likely closed the "
-            f"file dialog without making a selection.")
+            f"file dialog without making a selection.", event_type="ERROR")
         do_quit = True
         return None
     root.destroy()
@@ -148,7 +148,7 @@ def init():
                 if os.path.isfile(map_mod_location+"/provinces.bmp") and os.path.isfile(map_mod_location+"/definition.csv"):
                     path_to_test_for = os.getcwd()+f"/mod_data/{map_mod_location.split('/')[-2]}midpointlist.csv"
                     if os.path.isfile(path_to_test_for):
-                        debug_functions.debug_out("Found previously generated province midpoint list for mod")
+                        debug_functions.debug_out(f"Found previously generated province midpoint list for mod at {path_to_test_for}")
                         MIDPOINTS_PATH = path_to_test_for
                     else:
                         debug_functions.debug_out(f"Modded map found, generating new province midpoints list...")
@@ -163,7 +163,7 @@ def init():
             pygame.display.set_caption(caption_root + " - " + curr_filename.split('/')[-1])
 
     except:
-        debug_functions.debug_out(f"Exception [{traceback.format_exc()}] while initializing save")
+        debug_functions.debug_out(f"Exception [{traceback.format_exc()}] while initializing save", event_type="ERROR")
 
 
 def render_scene(event):
@@ -179,7 +179,7 @@ def render_scene(event):
                     return
                 else:
                     mode = "info"
-                    #debug_mode_out()
+                    debug_functions.debug_out(f"Viewing war [{list_out[0].title}]")
                     list_position = list_out[1]
                     war_info_interface.init(window, FONT, SMALL_FONT, LIGHT_FONT, STATS_FONT, MAP_TERRAIN,
                                             MAP_RIVERS, MAP_BORDERS, list_out[0])
@@ -189,11 +189,10 @@ def render_scene(event):
                                                             present_date, force_update=(not has_updated_for_resize))
             if poss_prev_window is not None:
                 mode = "list"
-                #debug_mode_out()
                 war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=True, force_reset_list=False, position=list_position)
         has_updated_for_resize = True
     except:
-        debug_functions.debug_out(f"Exception [{traceback.format_exc()}] on rendering scene [{mode}]")
+        debug_functions.debug_out(f"Exception [{traceback.format_exc()}] on rendering scene [{mode}]", event_type="ERROR")
 
 
 def main():
@@ -216,7 +215,7 @@ def main():
         debug_functions.debug_out("Exited normally")
 
     except:
-        debug_functions.debug_out(f"Program crashed, exiting with exception [{traceback.format_exc()}]")
+        debug_functions.debug_out(f"Program crashed, exiting with exception [{traceback.format_exc()}]", event_type="ERROR")
 
 
 if __name__ == "__main__":

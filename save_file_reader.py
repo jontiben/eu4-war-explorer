@@ -311,8 +311,8 @@ class War:
                 except LookupError:
                     self.viable = False
                     debug_functions.debug_out(
-                        f"Primary participant {get_line_data(check_misc_num)} not in [{self.title}] participants list (bad participant on line {str(check_misc_num)}). Skipping war.",
-                        event_type="WARN")
+                        f"Primary participant {get_line_data(check_misc_num)} not in [{self.title}] participants list "
+                        f"(bad participant on line {str(check_misc_num)}). Skipping war.", event_type="WARN")
             if "outcome" in file_lines[check_misc_num]:
                 self.outcome = get_line_data(check_misc_num)
 
@@ -650,7 +650,7 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
     try:
         savefile = codecs.open(filename, encoding="latin_1").read()
     except Exception as exception:
-        debug_functions.debug_out(f"Savefile opening failed with exception [{exception}]")
+        debug_functions.debug_out(f"Savefile opening failed with exception [{exception}]", event_type="ERROR")
         return None
     file_lines = savefile.split("\n")
     meta_savefile, meta_file_lines = None, None
@@ -668,6 +668,7 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
             os.remove("ai")
             try:
                 os.remove("rnw.zip")  # Handling random new worlds
+                debug_functions.debug_out("Random new world found.", event_type="INFO")
             except:
                 pass
         debug_functions.debug_out("Savefile successfully decompressed.")

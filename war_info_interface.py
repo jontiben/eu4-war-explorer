@@ -162,10 +162,13 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		else: # Sea
 			battle_scale = int(math.sqrt((battle.attacking_losses+battle.defending_losses)*defines.BATTLE_CIRCLE_SCALING_FACTOR*defines.SEA_BATTLE_SCALING_FACTOR))
 		if battle_type == "date" and BATTLE is None:
-			battle_days = common_functions.date_to_days(battle.date) - first_battle_days
-			red = int((battle_days/latest_battle_days)*255)
-			blue = int((1-(battle_days/latest_battle_days))*255)
-			circle_color = (red, 0, blue, 220)
+			if len(battle_list) < 2:
+				circle_color = (255, 0, 0, 220)
+			else:
+				battle_days = common_functions.date_to_days(battle.date) - first_battle_days
+				red = int((battle_days/latest_battle_days)*255)
+				blue = int((1-(battle_days/latest_battle_days))*255)
+				circle_color = (red, 0, blue, 220)
 
 		if battle_type == "casualties" or BATTLE is not None:
 			pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), battle_scale)

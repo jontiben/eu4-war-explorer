@@ -15,12 +15,12 @@ def debug_out(event_text: str, event_type: str = None) -> None:
         if event_type is not None:
             fullstring = f"| S{save_number} [{time}] {event_type}: {event_text}\n"
         else:
-            fullstring = f"| S{save_number} [{time}] *** {event_text}\n"
+            fullstring = f"| S{save_number} [{time}] ***** {event_text}\n"
     else:
         if event_type is not None:
             fullstring = f"[{time}] {event_type}: {event_text}\n"
         else:
-            fullstring = f"[{time}] *** {event_text}\n"
+            fullstring = f"[{time}] ***** {event_text}\n"
     out_file = open("debug.txt", 'a')
     out_file.write(fullstring)
     out_file.close()
