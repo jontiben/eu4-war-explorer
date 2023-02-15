@@ -268,9 +268,11 @@ def list_loop(window, font, small_font, war_list, event, force_update=False, for
                 for participant in war.participants:
                     if search_text in war.participants[participant].longname.upper():
                         new_war_list.append(war)
+                        break
                     else:
                         if search_text == war.participants[participant].name.upper():
                             new_war_list.append(war)
+                            break
 
 
     if sorting == "cas":
