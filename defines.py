@@ -24,6 +24,7 @@ PATH_TO_BACKUP_COUNTRIES_FOLDER = eu4_path_finder.PATH_TO_BACKUP_COUNTRIES_FOLDE
 # names (it's the flags folder).
 PATH_TO_FLAGS_FOLDER = eu4_path_finder.PATH_TO_FLAGS_FOLDER
 PATH_TO_BACKUP_FLAG = eu4_path_finder.PATH_TO_BACKUP_FLAG
+PATH_TO_CONDOTTIERI_FLAG = eu4_path_finder.PATH_TO_CONDOTTIERI_FLAG
 EU4_SAVE_DIR = eu4_path_finder.EU4_SAVE_DIR
 
 MAP_TERRAIN_PATH = os.path.join(os.curdir, "graphics/mapterrain.png")

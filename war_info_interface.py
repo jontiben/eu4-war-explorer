@@ -29,6 +29,11 @@ sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 battle_type = "casualties"
 return_to_battles = True # False takes you back to the timeline
 
+class Dummy: # Used to handle condottieri participants in a battle
+	def __init__(self, name):
+		self.name = name
+		self.longname = common_functions.get_full_country_name(name)+" (Condottieri)"
+
 def render_timeline(window, font, small_font, light_font, stats_font, present_date):
 	window.fill(defines.C_INTERFACE)
 
@@ -226,21 +231,35 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 	date_text_loc.centery = battle_title_loc.centery
 	window.blit(date_text, date_text_loc)
 
-	attacker_obj = WAR.participants[BATTLE.attacker]
-	defender_obj = WAR.participants[BATTLE.defender]
-	battle_flag_height = int(defines.FLAG_HEIGHT/2)
-	battle_flag_width = int(defines.FLAG_WIDTH/2)
+	att_flag, def_flag = None, None
+	battle_flag_height = int(defines.FLAG_HEIGHT / 2)
+	battle_flag_width = int(defines.FLAG_WIDTH / 2)
+
+	try:
+		attacker_obj = WAR.participants[BATTLE.attacker]
+	except KeyError: # Primary battle attacker is condottieri
+		attacker_obj = Dummy(BATTLE.attacker)
+		att_flag = pygame.transform.scale(pygame.image.load(defines.PATH_TO_CONDOTTIERI_FLAG),
+										  (battle_flag_width, battle_flag_height))
+	try:
+		defender_obj = WAR.participants[BATTLE.defender]
+	except KeyError: # Primary battle defender is condottieri
+		defender_obj = Dummy(BATTLE.defender)
+		def_flag = pygame.transform.scale(pygame.image.load(defines.PATH_TO_CONDOTTIERI_FLAG),
+										  (battle_flag_width, battle_flag_height))
 
 	start_of_battle_info = map_bottom+defines.NAV_BUTTON_HEIGHT
 
 	# Battle attacker's flag
-	att_flag = pygame.transform.scale(common_functions.load_flag(attacker_obj.name, WAR), (battle_flag_width, battle_flag_height))
+	if att_flag is None:
+		att_flag = pygame.transform.scale(common_functions.load_flag(attacker_obj.name, WAR), (battle_flag_width, battle_flag_height))
 	att_flag_loc = att_flag.get_rect()
 	att_flag_loc.topleft = (defines.PAD_DIST, defines.PAD_DIST+start_of_battle_info)
 	window.blit(att_flag, att_flag_loc)
 
 	# Battle defender's flag
-	def_flag = pygame.transform.scale(common_functions.load_flag(defender_obj.name, WAR), (battle_flag_width, battle_flag_height))
+	if def_flag is None:
+		def_flag = pygame.transform.scale(common_functions.load_flag(defender_obj.name, WAR), (battle_flag_width, battle_flag_height))
 	def_flag_loc = def_flag.get_rect()
 	def_flag_loc.topright = (window.get_width()-defines.PAD_DIST, defines.PAD_DIST+start_of_battle_info)
 	window.blit(def_flag, def_flag_loc)
