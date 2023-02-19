@@ -50,10 +50,10 @@ PATH_TO_BACKUP_COUNTRIES_FOLDER = EU4_FOLDER + "/history/countries"
 PATH_TO_FLAGS_FOLDER = EU4_FOLDER + "/gfx/flags"
 PATH_TO_BACKUP_FLAG = PATH_TO_FLAGS_FOLDER + "/colonial_patriot_rebels.tga"
 PATH_TO_CONDOTTIERI_FLAG = PATH_TO_FLAGS_FOLDER + "/ronin_rebels.tga"
-if not os.path.isfile(PATH_TO_BACKUP_FLAG):
+if not os.path.isfile(PATH_TO_BACKUP_FLAG): # Just in case
     PATH_TO_BACKUP_FLAG = PATH_TO_FLAGS_FOLDER + "heretic_rebels.tga"
 if not os.path.isfile(PATH_TO_CONDOTTIERI_FLAG):
-    PATH_TO_CONDOTTIERI_FLAG = PATH_TO_BACKUP_FLAG
+        PATH_TO_CONDOTTIERI_FLAG = PATH_TO_BACKUP_FLAG
 
 if operating_system == "Linux":
     EU4_SAVE_DIR = os.path.expanduser('~') + "/Documents/Paradox Interactive/Europa Universalis IV/save games"
@@ -61,7 +61,12 @@ if operating_system == "Linux":
 else:  # I haven't tested this but it *should* work for OSX as well
     EU4_SAVE_DIR = os.path.expanduser('~') + "/Documents/Paradox Interactive/Europa Universalis IV/save games"
     EU4_MODS = os.path.expanduser('~') + "/Documents/Paradox Interactive/Europa Universalis IV/mod"
-if not os.path.isdir(EU4_SAVE_DIR):
+    if not os.path.isdir(EU4_SAVE_DIR) and operating_system == "Windows": # Some people's installs are cursed this way
+        EU4_SAVE_DIR = os.path.expanduser('~') + "/OneDrive/Documents/Paradox Interactive/Europa Universalis IV/save games"
+    if not os.path.isdir(EU4_MODS) and operating_system == "Windows": # ^^
+        EU4_MODS = os.path.expanduser('~') + "/OneDrive/Documents/Paradox Interactive/Europa Universalis IV/mod"
+
+if not os.path.isdir(EU4_SAVE_DIR): # Final fallback
     EU4_SAVE_DIR = os.path.expanduser('~')
 if not os.path.isdir(EU4_MODS):
     EU4_MODS = find_eu4_mods()
