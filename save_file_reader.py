@@ -675,7 +675,16 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
                 debug_functions.debug_out("Random new world found.", event_type="INFO")
             except:
                 pass
-        debug_functions.debug_out("Savefile successfully decompressed.")
+        if file_lines[0].strip() != "EU4txt":
+            debug_functions.debug_out("Savefile decompression failed, likely ironman save.", event_type="ERROR")
+            debug_functions.debug_out("(You'll have to un-ironman your save first, try the internet for help)")
+            return None
+        else:
+            debug_functions.debug_out("Savefile successfully decompressed.")
+    if file_lines[0].strip() != "EU4txt":
+        debug_functions.debug_out("Can't read the savefile, likely because it's ironman.", event_type="ERROR")
+        debug_functions.debug_out("(You'll have to un-ironman your save first, try the internet for help)")
+        return None
 
     present_date = get_present_date()
     for l in range(len(file_lines)): # Necessary for compabtibility with older saves
