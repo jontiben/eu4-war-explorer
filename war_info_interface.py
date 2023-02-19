@@ -141,7 +141,8 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 				latest_battle_days = current_battle_days
 			if current_battle_days < first_battle_days:
 				first_battle_days = current_battle_days
-		latest_battle_days -= first_battle_days
+		if first_battle_days is not None:
+			latest_battle_days -= first_battle_days
 	date_color_size = defines.DATE_COLOR_SIZE
 
 	battle_center_size = defines.BATTLE_CENTER_SIZE
