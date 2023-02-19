@@ -660,31 +660,32 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
     meta_savefile, meta_file_lines = None, None
     if file_lines[0].strip() != "EU4txt":  # Compressed save
         short_name = filename.split('/')[-1]
-        debug_functions.debug_out(f"Savefile [{short_name}] is compressed. Decompressing...")
-        with zipfile.ZipFile(filename, 'r') as zip:
-            zip.extractall()
-            savefile = codecs.open("gamestate", encoding="latin_1").read()
-            file_lines = savefile.split("\n")
-            meta_savefile = codecs.open("meta", encoding="latin_1").read()
-            meta_file_lines = meta_savefile.split("\n")
-            os.remove("gamestate")
-            os.remove("meta")
-            os.remove("ai")
-            try:
-                os.remove("rnw.zip")  # Handling random new worlds
-                debug_functions.debug_out("Random new world found.", event_type="INFO")
-            except:
-                pass
-        if file_lines[0].strip() != "EU4txt":
-            debug_functions.debug_out("Savefile decompression failed, likely ironman save.", event_type="ERROR")
-            debug_functions.debug_out("(You'll have to un-ironman your save first, try the internet for help)")
+        debug_functions.debug_out(f"Savefile [{short_name}] appears compressed. Decompressing...")
+        try:
+            with zipfile.ZipFile(filename, 'r') as zip:
+                zip.extractall()
+                savefile = codecs.open("gamestate", encoding="latin_1").read()
+                file_lines = savefile.split("\n")
+                meta_savefile = codecs.open("meta", encoding="latin_1").read()
+                meta_file_lines = meta_savefile.split("\n")
+                os.remove("gamestate")
+                os.remove("meta")
+                os.remove("ai")
+                try:
+                    os.remove("rnw.zip")  # Handling random new worlds
+                    debug_functions.debug_out("Random new world found.", event_type="INFO")
+                except:
+                    pass
+            if file_lines[0].strip() != "EU4txt":
+                debug_functions.debug_out("Savefile decompression failed, likely ironman save.", event_type="ERROR")
+                debug_functions.debug_out("(You'll have to un-ironman your save first, try the internet for help)", event_type="HINT")
+                return None
+            else:
+                debug_functions.debug_out("Savefile successfully decompressed.")
+        except Exception as exception:
+            debug_functions.debug_out(f"Failed to understand file, likely because it's not a real EU4 savefile, "
+                                      f"with exception [{exception}]", event_type="ERROR")
             return None
-        else:
-            debug_functions.debug_out("Savefile successfully decompressed.")
-    if file_lines[0].strip() != "EU4txt":
-        debug_functions.debug_out("Can't read the savefile, likely because it's ironman.", event_type="ERROR")
-        debug_functions.debug_out("(You'll have to un-ironman your save first, try the internet for help)")
-        return None
 
     present_date = get_present_date()
     for l in range(len(file_lines)): # Necessary for compabtibility with older saves
