@@ -9,7 +9,7 @@ This application reads EU4 savefiles (ending in the file extension .eu4) for inf
 - Breakdowns of the overall casualties in a war by side which can be further broken down by individual nation
 - A list of battles fought in the war plotted on a map
 - A breakdown of forces and losses for each battle
-- A scrollable timeline showing major events over the course of the war
+- A scrollable timeline showing major events over the course of the war with clickable links to battles
 - Full mod support
 
 Navigation is done exclusively through clicking, scrolling, the ESC key, and typing to search on the war list screen.
