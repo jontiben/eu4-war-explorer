@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='eu4-war-explorer',
-    version='1.1a',
+    version='1.1.0a',
     packages=find_packages(include=['eu4-war-explorer']),
     install_requires=['pygame', 'PIL'],
     url='',
