@@ -79,13 +79,20 @@ def open_file():
     root = tk.Tk()
     root.withdraw()
     try:
-        file_name = filedialog.askopenfilename(initialdir=defines.EU4_SAVE_DIR, title='Select an EU4 Savefile',
+        # Sometimes this breaks on my computer. I suspect it's an issue with my OS install or the TK library or
+        # something equally cursed. It doesn't give an exception or traceback, just crashes with:
+        # "Process finished with exit code -1073740771 (0xC000041D)." I'm not sure whether those of us who walk the
+        # mortal plane as men have the spiritual pull to deal with something this deeply haunted, so I'm not going
+        # to touch it for now. I haven't introduced this issue with this update because it crops up in old versions of
+        # the program as well, versions where I know for a fact it used to consistently work. Miserere mei, Deus.
+        file_name = filedialog.askopenfilename(parent=root, initialdir=defines.EU4_SAVE_DIR, title="Select an EU4 Savefile",
                                                filetypes=[('eu4 save files', '*.eu4')])
     except:
         debug_functions.debug_out(
             f"Exception [{traceback.format_exc()}] while prompting the user to select a file, user likely closed the "
             f"file dialog without making a selection.", event_type="ERROR")
         do_quit = True
+        root.destroy()
         return None
     root.destroy()
     return file_name
