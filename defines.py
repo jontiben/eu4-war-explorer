@@ -133,4 +133,6 @@ ALT_NAMES = {
     "teutonicorder": "Teutonic Order",
     "livonianorder": "Livonian Order",
     "maccarthy": "Munster",
+    "timurid": "Timurids",
+    "qom": "Ajam",
 }
