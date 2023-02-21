@@ -50,7 +50,9 @@ C_BLACK = (0, 0, 0)
 C_GOLD = (255, 205, 36)
 C_RED = (255, 48, 48)
 # C_INTERFACE = (40,10,10)
-C_INTERFACE = (10, 25, 64)
+interface_color = get_config_data(lines[5])
+interface_color_tuple = interface_color.replace(' ','').replace('(','').replace(')','').split(",") # Convoluted because I want the parens to be optional
+C_INTERFACE = (int(interface_color_tuple[0]), int(interface_color_tuple[1]), int(interface_color_tuple[2])) # (10, 25, 64) by default
 # C_INTERFACE = (36,52,72)
 
 # Casualty vector info
