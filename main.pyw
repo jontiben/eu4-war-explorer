@@ -17,7 +17,7 @@ import defines
 import debug_functions
 
 ### VERSION
-VERSION = "1.1.0a"
+VERSION = "1.1.1a"
 
 do_quit = False
 mode = "list"
