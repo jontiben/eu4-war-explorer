@@ -164,7 +164,6 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		battle_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
 		if battle.surface == "land":
 			battle_scale = int(math.sqrt((battle.attacking_losses+battle.defending_losses)*defines.BATTLE_CIRCLE_SCALING_FACTOR))
-			
 		else: # Sea
 			battle_scale = int(math.sqrt((battle.attacking_losses+battle.defending_losses)*defines.BATTLE_CIRCLE_SCALING_FACTOR*defines.SEA_BATTLE_SCALING_FACTOR))
 		if battle_type == "date" and BATTLE is None:
@@ -183,15 +182,26 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		window.blit(battle_surface,(0, 0)) # Done individually to make the circles layer properly
 		#battle_center_list.append([mod_x, mod_y, battle.surface])
 
+	if BATTLE != None:
+		unselected_battles_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
+		unselected_battles_surface.set_alpha(defines.UNSELECTED_BATTLE_ALPHA)
 	for battle in WAR.battles:
 		curr_x = province_dict[battle.location][0]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
 		curr_y = province_dict[battle.location][1]#random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
 		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
 		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
 		if battle.surface == "land":
-			pygame.draw.circle(window, defines.C_BLACK, (mod_x, mod_y), battle_center_size)
+			if BATTLE == None or BATTLE == battle:
+				pygame.draw.circle(window, defines.C_BLACK, (mod_x, mod_y), battle_center_size)
+			else:
+				pygame.draw.circle(unselected_battles_surface, defines.C_BLACK, (mod_x, mod_y), battle_center_size)
 		else:
-			pygame.draw.circle(window, defines.C_WHITE, (mod_x, mod_y), battle_center_size)
+			if BATTLE == None or BATTLE == battle:
+				pygame.draw.circle(window, defines.C_WHITE, (mod_x, mod_y), battle_center_size)
+			else:
+				pygame.draw.circle(unselected_battles_surface, defines.C_WHITE, (mod_x, mod_y), battle_center_size)
+	if BATTLE != None:
+		window.blit(unselected_battles_surface,(0, 0))
 	if output_map:
 		return window
 	if not SOMETHING_FOCUSED:

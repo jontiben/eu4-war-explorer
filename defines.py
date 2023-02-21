@@ -42,7 +42,6 @@ HS_GRAPHIC = os.path.join(os.curdir, "graphics/big_ship_icon.png")
 
 # Colors
 C_WHITE = (255, 255, 255)
-C_TRANS_WHITE = (255, 255, 0, 56)
 C_ORANGE = (255, 128, 0, 200)
 C_TRANS_ORANGE = (255, 128, 0, int(get_config_data(lines[3]))) # transparency is 60 by default
 C_LGRAY = (160, 160, 160)
@@ -103,6 +102,7 @@ BATTLE_CENTER_SIZE = 2 # Pixels radius
 DATE_COLOR_SIZE = 7 # Pixels radius
 BATTLE_CIRCLE_SCALING_FACTOR = float(get_config_data(lines[4])) # 0.075 by default
 SEA_BATTLE_SCALING_FACTOR = 300  # Applied on top of the above number
+UNSELECTED_BATTLE_ALPHA = 128
 
 SCROLL_SIZE = 1
 TIMELINE_SCROLL_SIZE = 64 # Pixels here
