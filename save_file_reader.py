@@ -542,13 +542,7 @@ def first_element(input_list: list):
 def is_date(line_no: int) -> bool:
     # Determines if the data in a given line is a properly-formatted date
     line = clean_date(line_no)
-    if re.fullmatch(r"\d{4}.\d\d?.\d\d?", line) != None: # Most common case
-        return True
-    if re.fullmatch(r"\d{3}.\d\d?.\d\d?", line) != None: # Warcraft mod at least
-        return True
-    if re.fullmatch(r"\d{1}.\d\d?.\d\d?", line) != None:
-        return True
-    if re.fullmatch(r"\d{2}.\d\d?.\d\d?", line) != None:
+    if re.fullmatch(r"\d{1,4}.\d\d?.\d\d?", line) != None:
         return True
     return False
 
