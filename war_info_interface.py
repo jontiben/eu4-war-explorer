@@ -9,10 +9,7 @@ import math
 import defines
 import common_functions
 import debug_functions
-#import random
-
-#MAX_BATTLE_OFFSET = 8 # Max amount (in pixels on the original-scale map) to randomly offset the centerpoint of each
-# battle to one side in order to avoid overlaps.
+import random
 
 infantry_graphic = pygame.image.load(defines.INFANTRY_GRAPHIC)
 cavalry_graphic = pygame.image.load(defines.CAVALRY_GRAPHIC)
@@ -158,8 +155,8 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 	for battle in battle_list:
 		# Translucent circles scaled based on battle loss count
 
-		curr_x = province_dict[battle.location][0]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
-		curr_y = province_dict[battle.location][1]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
+		curr_x = province_dict[battle.location][0]
+		curr_y = province_dict[battle.location][1]
 		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
 		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
 		battle_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
@@ -186,10 +183,13 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		unselected_battles_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
 		unselected_battles_surface.set_alpha(defines.UNSELECTED_BATTLE_ALPHA)
 	for battle in WAR.battles:
-		curr_x = province_dict[battle.location][0]#+random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
-		curr_y = province_dict[battle.location][1]#random.randint(-MAX_BATTLE_OFFSET,MAX_BATTLE_OFFSET)
+		curr_x = province_dict[battle.location][0]
+		curr_y = province_dict[battle.location][1]
 		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
 		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
+		if defines.RANDOM_BATTLE_DISPLACEMENT:
+			mod_x += random.randint(-defines.MAX_BATTLE_OFFSET, defines.MAX_BATTLE_OFFSET)
+			mod_y += random.randint(-defines.MAX_BATTLE_OFFSET, defines.MAX_BATTLE_OFFSET)
 		if battle.surface == "land":
 			if BATTLE is None or BATTLE == battle:
 				pygame.draw.circle(window, defines.C_BLACK, (mod_x, mod_y), battle_center_size)
