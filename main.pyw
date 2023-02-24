@@ -26,11 +26,14 @@ list_position = 0
 
 def clear_debug_file():
     # Copies debug.txt to debug_backup.txt and blanks it
-    debug_file = open("debug.txt", 'r')
-    debug_backup_file = open("debug_backup.txt", 'w')
-    debug_backup_file.write(debug_file.read())
-    debug_backup_file.close()
-    debug_file.close()
+    try:
+        debug_file = open("debug.txt", 'r')
+        debug_backup_file = open("debug_backup.txt", 'w')
+        debug_backup_file.write(debug_file.read())
+        debug_backup_file.close()
+        debug_file.close()
+    except OSError: # No debug file yet
+        pass
     debug_file = open("debug.txt", 'w')
     debug_file.write("")
     debug_file.close()
