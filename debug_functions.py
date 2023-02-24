@@ -7,7 +7,7 @@
 from datetime import datetime
 
 save_number = -1
-
+messages = []
 
 def debug_out(event_text: str, event_type: str = None) -> None:
     # Outputs the time plus the event type and event to a text file.
@@ -33,3 +33,19 @@ def new_save() -> None:
     out_file = open("debug.txt", 'a')
     out_file.write(f"================================ SAVE {save_number} ================================\n")
     out_file.close()
+
+
+def hold_until_start(event_text: str, event_type: str = None) -> None:
+    global messages
+    messages.append((event_text, event_type))
+
+
+def output_message_backlog() -> None:
+    global messages
+    for message in messages:
+        debug_out(message[0], event_type=message[1])
+    messages = []
+
+
+
+

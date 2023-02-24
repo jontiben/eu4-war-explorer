@@ -9,11 +9,11 @@ import tkinter as tk
 from tkinter import filedialog
 import traceback, os, platform
 
+import defines
 import midpoint_calculator
 import save_file_reader
 import war_info_interface
 import war_list_interface
-import defines
 import debug_functions
 
 do_quit = False
@@ -34,8 +34,6 @@ def clear_debug_file():
     debug_file = open("debug.txt", 'w')
     debug_file.write("")
     debug_file.close()
-
-
 
 
 pygame.init()
@@ -224,5 +222,6 @@ if __name__ == "__main__":
     clear_debug_file()
     debug_functions.debug_out(f"Started EU4 Savefile Explorer version {defines.VERSION}")
     debug_functions.debug_out(f"OS is {platform.system()} {platform.release()}", event_type="INFO")
+    debug_functions.output_message_backlog()
     init()
     main()

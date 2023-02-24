@@ -40,12 +40,12 @@ elif operating_system == "Darwin":  # OSX
 else:  # Windows
     EU4_FOLDER = "C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV"
 if not os.path.isdir(EU4_FOLDER):
-    debug_functions.debug_out("EU4 directory not found automatically")
+    debug_functions.hold_until_start("EU4 directory not found automatically")
     EU4_FOLDER = ""
     while EU4_FOLDER.split('/')[-1] != "Europa Universalis IV":
         EU4_FOLDER = find_eu4_folder()
 else:
-    debug_functions.debug_out("EU4 directory found automatically")
+    debug_functions.hold_until_start("EU4 directory found automatically")
 PATH_TO_COUNTRIES_FILE = EU4_FOLDER + "/common/country_tags/00_countries.txt"
 PATH_TO_BACKUP_COUNTRIES_FOLDER = EU4_FOLDER + "/history/countries"
 PATH_TO_FLAGS_FOLDER = EU4_FOLDER + "/gfx/flags"
