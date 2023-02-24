@@ -16,9 +16,6 @@ import war_list_interface
 import defines
 import debug_functions
 
-### VERSION
-VERSION = "1.2.0a"
-
 do_quit = False
 mode = "list"
 war_list = []
@@ -39,15 +36,13 @@ def clear_debug_file():
     debug_file.close()
 
 
-clear_debug_file()
+
 
 pygame.init()
 
 screen_info = pygame.display.Info()
-start_width = int(defines.START_WIDTH)
-start_height = int(defines.START_HEIGHT)
-window = pygame.display.set_mode((start_width, start_height), pygame.RESIZABLE)
-caption_root = "EU4 War Explorer - " + VERSION
+window = pygame.display.set_mode((int(defines.START_WIDTH), int(defines.START_HEIGHT)), pygame.RESIZABLE)
+caption_root = "EU4 War Explorer - " + defines.VERSION
 pygame.display.set_caption(caption_root)
 pygame.display.set_icon(pygame.image.load(defines.INFANTRY_GRAPHIC))
 
@@ -226,7 +221,8 @@ def main():
 
 
 if __name__ == "__main__":
-    debug_functions.debug_out(f"Started EU4 Savefile Explorer version {VERSION}")
+    clear_debug_file()
+    debug_functions.debug_out(f"Started EU4 Savefile Explorer version {defines.VERSION}")
     debug_functions.debug_out(f"OS is {platform.system()} {platform.release()}", event_type="INFO")
     init()
     main()

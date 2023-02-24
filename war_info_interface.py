@@ -29,10 +29,12 @@ sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 battle_type = "casualties"
 return_to_battles = True # False takes you back to the timeline
 
+
 class Dummy: # Used to handle condottieri participants in a battle
 	def __init__(self, name):
 		self.name = name
 		self.longname = common_functions.get_full_country_name(name)+" (Condottieri)"
+
 
 def render_timeline(window, font, small_font, light_font, stats_font, present_date):
 	window.fill(defines.C_INTERFACE)
@@ -98,7 +100,7 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 
 
 def render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path,
-			   output_map = False):
+		output_map=False):
 	global MAP_SIZE
 	window.fill(defines.C_INTERFACE)
 
@@ -117,7 +119,6 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 			int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())))
 		window.blit(sized_borders_map, (0, 0))
 
-
 	province_dict = {}
 	province_mids_file = open(province_mids_path,'r')
 	lines = province_mids_file.readlines()
@@ -127,7 +128,7 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		province_dict[line[0]] = (float(line[1]), float(line[2]))
 	province_mids_file.close()
 
-	if BATTLE == None:
+	if BATTLE is None:
 		battle_list = WAR.battles
 		circle_color = defines.C_TRANS_ORANGE
 	else:
@@ -140,7 +141,7 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 	if BATTLE is None:
 		for battle in battle_list:
 			current_battle_days = common_functions.date_to_days(battle.date)
-			if first_battle_days == None:
+			if first_battle_days is None:
 				first_battle_days = current_battle_days
 			if current_battle_days > latest_battle_days:
 				latest_battle_days = current_battle_days
@@ -179,10 +180,9 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 			pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), battle_scale)
 		elif battle_type == "date":
 			pygame.draw.circle(battle_surface, circle_color, (mod_x, mod_y), date_color_size)
-		window.blit(battle_surface,(0, 0)) # Done individually to make the circles layer properly
-		#battle_center_list.append([mod_x, mod_y, battle.surface])
+		window.blit(battle_surface, (0, 0)) # Done individually to make the circles layer properly
 
-	if BATTLE != None:
+	if BATTLE is not None:
 		unselected_battles_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
 		unselected_battles_surface.set_alpha(defines.UNSELECTED_BATTLE_ALPHA)
 	for battle in WAR.battles:
@@ -191,16 +191,16 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
 		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
 		if battle.surface == "land":
-			if BATTLE == None or BATTLE == battle:
+			if BATTLE is None or BATTLE == battle:
 				pygame.draw.circle(window, defines.C_BLACK, (mod_x, mod_y), battle_center_size)
 			else:
 				pygame.draw.circle(unselected_battles_surface, defines.C_BLACK, (mod_x, mod_y), battle_center_size)
 		else:
-			if BATTLE == None or BATTLE == battle:
+			if BATTLE is None or BATTLE == battle:
 				pygame.draw.circle(window, defines.C_WHITE, (mod_x, mod_y), battle_center_size)
 			else:
 				pygame.draw.circle(unselected_battles_surface, defines.C_WHITE, (mod_x, mod_y), battle_center_size)
-	if BATTLE != None:
+	if BATTLE is not None:
 		window.blit(unselected_battles_surface,(0, 0))
 	if output_map:
 		return window
@@ -209,6 +209,7 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 	else:
 		render_one_battle(window, font, small_font, light_font, stats_font, terrain_map)
 
+
 def render_one_battle(window, font, small_font, light_font, stats_font, terrain_map):
 	map_bottom = int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())
 	window.fill(defines.C_INTERFACE, (0, map_bottom, window.get_width(), window.get_height()-map_bottom))
@@ -216,7 +217,6 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 	title_bar_loc = (0, map_bottom, window.get_width(), defines.NAV_BUTTON_HEIGHT)
 	title_bar = pygame.draw.rect(window, defines.C_INTERFACE, title_bar_loc)
 	title_bar_outline = pygame.draw.rect(window, defines.C_GOLD, title_bar_loc, defines.NAV_BUTTON_BORDER_WIDTH)
-	space_before_battles = title_bar_loc[1] + defines.NAV_BUTTON_HEIGHT
 
 	# Title of the battle
 	battle_title = font.render(BATTLE.fullname, True, defines.C_WHITE)
@@ -457,6 +457,7 @@ def render_battles(window, font, small_font, light_font, stats_font, terrain_map
 
 	pygame.display.update()
 
+
 def render_map_buttons(window, small_font, title_bar):
 	global clickable_list
 
@@ -543,6 +544,7 @@ def render_screen_buttons(window, font):
 	button_text_loc2 = button_text2.get_rect()
 	button_text_loc2.center = button_rectangle2.center
 	window.blit(button_text2, button_text_loc2)
+
 
 def render_war_stats(window, font, small_font, light_font, stats_font, padding_before_small_flags, tag):
 	# nation=000 tells it to display stats for all war participants
@@ -679,6 +681,7 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 		abs_total_text_loc.midtop = (int(window.get_width()/2), int(d_total_ship_text_loc.bottom+defines.PAD_DIST*2*(window.get_height()/800)))
 		window.blit(abs_total_text, abs_total_text_loc)
 
+
 def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	global clickable_list
 	window.fill(defines.C_INTERFACE)
@@ -693,12 +696,12 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	flag_height = defines.FLAG_HEIGHT # I want to get these at runtime but sometimes the flags can't load
 	flag_width = defines.FLAG_WIDTH
 
-	# Primary Belligerants' Flags
+	# Primary Belligerents' Flags
 	prim_att_flag = pygame.transform.scale(common_functions.load_flag(prim_att, WAR), (flag_width, flag_height))
 	prim_att_flag_loc = prim_att_flag.get_rect()
 	prim_att_flag_loc.topleft = (defines.PAD_DIST, defines.PAD_DIST)
 	window.blit(prim_att_flag, prim_att_flag_loc)
-	clickable_list.append(["flag",prim_att,prim_att_flag_loc])
+	clickable_list.append(["flag", prim_att, prim_att_flag_loc])
 	if WAR.outcome == "2":
 		pygame.draw.rect(window, defines.C_GOLD, prim_att_flag_loc, defines.NAV_BUTTON_BORDER_WIDTH)
 
@@ -706,7 +709,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	prim_def_flag_loc = prim_def_flag.get_rect()
 	prim_def_flag_loc.topleft = (window.get_width()-flag_width-defines.PAD_DIST, defines.PAD_DIST)
 	window.blit(prim_def_flag, prim_def_flag_loc)
-	clickable_list.append(["flag",prim_def,prim_def_flag_loc])
+	clickable_list.append(["flag", prim_def, prim_def_flag_loc])
 	if WAR.outcome == "3":
 		pygame.draw.rect(window, defines.C_GOLD, prim_def_flag_loc, defines.NAV_BUTTON_BORDER_WIDTH)
 
@@ -714,7 +717,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	prim_att_name = font.render(participants[prim_att].longname, True, defines.C_WHITE)
 	prim_att_name_loc = prim_att_name.get_rect()
 	prim_att_name_loc.y = (defines.PAD_DIST*2+flag_height)
-	prim_att_name_loc.x = (defines.PAD_DIST)
+	prim_att_name_loc.x = defines.PAD_DIST
 	window.blit(prim_att_name, prim_att_name_loc)
 	
 	# Primary Defender's Name
@@ -730,7 +733,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 		war_dates_text += common_functions.date_conversion(WAR.end_date)
 	else:
 		war_dates_text += "present"
-	war_dates = small_font.render(war_dates_text,True, defines.C_LGRAY)
+	war_dates = small_font.render(war_dates_text, True, defines.C_LGRAY)
 	war_dates_loc = war_dates.get_rect()
 	war_dates_loc.center = (window.get_width()/2, 0)
 	war_dates_loc.y = (flag_height/2)
@@ -761,7 +764,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 		curr_flag_loc.x = defines.PAD_DIST
 		curr_flag_loc.y = (a_loc*(defines.PAD_DIST+flag_half_height))+padding_before_small_flags
 		window.blit(curr_flag, curr_flag_loc)
-		clickable_list.append(["flag",add_attackers[a],curr_flag_loc])
+		clickable_list.append(["flag", add_attackers[a],curr_flag_loc])
 
 		a_text = small_font.render(participants[add_attackers[a]].longname, True, defines.C_WHITE)
 		a_text_loc = a_text.get_rect()
@@ -772,11 +775,11 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 		if participants[add_attackers[a]].join_date != WAR.start_date:
 			date_string += participants[add_attackers[a]].join_date+"-"
 		if participants[add_attackers[a]].quit_date != WAR.end_date and not (WAR.ongoing and participants[add_attackers[a]].quit_date == "annexed"):
-			# If participants are annexed during an ongoing war this won't be reflected in the war info screen. We have no way of knowing that until
-			# the war is over.
+			# If participants are annexed during an ongoing war this won't be reflected in the war info screen. We
+			# have no way of knowing that until the war is over.
 			date_string += "-"+participants[add_attackers[a]].quit_date
 		if date_string != "":
-			date_string = date_string.replace("--",'-')
+			date_string = date_string.replace("--", '-')
 			a_date = small_font.render(date_string, True, defines.C_LGRAY)
 			a_date_loc = a_date.get_rect()
 			a_date_loc.bottom = int(a_loc*(flag_half_height+defines.PAD_DIST))+flag_half_height+padding_before_small_flags
@@ -791,7 +794,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 		curr_flag_loc.right = window.get_width() - defines.PAD_DIST
 		curr_flag_loc.y = (d_loc*(defines.PAD_DIST+flag_half_height))+flag_height+defines.PAD_DIST*3+prim_def_name_loc.height
 		window.blit(curr_flag, curr_flag_loc)
-		clickable_list.append(["flag",add_defenders[d],curr_flag_loc])
+		clickable_list.append(["flag",add_defenders[d], curr_flag_loc])
 
 		d_text = small_font.render(participants[add_defenders[d]].longname, True, defines.C_WHITE)
 		d_text_loc = d_text.get_rect()
@@ -804,7 +807,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 		if participants[add_defenders[d]].quit_date != WAR.end_date and not (WAR.ongoing and participants[add_defenders[d]].quit_date == "annexed"):
 			date_string += "-"+participants[add_defenders[d]].quit_date
 		if date_string != "":
-			date_string = date_string.replace("--",'-')
+			date_string = date_string.replace("--", '-')
 			d_date = small_font.render(date_string, True, defines.C_LGRAY)
 			d_date_loc = d_date.get_rect()
 			d_date_loc.bottom = int(d_loc*(flag_half_height+defines.PAD_DIST))+flag_half_height+padding_before_small_flags
@@ -817,7 +820,6 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	pygame.display.update()
 
 
-
 def export_map(map):
 	from datetime import datetime
 	filename = f"exported_maps/ewe_battles_{str(datetime.now().time()).replace(':','').split('.')[0]}.{defines.MAP_OUTPUT_FORMAT}"
@@ -825,9 +827,8 @@ def export_map(map):
 		debug_functions.debug_out(f"Exporting map to image")
 		pygame.image.save(map, filename)
 		debug_functions.debug_out(f"Successfully exported map to file [{filename}]")
-	except:
-		debug_functions.debug_out(f"Exporting map failed", event_type="ERROR")
-
+	except Exception as exception:
+		debug_functions.debug_out(f"Exporting map failed with exception [{exception}]", event_type="ERROR")
 
 
 def info_loop(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path, event, present_date, force_update=False):
@@ -926,11 +927,6 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 									   river_map, border_map, province_mids_path)
 							render_one_battle(window, font, small_font, light_font, stats_font, terrain_map)
 
-
-
-
-
-
 		clickable_list = []
 		if current_screen == "info":
 			render_war(window, font, small_font, light_font, stats_font, tag=LOADED_TAG)
@@ -946,6 +942,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 			render_timeline(window, font, small_font, light_font, stats_font, present_date)
 
 		return None
+
 
 def init(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, war):
 	global WAR, BATTLE

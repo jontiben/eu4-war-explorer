@@ -8,6 +8,7 @@ from datetime import datetime
 
 save_number = -1
 
+
 def debug_out(event_text: str, event_type: str = None) -> None:
     # Outputs the time plus the event type and event to a text file.
     time = datetime.now().time()
@@ -24,6 +25,7 @@ def debug_out(event_text: str, event_type: str = None) -> None:
     out_file = open("debug.txt", 'a')
     out_file.write(fullstring)
     out_file.close()
+
 
 def new_save() -> None:
     global save_number

@@ -14,6 +14,7 @@ import debug_functions
 flags_dict = {}
 tags_dict = {}
 
+
 def return_ordinal_number(number: str) -> str:
     # Converts a number to its ordinal form
     ordinal_dict = {'1': "st", '2': "nd", '3': "rd"}
@@ -58,7 +59,7 @@ def get_full_country_name(tag: str) -> str:
                 if line[0] != '#' and line[0] != '\n':
                     try:
                         new_line = line.strip().split(" = ")[-1]
-                        new_line = new_line.replace("\"",'')
+                        new_line = new_line.replace("\"", '')
                         new_line = new_line.split('/')[1]
                         new_line = new_line.split('.')[0]
                         tags_dict[line[:3]] = new_line
@@ -68,9 +69,10 @@ def get_full_country_name(tag: str) -> str:
         else:
             if tag in tags_dict.keys():
                 name = tags_dict[tag]
-        if name is None: # Fallback
+        if name is None:  # Fallback
             debug_functions.debug_out(
-                f"Unable to find full country name for tag {tag} in [{defines.PATH_TO_COUNTRIES_FILE}]. Using fallback source.", event_type="WARN")
+                f"Unable to find full country name for tag {tag} in [{defines.PATH_TO_COUNTRIES_FILE}]. Using fallback source.",
+                event_type="WARN")
             for files in os.walk(defines.PATH_TO_BACKUP_COUNTRIES_FOLDER):
                 for filename in files[-1]:
                     if filename[:3] == tag.upper():
@@ -90,11 +92,11 @@ def get_full_country_name(tag: str) -> str:
     return tag
 
 
-def get_all_country_names(countries_folder = defines.PATH_TO_COUNTRIES_FILE[:-16]) -> list:
+def get_all_country_names(countries_folder=defines.PATH_TO_COUNTRIES_FILE[:-16]) -> list:
     all_countries = []
     for file in os.listdir(countries_folder):
         if os.path.isfile(countries_folder + file):
-            tags_countries_file = open(countries_folder+file, 'r')
+            tags_countries_file = open(countries_folder + file, 'r')
             tc_lines = tags_countries_file.readlines()
             tags_countries_file.close()
             for line in tc_lines:
@@ -107,11 +109,14 @@ def get_all_country_names(countries_folder = defines.PATH_TO_COUNTRIES_FILE[:-16
                         all_countries.append((line[:3], new_line))
                     except:
                         pass
-    if len(all_countries) == 0: # Fallback
-        debug_functions.debug_out(f"Unable to compile countries names dict from [{countries_folder}]. Using fallback source.", event_type="WARN")
+    if len(all_countries) == 0:  # Fallback
+        debug_functions.debug_out(
+            f"Unable to compile countries names dict from [{countries_folder}]. Using fallback source.",
+            event_type="WARN")
         for files in os.walk(defines.PATH_TO_BACKUP_COUNTRIES_FOLDER):
             for filename in files[-1]:
-                if filename[:3] == filename[:3].upper():  # Only filenames starting with three uppercase letters (or numbers)
+                if filename[:3] == filename[
+                                   :3].upper():  # Only filenames starting with three uppercase letters (or numbers)
                     tag = filename[:3]
                     name = filename[:-4].split('-')[1]
                     if name[0] == ' ':
@@ -181,7 +186,7 @@ def load_flag(tag: str, war):
                     debug_functions.debug_out(f"Failed to open flag for tag {tag}", event_type="WARN")
     if flag_tag is not None:
         colors = war.participants[tag].country_color
-        pygame.draw.rect(flag, colors, (int(flag.get_width()/2), 0, int(flag.get_width()/2), flag.get_height()))
+        pygame.draw.rect(flag, colors, (int(flag.get_width() / 2), 0, int(flag.get_width() / 2), flag.get_height()))
     return flag
 
 
@@ -190,5 +195,4 @@ def load_modded_flags(mod_folder) -> None:
     flag_directory = f"{mod_folder}/gfx/flags"
     for files in os.walk(flag_directory):
         for filename in files[-1]:
-            flags_dict[filename[:3]] = flag_directory+f"/{filename}"
-
+            flags_dict[filename[:3]] = flag_directory + f"/{filename}"

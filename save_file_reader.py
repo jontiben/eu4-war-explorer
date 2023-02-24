@@ -9,7 +9,7 @@ import re
 import os
 import zipfile
 import operator
-from typing import Tuple, List
+from typing import Tuple, List, Any
 
 import common_functions
 import debug_functions
@@ -480,6 +480,7 @@ def parse_combatant_block(start_point: int, end_point: int) -> list:
     sea_forces = {"galley": 0, "light_ship": 0, "heavy_ship": 0, "transport": 0}
     # Dictionaries allow you to make the combatants always stick to the same order in the list output on the other side.
     out_list = []
+    battle_surface, battle_losses, battle_country, battle_commander = "", 0, "", ""
     for o in range(start_point, end_point):
         current_keyword = get_line_key(o).replace('=', "")
         if current_keyword in ground_forces.keys():
@@ -542,7 +543,7 @@ def first_element(input_list: list):
 def is_date(line_no: int) -> bool:
     # Determines if the data in a given line is a properly-formatted date
     line = clean_date(line_no)
-    if re.fullmatch(r"\d{1,4}.\d\d?.\d\d?", line) != None:
+    if re.fullmatch(r"\d{1,4}.\d\d?.\d\d?", line) is not None:
         return True
     return False
 
@@ -588,7 +589,7 @@ def get_curr_player_countries() -> None:
             start_point = check_player_countries_num
             end_point = define_bracket_block(check_player_countries_num)
             break
-    if start_point != None:
+    if start_point is not None:
         for check_tag_num in range(start_point, end_point):
             if len(get_line_data(check_tag_num)) == 3 and get_line_data(check_tag_num).upper() == get_line_data(
                     check_tag_num):
@@ -648,7 +649,7 @@ def get_meta_data(local_file_lines) -> list:
     return meta_data_out
 
 
-def locate_wars(filename) -> tuple[list[War], str, str] | None:
+def locate_wars(filename) -> tuple[list[War], str, str | None, Any, Any] | None:
     global file_lines, present_date, nation_info_locations
     debug_functions.debug_out(f"Attempting to open [{filename}]")
     try:
@@ -688,7 +689,7 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
             return None
 
     present_date = get_present_date()
-    for l in range(len(file_lines)): # Necessary for compabtibility with older saves
+    for l in range(len(file_lines)): # Necessary for compatibility with older saves
         file_lines[l] = file_lines[l].strip()
     war_list = []
     get_curr_player_countries()
