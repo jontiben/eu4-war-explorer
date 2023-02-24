@@ -712,7 +712,7 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
         if len(file_lines[i]) == 5:
             if file_lines[i][:1] == "C":
                 if file_lines[i][3:5] == "={":
-                    if "has_set_government_name" in file_lines[i+1] or "pillaged_capital_state" in file_lines[i+1]:  # Edge case? Maybe others?
+                    if "has_set_government_name" in file_lines[i+1] or "pillaged_capital_state" in file_lines[i+1] or "government_rank=" in file_lines[i+1]:  # Edge case? Maybe others?
                         nation_info_locations[file_lines[i][0:3]] = i
         elif i > int(len(file_lines) * 0.7):  # !!!!!! (You can set this to like 0.98 for speed
         # loading in testing, but it will cut off a lot of early wars)
