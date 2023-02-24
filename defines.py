@@ -145,3 +145,26 @@ ALT_NAMES = {
     "timurid": "Timurids",
     "qom": "Ajam",
 }
+
+# v Colors codes used for flags created at runtime (e.g. custom nations)
+# (note that they're displayed one number higher in-game; so the color white, "0" in the savefile, is displayed as
+# color "1" in-game)
+EU4_COLORS_TRANSLATION = {
+    "0": (255, 255, 255),
+    "1": (10, 10, 10),
+    "2": (160, 64, 180),
+    "3": (150, 60, 84),
+    "4": (120, 64, 64),
+    "5": (255, 20, 20),
+    "6": (255, 160, 64),
+    "7": (100, 80, 50),
+    "8": (255, 200, 12),
+    "9": (64, 100, 50),
+    "10": (84, 150, 100),
+    "11": (64, 200, 150),
+    "12": (64, 200, 220),
+    "13": (40, 40, 140),
+    "14": (120, 220, 240),
+    "15": (50, 100, 140),
+    "16": (200, 96, 84),
+}

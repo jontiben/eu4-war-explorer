@@ -92,11 +92,11 @@ class Participant:
 
         self.flag_tag = None  # Colonies, used for locating the parent flag with loaded mods
 
-        if self.name[0] == 'C' and common_functions.is_created_nation(self.name):
-            colonial_info = self.get_colonial_info()
-            self.flag_path = defines.PATH_TO_FLAGS_FOLDER + '/' + colonial_info[0] + ".tga"
-            self.flag_tag = colonial_info[0]
-            self.country_color = colonial_info[1]
+        if common_functions.is_created_nation(self.name):
+            nation_info = self.get_nation_info()
+            self.flag_path = defines.PATH_TO_FLAGS_FOLDER + '/' + nation_info[0] + ".tga"
+            self.flag_tag = nation_info[0]
+            self.country_color = nation_info[1]
             if self.flag_tag == "":
                 self.flag_tag = None
         else:
@@ -198,17 +198,26 @@ class Participant:
         self.land_attrition_losses = sum(loss[:9][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
         self.sea_attrition_losses = sum(loss[9:][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
-    def get_colonial_info(self):
+    def get_nation_info(self):
         output = ["", [150, 150, 150]]
+        standby_color = [150, 150, 150]
         if self.name in nation_info_locations.keys():
             for l in range (nation_info_locations[self.name], define_bracket_block(nation_info_locations[self.name])):
                 if "colonial_parent" in file_lines[l]:
                     output[0] = file_lines[l].split('=')[1].strip().replace('"', '')
                 elif "country_color" in file_lines[l]:
-                    colors = clean_tabs(l+1).split(' ')[:3]
+                    colors = clean_tabs(l + 1).split(' ')[:3]
                     for c, color in enumerate(colors):
-                        output[1][c] = int(color)
-        return output  # No colonial parent found
+                        standby_color[c] = int(color)
+                    if self.name[0] == 'C' or self.name[0] == 'F':
+                        output[1] = standby_color
+                elif "flag_colors" in file_lines[l]:
+                    color = clean_tabs(l+1).split(' ')
+                    if color[0] != '0' or color[1] != '0' or color[2] != '0':
+                        output[1] = list(defines.EU4_COLORS_TRANSLATION[color[0]])
+        if output[1] == [150, 150, 150]:
+            output[1] = standby_color # Fallback
+        return output
 
 
 class War:
@@ -711,10 +720,11 @@ def locate_wars(filename) -> tuple[list[War], str, str | None, Any, Any] | None:
     game_version = meta_data[2]
     for i in range(len(file_lines)):
         if len(file_lines[i]) == 5:
-            if file_lines[i][:1] == "C":
-                if file_lines[i][3:5] == "={":
-                    if "has_set_government_name" in file_lines[i+1] or "pillaged_capital_state" in file_lines[i+1] or "government_rank=" in file_lines[i+1]:  # Edge case? Maybe others?
-                        nation_info_locations[file_lines[i][0:3]] = i
+            if file_lines[i][3:5] == "={":
+                if "has_set_government_name" in file_lines[i+1] or "pillaged_capital_state" in file_lines[i+1]:
+                    nation_info_locations[file_lines[i][0:3]] = i
+                elif "government_rank=" in file_lines[i+1] or "human=yes" in file_lines[i+1]: # Broken up for convenience
+                    nation_info_locations[file_lines[i][0:3]] = i
         elif i > int(len(file_lines) * 0.7):  # !!!!!! (You can set this to like 0.98 for speed
         # loading in testing, but it will cut off a lot of early wars)
             check_file_line = file_lines[i].strip()

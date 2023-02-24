@@ -181,8 +181,11 @@ def load_flag(tag: str, war):
             try:
                 flag = pygame.image.load(war.participants[tag].flag_path)
             except:
-                flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
-                if not is_created_nation(tag):
+                if is_created_nation(tag):
+                    flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
+                    pygame.draw.rect(flag, war.participants[tag].country_color, (0, 0, flag.get_width(), flag.get_height()))
+                else:
+                    flag = pygame.image.load(defines.PATH_TO_BACKUP_FLAG)
                     debug_functions.debug_out(f"Failed to open flag for tag {tag}", event_type="WARN")
     if flag_tag is not None:
         colors = war.participants[tag].country_color
