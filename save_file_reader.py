@@ -304,7 +304,10 @@ class War:
                     self.attack_total_warscore += float(get_line_data(check_participants_num + 1))
                 else:
                     self.defend_total_warscore += float(get_line_data(check_participants_num + 1))
-                self.participants[curr_tag].losses = get_line_data(check_participants_num + 5).split(' ')
+                if "promised_land" in file_lines[check_participants_num + 3]: # RNW compatibility
+                    self.participants[curr_tag].losses = get_line_data(check_participants_num + 6).split(' ')
+                else:
+                    self.participants[curr_tag].losses = get_line_data(check_participants_num + 5).split(' ')
                 self.participants[curr_tag].consolidate_losses()
         for key in self.participants.keys():
             if self.participants[key].name in PLAYER_COUNTRIES:
