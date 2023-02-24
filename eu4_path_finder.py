@@ -13,6 +13,7 @@ import debug_functions
 
 operating_system = platform.system()
 
+
 def find_eu4_folder():
     debug_functions.debug_out("Prompting user to select EU4 directory...")
     root = tk.Tk()
@@ -39,12 +40,12 @@ elif operating_system == "Darwin":  # OSX
 else:  # Windows
     EU4_FOLDER = "C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV"
 if not os.path.isdir(EU4_FOLDER):
-    debug_functions.debug_out("EU4 directory not found automatically")
+    debug_functions.hold_until_start("EU4 directory not found automatically")
     EU4_FOLDER = ""
     while EU4_FOLDER.split('/')[-1] != "Europa Universalis IV":
         EU4_FOLDER = find_eu4_folder()
 else:
-    debug_functions.debug_out("EU4 directory found automatically")
+    debug_functions.hold_until_start("EU4 directory found automatically")
 PATH_TO_COUNTRIES_FILE = EU4_FOLDER + "/common/country_tags/00_countries.txt"
 PATH_TO_BACKUP_COUNTRIES_FOLDER = EU4_FOLDER + "/history/countries"
 PATH_TO_FLAGS_FOLDER = EU4_FOLDER + "/gfx/flags"
@@ -53,7 +54,7 @@ PATH_TO_CONDOTTIERI_FLAG = PATH_TO_FLAGS_FOLDER + "/ronin_rebels.tga"
 if not os.path.isfile(PATH_TO_BACKUP_FLAG): # Just in case
     PATH_TO_BACKUP_FLAG = PATH_TO_FLAGS_FOLDER + "heretic_rebels.tga"
 if not os.path.isfile(PATH_TO_CONDOTTIERI_FLAG):
-        PATH_TO_CONDOTTIERI_FLAG = PATH_TO_BACKUP_FLAG
+    PATH_TO_CONDOTTIERI_FLAG = PATH_TO_BACKUP_FLAG
 
 if operating_system == "Linux":
     EU4_SAVE_DIR = os.path.expanduser('~') + "/Documents/Paradox Interactive/Europa Universalis IV/save games"

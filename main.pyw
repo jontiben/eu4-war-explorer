@@ -9,15 +9,12 @@ import tkinter as tk
 from tkinter import filedialog
 import traceback, os, platform
 
+import defines
 import midpoint_calculator
 import save_file_reader
 import war_info_interface
 import war_list_interface
-import defines
 import debug_functions
-
-### VERSION
-VERSION = "1.1.1a"
 
 do_quit = False
 mode = "list"
@@ -29,25 +26,24 @@ list_position = 0
 
 def clear_debug_file():
     # Copies debug.txt to debug_backup.txt and blanks it
-    debug_file = open("debug.txt", 'r')
-    debug_backup_file = open("debug_backup.txt", 'w')
-    debug_backup_file.write(debug_file.read())
-    debug_backup_file.close()
-    debug_file.close()
+    try:
+        debug_file = open("debug.txt", 'r')
+        debug_backup_file = open("debug_backup.txt", 'w')
+        debug_backup_file.write(debug_file.read())
+        debug_backup_file.close()
+        debug_file.close()
+    except OSError: # No debug file yet
+        pass
     debug_file = open("debug.txt", 'w')
     debug_file.write("")
     debug_file.close()
 
 
-clear_debug_file()
-
 pygame.init()
 
 screen_info = pygame.display.Info()
-start_width = int(defines.START_WIDTH)
-start_height = int(defines.START_HEIGHT)
-window = pygame.display.set_mode((start_width, start_height), pygame.RESIZABLE)
-caption_root = "EU4 War Explorer - " + VERSION
+window = pygame.display.set_mode((int(defines.START_WIDTH), int(defines.START_HEIGHT)), pygame.RESIZABLE)
+caption_root = "EU4 War Explorer - " + defines.VERSION
 pygame.display.set_caption(caption_root)
 pygame.display.set_icon(pygame.image.load(defines.INFANTRY_GRAPHIC))
 
@@ -226,7 +222,9 @@ def main():
 
 
 if __name__ == "__main__":
-    debug_functions.debug_out(f"Started EU4 Savefile Explorer version {VERSION}")
+    clear_debug_file()
+    debug_functions.debug_out(f"Started EU4 Savefile Explorer version {defines.VERSION}")
     debug_functions.debug_out(f"OS is {platform.system()} {platform.release()}", event_type="INFO")
+    debug_functions.output_message_backlog()
     init()
     main()

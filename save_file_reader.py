@@ -9,7 +9,7 @@ import re
 import os
 import zipfile
 import operator
-from typing import Tuple, List
+from typing import Tuple, List, Any
 
 import common_functions
 import debug_functions
@@ -92,11 +92,11 @@ class Participant:
 
         self.flag_tag = None  # Colonies, used for locating the parent flag with loaded mods
 
-        if self.name[0] == 'C' and common_functions.is_created_nation(self.name):
-            colonial_info = self.get_colonial_info()
-            self.flag_path = defines.PATH_TO_FLAGS_FOLDER + '/' + colonial_info[0] + ".tga"
-            self.flag_tag = colonial_info[0]
-            self.country_color = colonial_info[1]
+        if common_functions.is_created_nation(self.name):
+            nation_info = self.get_nation_info()
+            self.flag_path = defines.PATH_TO_FLAGS_FOLDER + '/' + nation_info[0] + ".tga"
+            self.flag_tag = nation_info[0]
+            self.country_color = nation_info[1]
             if self.flag_tag == "":
                 self.flag_tag = None
         else:
@@ -198,17 +198,26 @@ class Participant:
         self.land_attrition_losses = sum(loss[:9][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
         self.sea_attrition_losses = sum(loss[9:][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
-    def get_colonial_info(self):
+    def get_nation_info(self):
         output = ["", [150, 150, 150]]
+        standby_color = [150, 150, 150]
         if self.name in nation_info_locations.keys():
             for l in range (nation_info_locations[self.name], define_bracket_block(nation_info_locations[self.name])):
                 if "colonial_parent" in file_lines[l]:
                     output[0] = file_lines[l].split('=')[1].strip().replace('"', '')
                 elif "country_color" in file_lines[l]:
-                    colors = clean_tabs(l+1).split(' ')[:3]
+                    colors = clean_tabs(l + 1).split(' ')[:3]
                     for c, color in enumerate(colors):
-                        output[1][c] = int(color)
-        return output  # No colonial parent found
+                        standby_color[c] = int(color)
+                    if self.name[0] == 'C' or self.name[0] == 'F':
+                        output[1] = standby_color
+                elif "flag_colors" in file_lines[l]:
+                    color = clean_tabs(l+1).split(' ')
+                    if color[0] != '0' or color[1] != '0' or color[2] != '0':
+                        output[1] = list(defines.EU4_COLORS_TRANSLATION[color[0]])
+        if output[1] == [150, 150, 150]:
+            output[1] = standby_color # Fallback
+        return output
 
 
 class War:
@@ -295,7 +304,10 @@ class War:
                     self.attack_total_warscore += float(get_line_data(check_participants_num + 1))
                 else:
                     self.defend_total_warscore += float(get_line_data(check_participants_num + 1))
-                self.participants[curr_tag].losses = get_line_data(check_participants_num + 5).split(' ')
+                if "promised_land" in file_lines[check_participants_num + 3]: # RNW compatibility
+                    self.participants[curr_tag].losses = get_line_data(check_participants_num + 6).split(' ')
+                else:
+                    self.participants[curr_tag].losses = get_line_data(check_participants_num + 5).split(' ')
                 self.participants[curr_tag].consolidate_losses()
         for key in self.participants.keys():
             if self.participants[key].name in PLAYER_COUNTRIES:
@@ -480,6 +492,7 @@ def parse_combatant_block(start_point: int, end_point: int) -> list:
     sea_forces = {"galley": 0, "light_ship": 0, "heavy_ship": 0, "transport": 0}
     # Dictionaries allow you to make the combatants always stick to the same order in the list output on the other side.
     out_list = []
+    battle_surface, battle_losses, battle_country, battle_commander = "", 0, "", ""
     for o in range(start_point, end_point):
         current_keyword = get_line_key(o).replace('=', "")
         if current_keyword in ground_forces.keys():
@@ -542,13 +555,7 @@ def first_element(input_list: list):
 def is_date(line_no: int) -> bool:
     # Determines if the data in a given line is a properly-formatted date
     line = clean_date(line_no)
-    if re.fullmatch(r"\d{4}.\d\d?.\d\d?", line) != None: # Most common case
-        return True
-    if re.fullmatch(r"\d{3}.\d\d?.\d\d?", line) != None: # Warcraft mod at least
-        return True
-    if re.fullmatch(r"\d{1}.\d\d?.\d\d?", line) != None:
-        return True
-    if re.fullmatch(r"\d{2}.\d\d?.\d\d?", line) != None:
+    if re.fullmatch(r"\d{1,4}.\d\d?.\d\d?", line) is not None:
         return True
     return False
 
@@ -594,7 +601,7 @@ def get_curr_player_countries() -> None:
             start_point = check_player_countries_num
             end_point = define_bracket_block(check_player_countries_num)
             break
-    if start_point != None:
+    if start_point is not None:
         for check_tag_num in range(start_point, end_point):
             if len(get_line_data(check_tag_num)) == 3 and get_line_data(check_tag_num).upper() == get_line_data(
                     check_tag_num):
@@ -654,7 +661,7 @@ def get_meta_data(local_file_lines) -> list:
     return meta_data_out
 
 
-def locate_wars(filename) -> tuple[list[War], str, str] | None:
+def locate_wars(filename) -> tuple[list[War], str, str | None, Any, Any] | None:
     global file_lines, present_date, nation_info_locations
     debug_functions.debug_out(f"Attempting to open [{filename}]")
     try:
@@ -694,7 +701,7 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
             return None
 
     present_date = get_present_date()
-    for l in range(len(file_lines)): # Necessary for compabtibility with older saves
+    for l in range(len(file_lines)): # Necessary for compatibility with older saves
         file_lines[l] = file_lines[l].strip()
     war_list = []
     get_curr_player_countries()
@@ -716,10 +723,11 @@ def locate_wars(filename) -> tuple[list[War], str, str] | None:
     game_version = meta_data[2]
     for i in range(len(file_lines)):
         if len(file_lines[i]) == 5:
-            if file_lines[i][:1] == "C":
-                if file_lines[i][3:5] == "={":
-                    if "has_set_government_name" in file_lines[i+1] or "pillaged_capital_state" in file_lines[i+1]:  # Edge case? Maybe others?
-                        nation_info_locations[file_lines[i][0:3]] = i
+            if file_lines[i][3:5] == "={":
+                if "has_set_government_name" in file_lines[i+1] or "pillaged_capital_state" in file_lines[i+1]:
+                    nation_info_locations[file_lines[i][0:3]] = i
+                elif "government_rank=" in file_lines[i+1] or "human=yes" in file_lines[i+1]: # Broken up for convenience
+                    nation_info_locations[file_lines[i][0:3]] = i
         elif i > int(len(file_lines) * 0.7):  # !!!!!! (You can set this to like 0.98 for speed
         # loading in testing, but it will cut off a lot of early wars)
             check_file_line = file_lines[i].strip()
