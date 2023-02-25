@@ -39,6 +39,11 @@ elif operating_system == "Darwin":  # OSX
     EU4_FOLDER = os.path.expanduser('~') + "/Library/Application Support/Steam/SteamApps/common/Europa Universalis IV"
 else:  # Windows
     EU4_FOLDER = "C:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV"
+    if not os.path.isdir(EU4_FOLDER):
+        "D:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV"
+    if not os.path.isdir(EU4_FOLDER):
+        "E:/Program Files (x86)/Steam/steamapps/common/Europa Universalis IV"
+
 if not os.path.isdir(EU4_FOLDER):
     debug_functions.hold_until_start("EU4 directory not found automatically")
     EU4_FOLDER = ""
@@ -52,7 +57,7 @@ PATH_TO_FLAGS_FOLDER = EU4_FOLDER + "/gfx/flags"
 PATH_TO_BACKUP_FLAG = PATH_TO_FLAGS_FOLDER + "/colonial_patriot_rebels.tga"
 PATH_TO_CONDOTTIERI_FLAG = PATH_TO_FLAGS_FOLDER + "/ronin_rebels.tga"
 if not os.path.isfile(PATH_TO_BACKUP_FLAG): # Just in case
-    PATH_TO_BACKUP_FLAG = PATH_TO_FLAGS_FOLDER + "heretic_rebels.tga"
+    PATH_TO_BACKUP_FLAG = PATH_TO_FLAGS_FOLDER + "/heretic_rebels.tga"
 if not os.path.isfile(PATH_TO_CONDOTTIERI_FLAG):
     PATH_TO_CONDOTTIERI_FLAG = PATH_TO_BACKUP_FLAG
 
