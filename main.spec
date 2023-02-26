@@ -33,7 +33,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='eu4_war_explorer',
+    name='eu4-war-explorer',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

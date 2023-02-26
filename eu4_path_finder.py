@@ -18,7 +18,8 @@ def find_eu4_folder():
     debug_functions.debug_out("Prompting user to select EU4 directory...")
     root = tk.Tk()
     root.withdraw()
-    folder_name = filedialog.askdirectory(initialdir=os.getcwd(), title="Select your Europa Universalis IV folder (NOT in Paradox Interactive/-)")
+    folder_name = filedialog.askdirectory(initialdir=os.getcwd(), title="Select your Europa Universalis IV folder ("
+                                                                        "NOT in Paradox Interactive/-)")
     root.destroy()
     return folder_name
 
