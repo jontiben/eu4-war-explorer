@@ -342,18 +342,26 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 	else:
 		force_length = 4
 
+	current_text_offset = None
 	# Attacking Forces
 	for u in range(force_length):
 		if BATTLE.surface == "land":
-			curr_graphic = pygame.transform.scale(land_graphics_list[u],(defines.SMALL_UNIT_GRAPHIC_SIZE, defines.SMALL_UNIT_GRAPHIC_SIZE))
+			graphic_width_ratio = land_graphics_list[u].get_width()/land_graphics_list[u].get_height()
+			curr_graphic = pygame.transform.scale(land_graphics_list[u],(defines.SMALL_UNIT_GRAPHIC_SIZE*graphic_width_ratio, defines.SMALL_UNIT_GRAPHIC_SIZE))
 		else:
-			curr_graphic = pygame.transform.scale(sea_graphics_list[u],(defines.SMALL_UNIT_GRAPHIC_SIZE, defines.SMALL_UNIT_GRAPHIC_SIZE))	
+			graphic_width_ratio = sea_graphics_list[u].get_width() / sea_graphics_list[u].get_height()
+			curr_graphic = pygame.transform.scale(sea_graphics_list[u],(defines.SMALL_UNIT_GRAPHIC_SIZE*graphic_width_ratio, defines.SMALL_UNIT_GRAPHIC_SIZE))
 		curr_graphic_loc = curr_graphic.get_rect()
 		curr_graphic_loc.topleft = (defines.PAD_DIST, att_commander_loc.bottom+defines.PAD_DIST*2+(defines.SMALL_UNIT_GRAPHIC_SIZE+defines.PAD_DIST)*u)
 		window.blit(curr_graphic, curr_graphic_loc)
 		curr_count = stats_font.render(common_functions.break_up_large_numbers(BATTLE.attacking_force[u]), True, defines.C_WHITE)
 		curr_count_loc = curr_count.get_rect()
-		curr_count_loc.bottomleft = (curr_graphic_loc.right+defines.PAD_DIST, curr_graphic_loc.bottom)
+		curr_count_loc.bottom = curr_graphic_loc.bottom
+		if current_text_offset is None:
+			curr_count_loc.left = curr_graphic_loc.right+defines.PAD_DIST
+			current_text_offset = curr_count_loc.left
+		else:
+			curr_count_loc.left = current_text_offset
 		window.blit(curr_count, curr_count_loc)
 	# Total
 	att_total = stats_font.render(common_functions.break_up_large_numbers(sum(BATTLE.attacking_force))+" total", True, defines.C_WHITE)
@@ -371,6 +379,7 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 	att_losses_loc.bottomleft = (att_total_loc.right+defines.PAD_DIST*4, att_total_loc.bottom)
 	window.blit(att_losses, att_losses_loc)
 
+	current_text_offset = None
 	# Defending Forces
 	for u in range(force_length):
 		if BATTLE.surface == "land":
@@ -382,7 +391,12 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 		window.blit(curr_graphic, curr_graphic_loc)
 		curr_count = stats_font.render(common_functions.break_up_large_numbers(BATTLE.defending_force[u]), True, defines.C_WHITE)
 		curr_count_loc = curr_count.get_rect()
-		curr_count_loc.bottomright = (curr_graphic_loc.left-defines.PAD_DIST, curr_graphic_loc.bottom)
+		curr_count_loc.bottom = curr_graphic_loc.bottom
+		if current_text_offset is None:
+			curr_count_loc.right = curr_graphic_loc.left-defines.PAD_DIST
+			current_text_offset = curr_count_loc.right
+		else:
+			curr_count_loc.right = current_text_offset
 		window.blit(curr_count, curr_count_loc)
 	# Total
 	def_total = stats_font.render(common_functions.break_up_large_numbers(sum(BATTLE.defending_force))+" total", True, defines.C_WHITE)
