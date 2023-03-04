@@ -93,10 +93,10 @@ MAX_UNIT_GRAPHIC_SIZE = 43  # Pixels. Both dimensions are 43.
 SMALL_UNIT_GRAPHIC_SIZE = int(MAX_UNIT_GRAPHIC_SIZE * 0.7)
 
 try:
-    START_WIDTH = int(get_config_data(lines[0]))  # 1000 by default
+    START_WIDTH = int(get_config_data(lines[0]))  # 1200 by default
     START_HEIGHT = int(get_config_data(lines[1]))  # 800 by default
 except:
-    START_WIDTH = 1000
+    START_WIDTH = 1200
     START_HEIGHT = 800
 NAV_BUTTON_HEIGHT = 50  # Pixels
 NAV_BUTTON_BORDER_WIDTH = 4  # Thickness, in pixels
