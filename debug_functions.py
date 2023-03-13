@@ -31,7 +31,7 @@ def new_save() -> None:
     global save_number
     save_number += 1
     out_file = open("debug.txt", 'a')
-    out_file.write(f"================================ SAVE {save_number} ================================\n")
+    out_file.write(f"\n================================ SAVE {save_number} ================================\n")
     out_file.close()
 
 
