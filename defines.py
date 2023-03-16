@@ -17,7 +17,11 @@ config_file.close()
 
 
 def get_config_data(line):
-    return line.strip().split("=")[1].split(";")[0].replace(' ', '')
+    try:
+        return line.strip().split("=")[1].split(";")[0].replace(' ', '')
+    except: # it's okay, this mostly just handles blank lines
+        return None
+
 
 
 # Paths
