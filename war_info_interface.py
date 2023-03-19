@@ -33,6 +33,19 @@ class Dummy: # Used to handle condottieri participants in a battle
 		self.longname = common_functions.get_full_country_name(name)+" (Condottieri)"
 
 
+def esc_button(window, small_font):
+	# Draws a box with "ESC" in it for windows on which you can press ESC to back out
+	esc_button_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
+	esc_text = small_font.render("ESC", True, defines.C_LGRAY)
+	esc_text_rect = esc_text.get_rect()
+	esc_text_rect.topleft = (window.get_width()/defines.ESC_BUTTON_X, defines.PAD_DIST)
+	esc_box_rect = esc_text_rect.inflate(defines.PAD_DIST, defines.PAD_DIST/2)
+	pygame.draw.rect(esc_button_surface, defines.C_LGRAY, esc_box_rect, 2)
+	esc_button_surface.blit(esc_text, esc_text_rect)
+	esc_button_surface.set_alpha(180)
+	window.blit(esc_button_surface, (0, 0))
+
+
 def render_timeline(window, font, small_font, light_font, stats_font, present_date):
 	window.fill(defines.C_INTERFACE)
 
@@ -93,6 +106,7 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 		window.blit(to_render[t+1][0], to_render[t+1][1])
 
 	render_screen_buttons(window, font)
+	esc_button(window, small_font)
 	pygame.display.update()
 
 
@@ -416,6 +430,7 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 
 	render_map_buttons(window, small_font, title_bar)
 
+	esc_button(window, small_font)
 	pygame.display.update()
 
 def render_battles(window, font, small_font, light_font, stats_font, terrain_map):
@@ -469,6 +484,7 @@ def render_battles(window, font, small_font, light_font, stats_font, terrain_map
 	render_screen_buttons(window, font)
 	render_map_buttons(window, small_font, title_bar)
 
+	esc_button(window, small_font)
 	pygame.display.update()
 
 
@@ -830,6 +846,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 
 	render_war_stats(window, font, small_font, light_font, stats_font, padding_before_small_flags, tag=tag)
 	render_screen_buttons(window, font)
+	esc_button(window, small_font)
 
 	pygame.display.update()
 

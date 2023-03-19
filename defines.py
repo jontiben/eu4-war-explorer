@@ -111,6 +111,7 @@ MINOR_TIME_LINE_WIDTH = 5
 TIMELINE_POS = 5  # Number of positions above and below the timeline for text
 MIN_TIMELINE_HEIGHT = NAV_BUTTON_HEIGHT  # Height of the lowest timeline bar
 TIMELINE_LENGTH_MULTIPLIER = 2.25
+ESC_BUTTON_X = 7 # window width/ESC_BUTTON_X = x position of the escape button
 
 BATTLE_CENTER_SIZE = 2  # Pixels radius
 DATE_COLOR_SIZE = 7  # Pixels radius
