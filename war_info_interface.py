@@ -24,16 +24,16 @@ land_graphics_list = [infantry_graphic, cavalry_graphic, artillery_graphic]
 sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 
 battle_type = "casualties"
-return_to_battles = True # False takes you back to the timeline
+return_to_battles = True  # False takes you back to the timeline
 
 
-class Dummy: # Used to handle condottieri participants in a battle
+class Dummy:  # Used to handle condottieri participants in a battle
 	def __init__(self, name):
 		self.name = name
 		self.longname = common_functions.get_full_country_name(name)+" (Condottieri)"
 
 
-def esc_button(window, small_font):
+def esc_button(window, small_font) -> None:
 	# Draws a box with "ESC" in it for windows on which you can press ESC to back out
 	esc_button_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
 	esc_text = small_font.render("ESC", True, defines.C_LGRAY)
@@ -46,7 +46,7 @@ def esc_button(window, small_font):
 	window.blit(esc_button_surface, (0, 0))
 
 
-def render_timeline(window, font, small_font, light_font, stats_font, present_date):
+def render_timeline(window, font, small_font, light_font, stats_font, present_date) -> None:
 	window.fill(defines.C_INTERFACE)
 
 	halfheight = int((window.get_height()-defines.NAV_BUTTON_HEIGHT)/2)
@@ -111,11 +111,11 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 
 
 def render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path,
-		output_map=False):
+		output_map=False) -> None | pygame.Surface:
 	global MAP_SIZE
 	window.fill(defines.C_INTERFACE)
 
-	sized_terrain_map = pygame.transform.scale(terrain_map, (int(window.get_width()), 
+	sized_terrain_map = pygame.transform.scale(terrain_map, (int(window.get_width()),
 		int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())))
 	window.blit(sized_terrain_map, (0, 0))
 	sized_terrain_map_loc = sized_terrain_map.get_rect() # For convenience later
@@ -126,7 +126,7 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		window.blit(sized_river_map, (0, 0))
 
 	if "borders" in MAP_TYPES:
-		sized_borders_map = pygame.transform.scale(border_map, (int(window.get_width()), 
+		sized_borders_map = pygame.transform.scale(border_map, (int(window.get_width()),
 			int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())))
 		window.blit(sized_borders_map, (0, 0))
 
@@ -224,7 +224,7 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		render_one_battle(window, font, small_font, light_font, stats_font, terrain_map)
 
 
-def render_one_battle(window, font, small_font, light_font, stats_font, terrain_map):
+def render_one_battle(window, font, small_font, light_font, stats_font, terrain_map) -> None:
 	map_bottom = int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())
 	window.fill(defines.C_INTERFACE, (0, map_bottom, window.get_width(), window.get_height()-map_bottom))
 
@@ -433,7 +433,8 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 	esc_button(window, small_font)
 	pygame.display.update()
 
-def render_battles(window, font, small_font, light_font, stats_font, terrain_map):
+
+def render_battles(window, font, small_font, light_font, stats_font, terrain_map) -> None:
 	global clickable_list
 
 	map_bottom = int((terrain_map.get_height()/terrain_map.get_width())*window.get_width())
@@ -443,7 +444,7 @@ def render_battles(window, font, small_font, light_font, stats_font, terrain_map
 	title_bar = pygame.draw.rect(window, defines.C_INTERFACE, title_bar_loc)
 	title_bar_outline = pygame.draw.rect(window, defines.C_GOLD, title_bar_loc, defines.NAV_BUTTON_BORDER_WIDTH)
 	space_before_battles = title_bar_loc[1] + defines.NAV_BUTTON_HEIGHT
-	
+
 	war_title = font.render(WAR.title, True, defines.C_WHITE)
 	war_title_loc = war_title.get_rect()
 	war_title_loc.x = defines.PAD_DIST
@@ -488,7 +489,7 @@ def render_battles(window, font, small_font, light_font, stats_font, terrain_map
 	pygame.display.update()
 
 
-def render_map_buttons(window, small_font, title_bar):
+def render_map_buttons(window, small_font, title_bar) -> None:
 	global clickable_list
 
 	river_button_loc = (int(window.get_width()*0.5), title_bar.top+defines.PAD_DIST, defines.NAV_BUTTON_HEIGHT+defines.PAD_DIST*2, defines.NAV_BUTTON_HEIGHT-defines.PAD_DIST*2)
@@ -539,12 +540,12 @@ def render_map_buttons(window, small_font, title_bar):
 	window.blit(export_label, export_label_loc)
 
 
-def render_screen_buttons(window, font):
+def render_screen_buttons(window, font) -> None:
 	global clickable_list, current_screen
 
 	button_height = defines.NAV_BUTTON_HEIGHT
 	button_border_width = defines.NAV_BUTTON_BORDER_WIDTH
-	
+
 	# First Button
 	button_loc1 = (0, window.get_height()-button_height, int(window.get_width()/2+1), button_height)
 	pygame.draw.rect(window, defines.C_INTERFACE, button_loc1)
@@ -576,7 +577,7 @@ def render_screen_buttons(window, font):
 	window.blit(button_text2, button_text_loc2)
 
 
-def render_war_stats(window, font, small_font, light_font, stats_font, padding_before_small_flags, tag):
+def render_war_stats(window, font, small_font, light_font, stats_font, padding_before_small_flags, tag) -> None:
 	# nation=000 tells it to display stats for all war participants
 
 	# The phrase "losses by side"
@@ -712,7 +713,7 @@ def render_war_stats(window, font, small_font, light_font, stats_font, padding_b
 		window.blit(abs_total_text, abs_total_text_loc)
 
 
-def render_war(window, font, small_font, light_font, stats_font, tag="000"):
+def render_war(window, font, small_font, light_font, stats_font, tag="000") -> None:
 	global clickable_list
 	window.fill(defines.C_INTERFACE)
 
@@ -749,13 +750,13 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	prim_att_name_loc.y = (defines.PAD_DIST*2+flag_height)
 	prim_att_name_loc.x = defines.PAD_DIST
 	window.blit(prim_att_name, prim_att_name_loc)
-	
+
 	# Primary Defender's Name
 	prim_def_name = font.render(participants[prim_def].longname, True, defines.C_WHITE)
 	prim_def_name_loc = prim_def_name.get_rect()
 	prim_def_name_loc.y = (defines.PAD_DIST*2+flag_height)
 	prim_def_name_loc.right = (window.get_width()-defines.PAD_DIST)
-	window.blit(prim_def_name, prim_def_name_loc)	
+	window.blit(prim_def_name, prim_def_name_loc)
 
 	# Dates of the war
 	war_dates_text = common_functions.date_conversion(WAR.start_date)+" - "
@@ -778,7 +779,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	window.blit(war_outcome, war_outcome_loc)
 
 	# Literally just the word "attacked"
-	attacked = small_font.render("-  attacked  -", True, defines.C_LGRAY)	
+	attacked = small_font.render("-  attacked  -", True, defines.C_LGRAY)
 	attacked_loc = attacked.get_rect()
 	attacked_loc.center = (window.get_width()/2, prim_att_name_loc.center[1])
 	window.blit(attacked, attacked_loc)
@@ -851,7 +852,7 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000"):
 	pygame.display.update()
 
 
-def export_map(map):
+def export_map(map) -> None:
 	from datetime import datetime
 	filename = f"exported_maps/ewe_battles_{str(datetime.now().time()).replace(':','').split('.')[0]}.{defines.MAP_OUTPUT_FORMAT}"
 	try:
@@ -862,7 +863,7 @@ def export_map(map):
 		debug_functions.debug_out(f"Exporting map failed with exception [{exception}]", event_type="ERROR")
 
 
-def info_loop(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path, event, present_date, force_update=False):
+def info_loop(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path, event, present_date, force_update=False) -> int | None:
 	global clickable_list
 	global battle_type
 	global return_to_battles
@@ -897,7 +898,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 					if CURR_POSITION > defines.SCROLL_SIZE-1:
 						CURR_POSITION -= defines.SCROLL_SIZE
 			elif event.button == 5:
-				if current_screen == "info": 
+				if current_screen == "info":
 					if CURR_POSITION < max(WAR.attacker_count, WAR.defender_count)-defines.SCROLL_SIZE-1:
 						CURR_POSITION += defines.SCROLL_SIZE
 				elif current_screen == "battles":
@@ -975,7 +976,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 		return None
 
 
-def init(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, war):
+def init(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, war) -> None:
 	global WAR, BATTLE
 	global prim_att, prim_def, add_attackers, add_defenders, participants
 	global SOMETHING_FOCUSED, LOADED_TAG

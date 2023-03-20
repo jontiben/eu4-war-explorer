@@ -55,19 +55,19 @@ LIGHT_FONT = pygame.font.Font("fonts/Dosis-Light.ttf", 32)
 STATS_FONT = pygame.font.Font("fonts/UbuntuMono-Regular.ttf", 24)
 
 
-def disp_resize(screen_size):
+def disp_resize(screen_size) -> None:
     # Resizes the window
     global window
     window = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
     pygame.display.update()
 
 
-def debug_mode_out():
+def debug_mode_out() -> None:
     # Outputs the current mode to the debug.txt file
     debug_functions.debug_out(mode, event_type="mode")
 
 
-def open_file():
+def open_file() -> str | None:
     global do_quit
     debug_functions.new_save()
     # Opens a file using a tkinter dialog
@@ -93,7 +93,8 @@ def open_file():
     root.destroy()
     return file_name
 
-def init():
+
+def init() -> None:
     global do_quit
     try:
         # Loads a new map and runs save_file_reader.py
@@ -169,7 +170,7 @@ def init():
         debug_functions.debug_out(f"Exception [{traceback.format_exc()}] while initializing save", event_type="ERROR")
 
 
-def render_scene(event):
+def render_scene(event) -> None:
     global window, mode, has_updated_for_resize, curr_filename, list_position
     try:
         if mode == "list":  # The window/scene that's active
@@ -198,7 +199,7 @@ def render_scene(event):
         debug_functions.debug_out(f"Exception [{traceback.format_exc()}] on rendering scene [{mode}]", event_type="ERROR")
 
 
-def main():
+def main() -> None:
     global do_quit, has_updated_for_resize
     try:
         while not do_quit:

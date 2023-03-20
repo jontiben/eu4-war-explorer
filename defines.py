@@ -9,7 +9,7 @@ import os
 import eu4_path_finder
 
 ### VERSION
-VERSION = "1.2.0a"
+VERSION = "1.2.2a"
 
 config_file = open("config.cfg", 'r')
 lines = config_file.readlines()
@@ -19,9 +19,8 @@ config_file.close()
 def get_config_data(line):
     try:
         return line.strip().split("=")[1].split(";")[0].replace(' ', '')
-    except: # it's okay, this mostly just handles blank lines
+    except:  # it's okay, this mostly just handles blank lines
         return None
-
 
 
 # Paths
@@ -65,7 +64,8 @@ C_RED = (255, 48, 48)
 interface_color = get_config_data(lines[6])
 interface_color_tuple = interface_color.replace(' ', '').replace('(', '').replace(')', '').split(",")
 C_INTERFACE = (
-int(interface_color_tuple[0]), int(interface_color_tuple[1]), int(interface_color_tuple[2]))  # (10, 25, 64) by default
+    int(interface_color_tuple[0]), int(interface_color_tuple[1]),
+    int(interface_color_tuple[2]))  # (10, 25, 64) by default
 # C_INTERFACE = (36,52,72)
 
 # Casualty vector info
@@ -111,7 +111,7 @@ MINOR_TIME_LINE_WIDTH = 5
 TIMELINE_POS = 5  # Number of positions above and below the timeline for text
 MIN_TIMELINE_HEIGHT = NAV_BUTTON_HEIGHT  # Height of the lowest timeline bar
 TIMELINE_LENGTH_MULTIPLIER = 2.25
-ESC_BUTTON_X = 7 # window width/ESC_BUTTON_X = x position of the escape button
+ESC_BUTTON_X = 7  # window width/ESC_BUTTON_X = x position of the escape button
 
 BATTLE_CENTER_SIZE = 2  # Pixels radius
 DATE_COLOR_SIZE = 7  # Pixels radius
@@ -119,7 +119,7 @@ BATTLE_CIRCLE_SCALING_FACTOR = float(get_config_data(lines[3]))  # 0.075 by defa
 SEA_BATTLE_SCALING_FACTOR = 300  # Applied on top of the above number
 UNSELECTED_BATTLE_ALPHA = 128
 
-do_battle_displacement = get_config_data(lines[7]).lower() # no by default
+do_battle_displacement = get_config_data(lines[7]).lower()  # no by default
 RANDOM_BATTLE_DISPLACEMENT = False
 if do_battle_displacement == "yes":
     RANDOM_BATTLE_DISPLACEMENT = True
