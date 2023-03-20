@@ -18,9 +18,8 @@ Note that the first 11 wars on the battle screen will always be the same on any 
 
 
 Planned features are:
-- The ability to sort wars and battles by total casualty count
+- The ability to sort battles by total casualty count
 - More information on the timeline
-- Some sort of indicator whenever you can press ESC to return to a window
 
 This project was written entirely in Python using Pygame and tkinter for the UI and PIL for modded map processing.
 
