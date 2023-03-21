@@ -1,5 +1,5 @@
 ## EU4 War Explorer
-created by jontiben
+created by jontiben in 2022
 
 ![image](https://user-images.githubusercontent.com/25780026/215621594-606c4e4a-c926-47df-a8a7-aca29d81b3ed.png)<b>War info screen</b>
 
@@ -32,6 +32,7 @@ To contact me, please send me a friend request on discord where I am jontiben#78
 ![image](https://user-images.githubusercontent.com/25780026/215621150-74549821-f098-4108-889c-c16845595da7.png)<b>Single battle</b>
 ![image](https://user-images.githubusercontent.com/25780026/215621186-83de2638-cfb0-4df5-886e-53f344fa47fb.png)<b>Timeline</b>
 
-
+## License
+This project is maintained under the MIT License.
 
 
