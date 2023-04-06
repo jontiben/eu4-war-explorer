@@ -7,7 +7,7 @@ created by jontiben in 2022
 This application reads EU4 savefiles (ending in the file extension .eu4) for information about past wars and then presents it in an easily readable format. It features:
 - A searchable list of every finished war in the savefile (searchable by elements of the war title or by tags involved)
 - Breakdowns of the overall casualties in a war by side which can be further broken down by individual nation
-- A list of battles fought in the war plotted on a map
+- A list of battles fought in the war plotted on a map, which can be exported to an image
 - A breakdown of forces and losses for each battle
 - A scrollable timeline showing major events over the course of the war with clickable links to battles
 - Full mod support
