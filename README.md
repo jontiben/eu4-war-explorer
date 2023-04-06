@@ -35,4 +35,8 @@ To contact me, please send me a friend request on discord where I am jontiben#78
 ## License
 This project is maintained under the MIT License.
 
+## Other
+
+Link to PDXPlaza forum post: https://forum.paradoxplaza.com/forum/threads/eu4-war-explorer.1577174/
+
 
