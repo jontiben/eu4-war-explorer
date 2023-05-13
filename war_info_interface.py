@@ -38,7 +38,7 @@ def esc_button(window, small_font) -> None:
 	esc_button_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
 	esc_text = small_font.render("ESC", True, defines.C_LGRAY)
 	esc_text_rect = esc_text.get_rect()
-	esc_text_rect.topleft = (window.get_width()/defines.ESC_BUTTON_X, defines.PAD_DIST)
+	esc_text_rect.topleft = (window.get_width() * defines.ESC_BUTTON_X + defines.PAD_DIST, defines.PAD_DIST)
 	esc_box_rect = esc_text_rect.inflate(defines.PAD_DIST, defines.PAD_DIST/2)
 	pygame.draw.rect(esc_button_surface, defines.C_LGRAY, esc_box_rect, 2)
 	esc_button_surface.blit(esc_text, esc_text_rect)
@@ -218,6 +218,9 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		window.blit(unselected_battles_surface,(0, 0))
 	if output_map:
 		return window
+
+	esc_button(window, small_font)
+	
 	if not SOMETHING_FOCUSED:
 		render_battles(window, font, small_font, light_font, stats_font, terrain_map)
 	else:
@@ -430,7 +433,6 @@ def render_one_battle(window, font, small_font, light_font, stats_font, terrain_
 
 	render_map_buttons(window, small_font, title_bar)
 
-	esc_button(window, small_font)
 	pygame.display.update()
 
 
@@ -485,7 +487,6 @@ def render_battles(window, font, small_font, light_font, stats_font, terrain_map
 	render_screen_buttons(window, font)
 	render_map_buttons(window, small_font, title_bar)
 
-	esc_button(window, small_font)
 	pygame.display.update()
 
 
