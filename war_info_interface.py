@@ -25,6 +25,7 @@ sea_graphics_list = [hs_graphic, ls_graphic, gal_graphic, tra_graphic]
 
 battle_type = "casualties"
 return_to_battles = True  # False takes you back to the timeline
+text_on = False
 
 
 class Dummy:  # Used to handle condottieri participants in a battle
@@ -112,7 +113,8 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 
 def render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path,
 		output_map=False) -> None | pygame.Surface:
-	global MAP_SIZE
+	global MAP_SIZE, mouseover_battles
+	mouseover_battles = {}
 	window.fill(defines.C_INTERFACE)
 
 	sized_terrain_map = pygame.transform.scale(terrain_map, (int(window.get_width()),
@@ -173,6 +175,10 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		curr_y = province_dict[battle.location][1]
 		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
 		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
+		if (mod_x, mod_y) in mouseover_battles:
+			mouseover_battles[(mod_x, mod_y)] = battle.fullname[3:].replace("Battle", "Battles")
+		else:
+			mouseover_battles[(mod_x, mod_y)] = battle.fullname
 		battle_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
 		if battle.surface == "land":
 			battle_scale = int(math.sqrt((battle.attacking_losses+battle.defending_losses)*defines.BATTLE_CIRCLE_SCALING_FACTOR))
@@ -908,17 +914,11 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 				elif current_screen == "timeline":
 					CURR_POSITION += defines.TIMELINE_SCROLL_SIZE
 			elif event.button == 1:
+				clickable_list.reverse()
 				mouse_pos = pygame.mouse.get_pos()
 				for button in clickable_list:
 					if button[2].collidepoint(mouse_pos):
-						if button[0] == "flag":
-							LOADED_TAG = button[1]
-							SOMETHING_FOCUSED = True
-						elif button[0] == "battle":
-							SOMETHING_FOCUSED = True
-							BATTLE = button[1]
-							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
-						elif button[0] == "switch_window":
+						if button[0] == "switch_window":
 							CURR_POSITION = 0
 							return_to_battles = True
 							SOMETHING_FOCUSED = False
@@ -927,6 +927,13 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 							if current_screen == "battles":
 								render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
 							break # Necessary to stop it flipping back and forth infinitely
+						elif button[0] == "flag" and current_screen == "info":
+							LOADED_TAG = button[1]
+							SOMETHING_FOCUSED = True
+						elif button[0] == "battle" and current_screen == "battles":
+							SOMETHING_FOCUSED = True
+							BATTLE = button[1]
+							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
 						elif button[0] == "map":
 							MAP_TYPES.append(button[1])
 							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
@@ -959,6 +966,29 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 							render_map(window, font, small_font, light_font, stats_font, terrain_map,
 									   river_map, border_map, province_mids_path)
 							render_one_battle(window, font, small_font, light_font, stats_font, terrain_map)
+				mouse_x, mouse_y = mouse_pos
+				text_on = False
+				for item in mouseover_battles:
+					# Check if the mouse is within battle_center_size of the battle location with pygame (in a square, for performance)
+					if item[0] - (defines.BATTLE_CENTER_SIZE + 5) < mouse_x < item[0] + (
+							defines.BATTLE_CENTER_SIZE + 5) and item[
+						1] - (defines.BATTLE_CENTER_SIZE + 5) < mouse_y < item[1] + (
+							defines.BATTLE_CENTER_SIZE + 5):
+						# Draw the battle name
+						render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map,
+								   border_map,
+								   province_mids_path)
+						pygame.draw.circle(window, defines.C_GOLD, item, defines.BATTLE_CENTER_SIZE)
+						text = small_font.render(mouseover_battles[item], True, defines.C_WHITE)
+						text_rect = text.get_rect()
+						text_rect.topleft = (item[0] + defines.PAD_DIST / 2, item[1] - defines.BATTLE_CENTER_SIZE - 10)
+						window.blit(text, text_rect)
+						text_on = True
+						pygame.display.update()
+						break
+				if text_on == False:
+					render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map,
+							   province_mids_path)
 
 		clickable_list = []
 		if current_screen == "info":
@@ -981,11 +1011,12 @@ def init(window, font, small_font, light_font, stats_font, terrain_map, river_ma
 	global WAR, BATTLE
 	global prim_att, prim_def, add_attackers, add_defenders, participants
 	global SOMETHING_FOCUSED, LOADED_TAG
-	global current_screen, clickable_list, CURR_POSITION
+	global current_screen, clickable_list, CURR_POSITION, mouseover_battles
 	global MAP_TYPES
 	global MAP_SIZE
 
 	clickable_list = []
+	mouseover_battles = {}
 	SOMETHING_FOCUSED = False
 	CURR_POSITION = 0
 	LOADED_TAG = "000"
