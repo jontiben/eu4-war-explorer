@@ -9,7 +9,7 @@ from datetime import datetime
 save_number = -1
 messages = []
 
-def debug_out(event_text: str, event_type: str = None) -> None:
+def debug_out(event_text: str, event_type: str | None = None) -> None:
     # Outputs the time plus the event type and event to a text file.
     time = datetime.now().time()
     if save_number > -1:
@@ -22,9 +22,8 @@ def debug_out(event_text: str, event_type: str = None) -> None:
             fullstring = f"[{time}] {event_type}: {event_text}\n"
         else:
             fullstring = f"[{time}] ***** {event_text}\n"
-    out_file = open("debug.txt", 'a')
-    out_file.write(fullstring)
-    out_file.close()
+    with open("debug.txt", 'a') as out_file:
+        out_file.write(fullstring)
 
 
 def new_save() -> None:

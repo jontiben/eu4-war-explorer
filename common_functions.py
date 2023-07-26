@@ -79,15 +79,15 @@ def get_full_country_name(tag: str) -> str:
                         name = filename[:-4].split('-')[1]
                         if name[0] == ' ':
                             return name[1:]
-                        if name.lower() in defines.ALT_NAMES.keys():
+                        if name.lower() in defines.ALT_NAMES:
                             return defines.ALT_NAMES[name.lower()]
                         return name
         else:
-            if name.lower() in defines.ALT_NAMES.keys():
+            if name.lower() in defines.ALT_NAMES:
                 return defines.ALT_NAMES[name.lower()]
             return name
     except:
-        debug_functions.debug_out(f"Unable to find full country name for tag {tag}.", event_type="WARN")
+        debug_functions.debug_out(f"Unable to find full country name at all for tag {tag}.", event_type="WARN")
         return tag
     return tag
 
@@ -106,9 +106,12 @@ def get_all_country_names(countries_folder=defines.PATH_TO_COUNTRIES_FILE[:-16])
                         new_line = new_line.replace("\"", '')
                         new_line = new_line.split('/')[1]
                         new_line = new_line.split('.')[0]
+                        if new_line.lower() in defines.ALT_NAMES:
+                            new_line = defines.ALT_NAMES[new_line.lower()]
                         all_countries.append((line[:3], new_line))
                     except:
                         pass
+
     if len(all_countries) == 0:  # Fallback
         debug_functions.debug_out(
             f"Unable to compile countries names dict from [{countries_folder}]. Using fallback source.",
@@ -121,6 +124,8 @@ def get_all_country_names(countries_folder=defines.PATH_TO_COUNTRIES_FILE[:-16])
                     name = filename[:-4].split('-')[1]
                     if name[0] == ' ':
                         name = name[1:]
+                    if name.lower() in defines.ALT_NAMES:
+                        name = defines.ALT_NAMES[name.lower()]
                     all_countries.append((tag, name))
     return all_countries
 

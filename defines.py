@@ -159,6 +159,8 @@ ALT_NAMES = {
     "maccarthy": "Munster",
     "timurid": "Timurids",
     "qom": "Ajam",
+    "luangprabang": "Luang Prabang",
+    "mongkawng": "Mong Kawng"
 }
 
 # v Colors codes used for flags created at runtime (e.g. custom nations)
