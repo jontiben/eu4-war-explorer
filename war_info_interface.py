@@ -982,6 +982,11 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 						text = small_font.render(mouseover_battles[item], True, defines.C_WHITE)
 						text_rect = text.get_rect()
 						text_rect.topleft = (item[0] + defines.PAD_DIST / 2, item[1] - defines.BATTLE_CENTER_SIZE - 10)
+						text_backing_surface = pygame.Surface((text_rect.width, text_rect.height))
+						text_backing_surface_rect = text_backing_surface.get_rect()
+						text_backing_surface_rect.topleft = text_rect.topleft
+						text_backing_surface.set_alpha(defines.BATTLE_TEXT_BACKING_ALPHA)
+						window.blit(text_backing_surface, text_backing_surface_rect)
 						window.blit(text, text_rect)
 						text_on = True
 						pygame.display.update()

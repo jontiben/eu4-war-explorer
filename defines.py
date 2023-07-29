@@ -66,7 +66,7 @@ interface_color_tuple = interface_color.replace(' ', '').replace('(', '').replac
 C_INTERFACE = (
     int(interface_color_tuple[0]), int(interface_color_tuple[1]),
     int(interface_color_tuple[2]))  # (10, 25, 64) by default
-# C_INTERFACE = (36,52,72)
+BATTLE_TEXT_BACKING_ALPHA = 160
 
 # Casualty vector info
 CASUALTY_VECTOR_LENGTH = 21  # Length (number of values) of the casualty (loss) vector in the savefile
@@ -185,3 +185,22 @@ EU4_COLORS_TRANSLATION = {
     "15": (50, 100, 140),
     "16": (200, 96, 84),
 }
+
+# Words whose presence at the beginning of a sea battle's province name means that the name of the battle won't
+# be prefixed with "The"
+DEFINITE_INITIAL_WORDS_LIST = [
+    "lake",
+    "the"
+]
+
+# Words whose presence at the end of a sea battle's province name means that the name of the battle won't be
+# prefixed with "The"
+DEFINITE_FINAL_WORDS_LIST = [
+    "bay",
+    "island",
+    "islands",
+    "cape",
+    "end",
+    "lake",
+    "channel",
+]

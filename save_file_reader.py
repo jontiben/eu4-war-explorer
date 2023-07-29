@@ -68,7 +68,7 @@ class Battle:
             self.fullname = self.str_iteration + "Battle of " + self.name
         else:
             words = self.name.split(' ')
-            if words[-1] != "Bay" and words[-1] != "Island" and words[0] != "Cape" and words[-1] != "Bank":
+            if words[-1].lower() not in defines.DEFINITE_FINAL_WORDS_LIST and words[0].lower() not in defines.DEFINITE_INITIAL_WORDS_LIST:
                 self.fullname = self.str_iteration + "Battle of the " + self.name
             else:
                 self.fullname = self.str_iteration + "Battle of " + self.name
