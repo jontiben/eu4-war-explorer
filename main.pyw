@@ -7,7 +7,9 @@
 import pygame
 import tkinter as tk
 from tkinter import filedialog
-import traceback, os, platform
+import traceback
+import os
+import platform
 
 import defines
 import midpoint_calculator
@@ -32,7 +34,7 @@ def clear_debug_file():
         debug_backup_file.write(debug_file.read())
         debug_backup_file.close()
         debug_file.close()
-    except OSError: # No debug file yet
+    except OSError:  # No debug file yet
         pass
     debug_file = open("debug.txt", 'w')
     debug_file.write("")
@@ -81,12 +83,17 @@ def open_file() -> str | None:
         # mortal plane as men have the spiritual pull to deal with something this deeply haunted, so I'm not going
         # to touch it for now. I haven't introduced this issue with this update because it crops up in old versions of
         # the program as well, versions where I know for a fact it used to consistently work. Miserere mei, Deus.
-        file_name = filedialog.askopenfilename(parent=root, initialdir=defines.EU4_SAVE_DIR, title="Select an EU4 Savefile",
+        #
+        # July 2023 update: it stopped happening out of the blue at some point in the last few months. I still don't
+        # know what it was, I'm leaving this comment here in case anyone else encounters the same error in the future
+        # and wants to feel a little less alone.
+        file_name = filedialog.askopenfilename(parent=root, initialdir=defines.EU4_SAVE_DIR,
+                                               title="Select an EU4 Savefile",
                                                filetypes=[('eu4 save files', '*.eu4')])
     except:
         debug_functions.debug_out(
-            f"Exception [{traceback.format_exc()}] while prompting the user to select a file, user likely closed the "
-            f"file dialog without making a selection.", event_type="ERROR")
+            f"Exception [{traceback.format_exc()}] while prompting the user to select a file, user likely"
+            f"closed the file dialog without making a selection.", event_type="ERROR")
         do_quit = True
         root.destroy()
         return None
@@ -162,12 +169,14 @@ def init() -> None:
             mode = "list"
 
             #debug_mode_out()
-            war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, None, force_update=True, force_reset_list=True)
+            war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, None, force_update=True,
+                                         force_reset_list=True)
             pygame.display.update()
             pygame.display.set_caption(caption_root + " - " + curr_filename.split('/')[-1])
 
     except:
-        debug_functions.debug_out(f"Exception [{traceback.format_exc()}] while initializing save", event_type="ERROR")
+        debug_functions.debug_out(f"Exception [{traceback.format_exc()}] while initializing save",
+                                  event_type="ERROR")
 
 
 def render_scene(event) -> None:
@@ -193,10 +202,12 @@ def render_scene(event) -> None:
                                                             present_date, force_update=(not has_updated_for_resize))
             if poss_prev_window is not None:
                 mode = "list"
-                war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=True, force_reset_list=False, position=list_position)
+                war_list_interface.list_loop(window, FONT, SMALL_FONT, war_list, event, force_update=True,
+                                             force_reset_list=False, position=list_position)
         has_updated_for_resize = True
     except:
-        debug_functions.debug_out(f"Exception [{traceback.format_exc()}] on rendering scene [{mode}]", event_type="ERROR")
+        debug_functions.debug_out(f"Exception [{traceback.format_exc()}] on rendering scene [{mode}]",
+                                  event_type="ERROR")
 
 
 def main() -> None:
@@ -209,7 +220,7 @@ def main() -> None:
                 elif event.type == pygame.VIDEORESIZE:
                     # When pygame.event.get() is called in a function, for some reason it never gets
                     # pygame.VIDEORESIZE events. That's why I'm dealing with the important things (quitting and
-                    # resizing) out here. All other inputs eventually get passed to the various modules and they can
+                    # resizing) out here. All other inputs eventually get passed to the various modules, they can
                     # figure out what to do with them.
                     disp_resize(event.size) 
                     has_updated_for_resize = False
@@ -219,7 +230,8 @@ def main() -> None:
         debug_functions.debug_out("Exited normally")
 
     except:
-        debug_functions.debug_out(f"Program crashed, exiting with exception [{traceback.format_exc()}]", event_type="ERROR")
+        debug_functions.debug_out(f"Program crashed, exiting with exception [{traceback.format_exc()}]",
+                                  event_type="ERROR")
 
 
 if __name__ == "__main__":
