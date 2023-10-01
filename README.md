@@ -23,7 +23,7 @@ Planned features are:
 
 This project was written entirely in Python using Pygame and tkinter for the UI and PIL for modded map processing.
 
-To contact me, please send me a friend request on discord where I am jontiben#7855.
+To contact me, please send me a friend request on discord where I am @jontiben.
 
 ## Screenshots
 ![image](https://user-images.githubusercontent.com/25780026/215621041-c2097bb4-0bdf-4eb7-ac81-f70aa1284135.png)<b>War list sorted by casualties</b>
