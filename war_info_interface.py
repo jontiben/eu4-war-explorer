@@ -27,6 +27,8 @@ battle_type = "casualties"
 return_to_battles = True  # False takes you back to the timeline
 text_on = False
 
+failed_to_render = [] # Provinces whose location on the map cannot be rendered because they don't exist in the midpoints file
+
 
 class Dummy:  # Used to handle condottieri participants in a battle
 	def __init__(self, name):
@@ -113,7 +115,7 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 
 def render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path,
 		output_map=False) -> None | pygame.Surface:
-	global MAP_SIZE, mouseover_battles
+	global MAP_SIZE, mouseover_battles, failed_to_render
 	mouseover_battles = {}
 	window.fill(defines.C_INTERFACE)
 
@@ -170,11 +172,15 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		date_color_size *= 1.5
 	for battle in battle_list:
 		# Translucent circles scaled based on battle loss count
-
-		curr_x = province_dict[battle.location][0]
-		curr_y = province_dict[battle.location][1]
-		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
-		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
+		try:
+			curr_x = province_dict[battle.location][0]
+			curr_y = province_dict[battle.location][1]
+			mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
+			mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
+		except KeyError:  # No debug file yet
+			if battle.location not in failed_to_render:
+				failed_to_render.append(battle.location)
+				debug_functions.debug_out(f"Could not find midpoint data for province [{battle.location}] in file [{province_mids_path}]. This battle will not be rendered. Try deleting the midpointlist file and restarting the application.", event_type="ERROR")
 		if (mod_x, mod_y) in mouseover_battles:
 			mouseover_battles[(mod_x, mod_y)] = battle.fullname[3:].replace("Battle", "Battles")
 		else:
@@ -203,10 +209,13 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 		unselected_battles_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
 		unselected_battles_surface.set_alpha(defines.UNSELECTED_BATTLE_ALPHA)
 	for battle in WAR.battles:
-		curr_x = province_dict[battle.location][0]
-		curr_y = province_dict[battle.location][1]
-		mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
-		mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
+		try:
+			curr_x = province_dict[battle.location][0]
+			curr_y = province_dict[battle.location][1]
+			mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
+			mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
+		except KeyError:
+			pass
 		if defines.RANDOM_BATTLE_DISPLACEMENT:
 			mod_x += random.randint(-defines.MAX_BATTLE_OFFSET, defines.MAX_BATTLE_OFFSET)
 			mod_y += random.randint(-defines.MAX_BATTLE_OFFSET, defines.MAX_BATTLE_OFFSET)

@@ -159,7 +159,7 @@ def init() -> None:
                 if os.path.isfile(map_mod_location+"/provinces.bmp") and os.path.isfile(map_mod_location+"/definition.csv"):
                     path_to_test_for = os.getcwd()+f"/mod_data/{map_mod_location.split('/')[-2]}midpointlist.csv"
                     if os.path.isfile(path_to_test_for):
-                        debug_functions.debug_out(f"Found previously generated province midpoint list for mod at {path_to_test_for}")
+                        debug_functions.debug_out(f"Found previously generated province midpoint list for mod at [{path_to_test_for}]")
                         MIDPOINTS_PATH = path_to_test_for
                     else:
                         debug_functions.debug_out(f"Modded map found, generating new province midpoints list...")

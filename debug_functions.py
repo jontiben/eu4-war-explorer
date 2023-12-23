@@ -14,9 +14,10 @@ def debug_out(event_text: str, event_type: str | None = None) -> None:
     time = datetime.now().time()
     if save_number > -1:
         if event_type is not None:
-            fullstring = f"| S{save_number} [{time}] {event_type}: {event_text}\n"
+            spacing = ' ' * (6 - len(event_type))
+            fullstring = f"| S{save_number} [{time}] {event_type}:{spacing}{event_text}\n"
         else:
-            fullstring = f"| S{save_number} [{time}] ***** {event_text}\n"
+            fullstring = f"| S{save_number} [{time}]        {event_text}\n"
     else: # Before the first save's opened
         if event_type is not None:
             fullstring = f"[{time}] {event_type}: {event_text}\n"
