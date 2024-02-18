@@ -182,9 +182,9 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 				failed_to_render.append(battle.location)
 				debug_functions.debug_out(f"Could not find midpoint data for province [{battle.location}] in file [{province_mids_path}]. This battle will not be rendered. Try deleting the midpointlist file and restarting the application.", event_type="ERROR")
 		if (mod_x, mod_y) in mouseover_battles:
-			mouseover_battles[(mod_x, mod_y)] = battle.fullname[3:].replace("Battle", "Battles")
+			mouseover_battles[(mod_x, mod_y)] = [battle.fullname[3:].replace("Battle", "Battles"), battle.location]
 		else:
-			mouseover_battles[(mod_x, mod_y)] = battle.fullname
+			mouseover_battles[(mod_x, mod_y)] = [battle.fullname, battle.location]
 		battle_surface = pygame.Surface((window.get_width(), window.get_height()), pygame.SRCALPHA)
 		if battle.surface == "land":
 			battle_scale = int(math.sqrt((battle.attacking_losses+battle.defending_losses)*defines.BATTLE_CIRCLE_SCALING_FACTOR))
@@ -469,9 +469,17 @@ def render_battles(window, font, small_font, light_font, stats_font, terrain_map
 	window.blit(war_title, war_title_loc)
 
 	battles_to_blit = []
+	line_counter = CURR_POSITION - 1
 	for i in range(CURR_POSITION, len(WAR.battles)):
 		curr_battle = WAR.battles[i]
-		i_loc = i - CURR_POSITION
+		if BATTLE_LIMITER is not None:
+			if curr_battle.location != BATTLE_LIMITER:
+				continue
+			else:
+				line_counter += 1
+		else:
+			line_counter += 1
+		i_loc = line_counter - CURR_POSITION
 		battle_title = font.render(curr_battle.fullname, True, defines.C_WHITE)
 		battle_title_loc = battle_title.get_rect()
 		battle_title_loc.x = defines.PAD_DIST
@@ -889,9 +897,12 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 	global CURR_POSITION
 	global BATTLE
 	global MAP_TYPES
+	global BATTLE_LIMITER
 	if event != None:
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_ESCAPE:
+				if BATTLE_LIMITER is not None:
+					BATTLE_LIMITER = None
 				if not SOMETHING_FOCUSED:
 					return 1
 				else:
@@ -924,6 +935,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 					CURR_POSITION += defines.TIMELINE_SCROLL_SIZE
 			elif event.button == 1:
 				clickable_list.reverse()
+				BATTLE_LIMITER = None
 				mouse_pos = pygame.mouse.get_pos()
 				for button in clickable_list:
 					if button[2].collidepoint(mouse_pos):
@@ -943,6 +955,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 							SOMETHING_FOCUSED = True
 							BATTLE = button[1]
 							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
+							break
 						elif button[0] == "map":
 							MAP_TYPES.append(button[1])
 							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map, province_mids_path)
@@ -975,8 +988,15 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 							render_map(window, font, small_font, light_font, stats_font, terrain_map,
 									   river_map, border_map, province_mids_path)
 							render_one_battle(window, font, small_font, light_font, stats_font, terrain_map)
+						elif button[0] == "slice":
+							BATTLE_LIMITER = button[1]
+							CURR_POSITION = 0
+							return_to_battles = True
+							render_map(window, font, small_font, light_font, stats_font, terrain_map,
+									   river_map, border_map, province_mids_path)
 				mouse_x, mouse_y = mouse_pos
 				text_on = False
+				clickable_list = []
 				for item in mouseover_battles:
 					# Check if the mouse is within battle_center_size of the battle location with pygame (in a square, for performance)
 					if item[0] - (defines.BATTLE_CENTER_SIZE + 5) < mouse_x < item[0] + (
@@ -988,7 +1008,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 								   border_map,
 								   province_mids_path)
 						pygame.draw.circle(window, defines.C_GOLD, item, defines.BATTLE_CENTER_SIZE)
-						text = small_font.render(mouseover_battles[item], True, defines.C_WHITE)
+						text = small_font.render(mouseover_battles[item][0], True, defines.C_WHITE)
 						text_rect = text.get_rect()
 						text_rect.topleft = (item[0] + defines.PAD_DIST / 2, item[1] - defines.BATTLE_CENTER_SIZE - 10)
 						text_backing_surface = pygame.Surface((text_rect.width, text_rect.height))
@@ -997,6 +1017,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 						text_backing_surface.set_alpha(defines.BATTLE_TEXT_BACKING_ALPHA)
 						window.blit(text_backing_surface, text_backing_surface_rect)
 						window.blit(text, text_rect)
+						clickable_list.append(["slice", mouseover_battles[item][1], text_backing_surface_rect])
 						text_on = True
 						pygame.display.update()
 						break
@@ -1004,7 +1025,6 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 					render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map,
 							   province_mids_path)
 
-		clickable_list = []
 		if current_screen == "info":
 			render_war(window, font, small_font, light_font, stats_font, tag=LOADED_TAG)
 		elif current_screen == "battles":
@@ -1014,6 +1034,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 				if not SOMETHING_FOCUSED:
 					render_battles(window, font, small_font, light_font, stats_font, terrain_map)
 				else:
+					BATTLE_LIMITER = None
 					render_one_battle(window, font, small_font, light_font, stats_font, terrain_map)
 		elif current_screen == "timeline":
 			render_timeline(window, font, small_font, light_font, stats_font, present_date)
@@ -1028,6 +1049,7 @@ def init(window, font, small_font, light_font, stats_font, terrain_map, river_ma
 	global current_screen, clickable_list, CURR_POSITION, mouseover_battles
 	global MAP_TYPES
 	global MAP_SIZE
+	global BATTLE_LIMITER
 
 	clickable_list = []
 	mouseover_battles = {}
@@ -1040,6 +1062,8 @@ def init(window, font, small_font, light_font, stats_font, terrain_map, river_ma
 	MAP_TYPES = []
 
 	MAP_SIZE = (terrain_map.get_width(), terrain_map.get_height())
+
+	BATTLE_LIMITER = None
 
 	participants = WAR.participants
 
