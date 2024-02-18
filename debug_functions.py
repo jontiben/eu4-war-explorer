@@ -11,7 +11,7 @@ messages = []
 
 def debug_out(event_text: str, event_type: str | None = None) -> None:
     # Outputs the time plus the event type and event to a text file.
-    time = datetime.now().time()
+    time = str(datetime.now().time())[:-4]
     if save_number > -1:
         if event_type is not None:
             spacing = ' ' * (6 - len(event_type))

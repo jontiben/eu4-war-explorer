@@ -173,6 +173,7 @@ def init() -> None:
                                          force_reset_list=True)
             pygame.display.update()
             pygame.display.set_caption(caption_root + " - " + curr_filename.split('/')[-1])
+            debug_functions.debug_out(f"Done, war list prepared")
 
     except:
         debug_functions.debug_out(f"Exception [{traceback.format_exc()}] while initializing save",
@@ -237,7 +238,7 @@ def main() -> None:
 if __name__ == "__main__":
     clear_debug_file()
     debug_functions.debug_out(f"Started EU4 Savefile Explorer version {defines.VERSION}")
-    debug_functions.debug_out(f"OS is {platform.system()} {platform.release()}", event_type="INFO")
+    debug_functions.debug_out(f"OS is {platform.system()} {platform.release()}".replace("Windows 10", "Windows 10 or later"), event_type="INFO")
     debug_functions.output_message_backlog()
     init()
     main()
