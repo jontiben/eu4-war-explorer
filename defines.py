@@ -38,7 +38,7 @@ EU4_SAVE_DIR = eu4_path_finder.EU4_SAVE_DIR
 MAP_TERRAIN_PATH = os.path.join(os.curdir, "graphics/mapterrain.png")
 MAP_BORDERS_PATH = os.path.join(os.curdir, "graphics/mapprovinces.png")
 MAP_RIVERS_PATH = os.path.join(os.curdir, "graphics/maprivers.png")
-MIDPOINTS_PATH = os.path.join(os.curdir, "exported_maps/midpointlist.csv")
+MIDPOINTS_PATH = os.path.join(os.curdir, "midpointlist.csv")
 
 INFANTRY_GRAPHIC = os.path.join(os.curdir, "graphics/infantry_icon.png")
 CAVALRY_GRAPHIC = os.path.join(os.curdir, "graphics/cavalry_icon.png")
