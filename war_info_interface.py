@@ -903,7 +903,7 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 			if event.key == pygame.K_ESCAPE:
 				if BATTLE_LIMITER is not None:
 					BATTLE_LIMITER = None
-				if not SOMETHING_FOCUSED:
+				elif not SOMETHING_FOCUSED:
 					return 1
 				else:
 					LOADED_TAG = "000"
