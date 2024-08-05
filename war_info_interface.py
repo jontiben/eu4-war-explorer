@@ -108,7 +108,7 @@ def render_timeline(window, font, small_font, light_font, stats_font, present_da
 		window.blit(to_render[t][0], to_render[t][1])
 		window.blit(to_render[t+1][0], to_render[t+1][1])
 
-	render_screen_buttons(window, font)
+	render_screen_buttons(window, font, small_font)
 	esc_button(window, small_font)
 	pygame.display.update()
 
@@ -507,7 +507,7 @@ def render_battles(window, font, small_font, light_font, stats_font, terrain_map
 		clickable_list.append(["battle", curr_battle, dividing_lines])
 	window.blits(battles_to_blit)
 
-	render_screen_buttons(window, font)
+	render_screen_buttons(window, font, small_font)
 	render_map_buttons(window, small_font, title_bar)
 
 	pygame.display.update()
@@ -564,7 +564,7 @@ def render_map_buttons(window, small_font, title_bar) -> None:
 	window.blit(export_label, export_label_loc)
 
 
-def render_screen_buttons(window, font) -> None:
+def render_screen_buttons(window, font, small_font) -> None:
 	global clickable_list, current_screen
 
 	button_height = defines.NAV_BUTTON_HEIGHT
@@ -599,6 +599,20 @@ def render_screen_buttons(window, font) -> None:
 	button_text_loc2 = button_text2.get_rect()
 	button_text_loc2.center = button_rectangle2.center
 	window.blit(button_text2, button_text_loc2)
+
+	# Export button for the initial war info screen
+	if current_screen == "info":
+		export_button_width = defines.NAV_BUTTON_HEIGHT+defines.PAD_DIST*2
+		export_button_height = defines.NAV_BUTTON_HEIGHT-defines.PAD_DIST*2
+		export_loc = (button_rectangle2.right - (export_button_width + defines.PAD_DIST), button_rectangle1.top - (defines.PAD_DIST + export_button_height), export_button_width, export_button_height)
+		export_toggle = pygame.draw.rect(window, defines.C_GOLD, export_loc, defines.NAV_BUTTON_BORDER_WIDTH)
+		clickable_list.append(["export", "info", export_toggle])
+		export_label = small_font.render("SAVE", True, defines.C_GOLD)
+		export_label_loc = export_label.get_rect()
+		export_label_loc.center = export_toggle.center
+		window.blit(export_label, export_label_loc)
+
+	# Export button for the battles screen is in render_map_buttons
 
 
 def render_war_stats(window, font, small_font, light_font, stats_font, padding_before_small_flags, tag) -> None:
@@ -870,17 +884,138 @@ def render_war(window, font, small_font, light_font, stats_font, tag="000") -> N
 			window.blit(d_date, d_date_loc)
 
 	render_war_stats(window, font, small_font, light_font, stats_font, padding_before_small_flags, tag=tag)
-	render_screen_buttons(window, font)
+	render_screen_buttons(window, font, small_font)
 	esc_button(window, small_font)
 
 	pygame.display.update()
 
 
+def export_war_info(war) -> None:
+	filename = f"exported_war_info/ewe_{war.title}.txt"
+	debug_functions.debug_out(f"Attempting to export war info to .txt file")
+	try:
+		with open(filename, 'w') as data_output_file:
+			winning_side_text = "Ended in a draw"
+			if war.outcome == 2:
+				winning_side_text = "The attackers won"
+			elif war.outcome == 3:
+				winning_side_text = "The defenders won"
+
+			# definitions for attackers_info_block, defenders_info_block, and total_info_block
+			# (see output file structure in the write function at the bottom of this function)	
+			participants_info = {"attack": [], "defend": []}
+			# ^ series of strings to join together, dynamically adding new entries is easier this way.
+			total_losses_info = {"attack": [0, 0, 0, 0], "defend": [0, 0, 0, 0]}
+			# ^ [total_land, total_ship, total_land_attr, total_ship_attr]
+			for tag in war.participants:
+				participant = war.participants[tag]
+				side = participant.side
+				participants_info[side].append("  ")
+				if participant.level == "primary":
+					participants_info[side].append('*')
+				total_land_losses = sum(participant.loss_list[:3])
+				total_ship_losses = sum(participant.loss_list[3:])
+				total_land_attr_losses = participant.land_attrition_losses
+				total_ship_attr_losses = participant.sea_attrition_losses
+				total_losses_info[side][0] += total_land_losses
+				total_losses_info[side][1] += total_ship_losses
+				total_losses_info[side][2] += total_land_attr_losses
+				total_losses_info[side][3] += total_ship_attr_losses
+
+				participants_info[side].append(f'''{participant.longname} ({participant.name})
+    Participated {participant.join_date} - {participant.quit_date}
+    Losses:
+      Infantry Losses: {participant.inf_losses} (attr: {participant.losses[defines.INF_START + defines.ATTRITION_OFFSET]})
+      Cavalry Losses: {participant.cav_losses} (attr: {participant.losses[defines.CAV_START + defines.ATTRITION_OFFSET]})
+      Artillery Losses: {participant.art_losses} (attr: {participant.losses[defines.ART_START + defines.ATTRITION_OFFSET]})
+      Heavy Ship Losses: {participant.hs_losses} (attr: {participant.losses[defines.HS_START + defines.ATTRITION_OFFSET]})
+      Light Ship Losses: {participant.ls_losses} (attr: {participant.losses[defines.LS_START + defines.ATTRITION_OFFSET]})
+      Galley Losses: {participant.gal_losses} (attr: {participant.losses[defines.GAL_START + defines.ATTRITION_OFFSET]})
+      Transport Losses: {participant.tra_losses} (attr: {participant.losses[defines.TRA_START + defines.ATTRITION_OFFSET]})
+    Total Land Losses: {total_land_losses} (attr: {total_land_attr_losses})
+    Total Ship Losses: {total_ship_losses} (attr: {total_ship_attr_losses})
+''')
+
+			attackers_info_block = "".join(participants_info["attack"])
+			defenders_info_block = "".join(participants_info["defend"])
+			total_info_block = f'''  Attackers:
+    Land Losses: {total_losses_info["attack"][0]} (attr: {total_losses_info["attack"][2]})
+    Ship Losses: {total_losses_info["attack"][1]} (attr: {total_losses_info["attack"][3]})
+  Defenders:
+    Land Losses: {total_losses_info["defend"][0]} (attr: {total_losses_info["defend"][2]})
+    Ship Losses: {total_losses_info["defend"][1]} (attr: {total_losses_info["defend"][3]})
+'''
+
+			# definition for battles_info_block
+
+			battles_info_block = []
+			for battle in war.battles:
+				result = "Unknown result"
+				if battle.result == "yes":
+					result = "Attacker won"
+				elif battle.result == "no":
+					result = "Defender won"
+				battles_info_block.append(f'''  {battle.fullname} ({battle.surface} battle)
+    {battle.date}
+    {result}
+    Province ID: {battle.location}
+    Attacker:
+      {war.participants[battle.attacker].longname} ({battle.attacker})
+      Led by {battle.attacking_general}\n''')
+				if battle.surface == "land":
+					battles_info_block.append(f'''      Engaged Infantry: {battle.attacking_force[0]}
+      Engaged Cavalry: {battle.attacking_force[1]}
+      Engaged Artillery: {battle.attacking_force[2]}
+      Total Engaged: {battle.attacking_force[0] + battle.attacking_force[1] + battle.attacking_force[2]}''')
+				else:
+					battles_info_block.append(f'''      Engaged Heavy Ships: {battle.attacking_force[0]}
+      Engaged Light Ships: {battle.attacking_force[1]}
+      Engaged Galleys: {battle.attacking_force[2]}
+      Engaged Transports: {battle.attacking_force[3]}
+      Total Engaged: {battle.attacking_force[0] + battle.attacking_force[1] + battle.attacking_force[2] + battle.attacking_force[3]}''')
+				battles_info_block.append(f"\n      Total Losses: {battle.attacking_losses}\n")
+				battles_info_block.append(f'''    Defender:
+      {war.participants[battle.defender].longname} ({battle.defender})
+      Led by {battle.defending_general}\n''')
+				if battle.surface == "land":
+					battles_info_block.append(f'''      Engaged Infantry: {battle.defending_force[0]}
+      Engaged Cavalry: {battle.defending_force[1]}
+      Engaged Artillery: {battle.defending_force[2]}
+      Total Engaged: {battle.attacking_force[0] + battle.attacking_force[1] + battle.attacking_force[2]}''')
+				else:
+					battles_info_block.append(f'''      Engaged Heavy Ships: {battle.defending_force[0]}
+      Engaged Light Ships: {battle.defending_force[1]}
+      Engaged Galleys: {battle.defending_force[2]}
+      Engaged Transports: {battle.defending_force[3]}
+      Total Engaged: {battle.attacking_force[0] + battle.attacking_force[1] + battle.attacking_force[2] + battle.attacking_force[3]}''')
+				battles_info_block.append(f"\n      Total Losses: {battle.defending_losses}\n")
+
+			battles_info_block = "".join(battles_info_block)
+			
+			# Actual write function here
+			data_output_file.write(f'''{war.title}
+{war.start_date} - {war.end_date}
+{winning_side_text}
+
+Attackers:
+{attackers_info_block}
+Defenders:
+{defenders_info_block}
+Totals:
+{total_info_block}
+Battles:
+{battles_info_block}
+				''')
+		debug_functions.debug_out(f"Successfully exported war info to file [{filename}]")
+	except Exception as exception:
+		debug_functions.debug_out(f"Exporting war data failed with exception [{exception}]", event_type="ERROR")
+
+
 def export_map(map) -> None:
 	from datetime import datetime
 	filename = f"exported_maps/ewe_battles_{str(datetime.now().time()).replace(':','').split('.')[0]}.{defines.MAP_OUTPUT_FORMAT}"
+	debug_functions.debug_out(f"Attempting to export map to image")
 	try:
-		debug_functions.debug_out(f"Exporting map to image")
 		pygame.image.save(map, filename)
 		debug_functions.debug_out(f"Successfully exported map to file [{filename}]")
 	except Exception as exception:
@@ -975,11 +1110,15 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 									   border_map, province_mids_path)
 							break
 						elif button[0] == "export":
-							export_window = pygame.Surface((MAP_SIZE))
-							map = render_map(export_window, font, small_font, light_font, stats_font, terrain_map,
-											 river_map, border_map, province_mids_path, output_map=True)
-							export_map(map)
-							break
+							if button[1] == "map":
+								export_window = pygame.Surface((MAP_SIZE))
+								map = render_map(export_window, font, small_font, light_font, stats_font, terrain_map,
+												 river_map, border_map, province_mids_path, output_map=True)
+								export_map(map)
+								break
+							elif button[1] == "info":
+								export_war_info(WAR)
+								break
 						elif button[1] == "link":
 							current_screen = "battles"
 							SOMETHING_FOCUSED = True

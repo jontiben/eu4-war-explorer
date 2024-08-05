@@ -691,7 +691,7 @@ def locate_wars(filename) -> tuple[list[War], str, str | None, Any, Any] | None:
                     pass
             if file_lines[0].strip() != "EU4txt":
                 debug_functions.debug_out("Savefile decompression failed, likely ironman save.", event_type="ERROR")
-                debug_functions.debug_out("(You'll have to un-ironman your save first, try the internet for help)", event_type="HINT")
+                debug_functions.debug_out("(You'll have to de-ironman your save first, try the internet for help)", event_type="HINT")
                 return None
             else:
                 debug_functions.debug_out("Savefile successfully decompressed.")

@@ -136,3 +136,5 @@ mod_data/*
 !mod_data/mod_data.txt
 exported_maps/*
 !exported_maps/exported_maps.txt
+exported_war_info/*
+!exported_war_info/exported_war_info.txt
