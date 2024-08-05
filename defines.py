@@ -100,8 +100,8 @@ try:
     START_WIDTH = int(get_config_data(lines[0]))  # 1200 by default
     START_HEIGHT = int(get_config_data(lines[1]))  # 800 by default
 except:
-    START_WIDTH = 1200
-    START_HEIGHT = 800
+    START_WIDTH = 1400
+    START_HEIGHT = 1000
 NAV_BUTTON_HEIGHT = 50  # Pixels
 NAV_BUTTON_BORDER_WIDTH = 4  # Thickness, in pixels
 SMALL_BORDER_WIDTH = int(NAV_BUTTON_BORDER_WIDTH / 4)
@@ -203,4 +203,5 @@ DEFINITE_FINAL_WORDS_LIST = [
     "end",
     "lake",
     "channel",
+    "relief" # anbennar, maybe in the future handle specifically possessives in names and make this irrelevant?
 ]
