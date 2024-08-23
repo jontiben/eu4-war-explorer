@@ -10,6 +10,7 @@ a = Analysis(
     binaries=[],
     datas=[('exported_maps\\exported_maps.txt', 'exported_maps'),
     ("mod_data\\mod_data.txt", "mod_data"),
+    ("exported_war_info\\exported_war_info.txt", "exported_war_info"),
     ("fonts\\*", "fonts"),
     ("graphics\\*", "graphics"),
     ("README.md", '.'),
@@ -25,6 +26,7 @@ a = Analysis(
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
+    optimize=0,
 )
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
