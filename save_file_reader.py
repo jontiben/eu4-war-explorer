@@ -304,7 +304,7 @@ class War:
                     self.attack_total_warscore += float(get_line_data(check_participants_num + 1))
                 else:
                     self.defend_total_warscore += float(get_line_data(check_participants_num + 1))
-                if "promised_land" in file_lines[check_participants_num + 3]: # RNW compatibility
+                if "promised_land" in file_lines[check_participants_num + 3] or "war_score" in file_lines[check_participants_num + 3] : # RNW and post 1.38(?) savefile compatibility
                     self.participants[curr_tag].losses = get_line_data(check_participants_num + 6).split(' ')
                 else:
                     self.participants[curr_tag].losses = get_line_data(check_participants_num + 5).split(' ')
@@ -644,7 +644,6 @@ def get_meta_data(local_file_lines) -> list:
                         meta_data_out[1].append((get_line_data(i+1), get_line_data(i+2)))
                     else:
                         debug_functions.debug_out(f"Failed to find .mod file at path [{defines.EU4_MODS + '/' + path.split('/')[1]}]", event_type="WARN")
-                    break
         elif line == "mod_enabled={":  # I think mod_enabled is the old name for this
             for i in range(l+1, define_bracket_block(l)):
                 if clean_tabs(i) != "}":
@@ -653,7 +652,6 @@ def get_meta_data(local_file_lines) -> list:
                         meta_data_out[1].append((path, path.split('_')[1][:-4]))
                     else:
                         debug_functions.debug_out(f"Failed to find .mod file at path [{defines.EU4_MODS + '/' + path.split('/')[1]}]", event_type="WARN")
-                    break
         elif "checksum=" in line:
             # End of meta file/section
             meta_data_out[0] = get_line_data(l)

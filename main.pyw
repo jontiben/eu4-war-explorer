@@ -87,6 +87,8 @@ def open_file() -> str | None:
         # July 2023 update: it stopped happening out of the blue at some point in the last few months. I still don't
         # know what it was, I'm leaving this comment here in case anyone else encounters the same error in the future
         # and wants to feel a little less alone.
+        #
+        # September 2024 update: it's back and I still don't know what it is.
         file_name = filedialog.askopenfilename(parent=root, initialdir=defines.EU4_SAVE_DIR,
                                                title="Select an EU4 Savefile",
                                                filetypes=[('eu4 save files', '*.eu4')])
