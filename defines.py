@@ -9,7 +9,7 @@ import os
 import eu4_path_finder
 
 ### VERSION
-VERSION = "1.2.2a"
+VERSION = "1.2.5a"
 
 config_file = open("config.cfg", 'r')
 lines = config_file.readlines()
