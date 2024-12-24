@@ -304,10 +304,14 @@ class War:
                     self.attack_total_warscore += float(get_line_data(check_participants_num + 1))
                 else:
                     self.defend_total_warscore += float(get_line_data(check_participants_num + 1))
-                if "promised_land" in file_lines[check_participants_num + 3] or "war_score" in file_lines[check_participants_num + 3] : # RNW and post 1.38(?) savefile compatibility
-                    self.participants[curr_tag].losses = get_line_data(check_participants_num + 6).split(' ')
-                else:
-                    self.participants[curr_tag].losses = get_line_data(check_participants_num + 5).split(' ')
+                losses_offset = 5
+                if "promised_land" in file_lines[check_participants_num + 3] or "promised_land" in file_lines[check_participants_num + 4]:
+                    # RNW and post 1.38(?) savefile compatibility
+                    losses_offset += 1
+                if "war_score" in file_lines[check_participants_num + 3] or "war_score" in file_lines[check_participants_num + 4]: 
+                    # RNW and post 1.38(?) savefile compatibility
+                    losses_offset += 1
+                self.participants[curr_tag].losses = get_line_data(check_participants_num + losses_offset).split(' ')
                 self.participants[curr_tag].consolidate_losses()
         for key in self.participants.keys():
             if self.participants[key].name in PLAYER_COUNTRIES:

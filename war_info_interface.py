@@ -1133,36 +1133,38 @@ def info_loop(window, font, small_font, light_font, stats_font, terrain_map, riv
 							return_to_battles = True
 							render_map(window, font, small_font, light_font, stats_font, terrain_map,
 									   river_map, border_map, province_mids_path)
+							
 				mouse_x, mouse_y = mouse_pos
 				text_on = False
 				clickable_list = []
-				for item in mouseover_battles:
-					# Check if the mouse is within battle_center_size of the battle location with pygame (in a square, for performance)
-					if item[0] - (defines.BATTLE_CENTER_SIZE + 5) < mouse_x < item[0] + (
-							defines.BATTLE_CENTER_SIZE + 5) and item[
-						1] - (defines.BATTLE_CENTER_SIZE + 5) < mouse_y < item[1] + (
-							defines.BATTLE_CENTER_SIZE + 5):
-						# Draw the battle name
-						render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map,
-								   border_map,
+				if current_screen == "battles":
+					for item in mouseover_battles:
+						# Check if the mouse is within battle_center_size of the battle location with pygame (in a square, for performance)
+						if item[0] - (defines.BATTLE_CENTER_SIZE + 5) < mouse_x < item[0] + (
+								defines.BATTLE_CENTER_SIZE + 5) and item[
+							1] - (defines.BATTLE_CENTER_SIZE + 5) < mouse_y < item[1] + (
+								defines.BATTLE_CENTER_SIZE + 5):
+							# Draw the battle name
+							render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map,
+									   border_map,
+									   province_mids_path)
+							pygame.draw.circle(window, defines.C_GOLD, item, defines.BATTLE_CENTER_SIZE)
+							text = small_font.render(mouseover_battles[item][0], True, defines.C_WHITE)
+							text_rect = text.get_rect()
+							text_rect.topleft = (item[0] + defines.PAD_DIST / 2, item[1] - defines.BATTLE_CENTER_SIZE - 10)
+							text_backing_surface = pygame.Surface((text_rect.width, text_rect.height))
+							text_backing_surface_rect = text_backing_surface.get_rect()
+							text_backing_surface_rect.topleft = text_rect.topleft
+							text_backing_surface.set_alpha(defines.BATTLE_TEXT_BACKING_ALPHA)
+							window.blit(text_backing_surface, text_backing_surface_rect)
+							window.blit(text, text_rect)
+							clickable_list.append(["slice", mouseover_battles[item][1], text_backing_surface_rect])
+							text_on = True
+							pygame.display.update()
+							break
+					if text_on == False:
+						render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map,
 								   province_mids_path)
-						pygame.draw.circle(window, defines.C_GOLD, item, defines.BATTLE_CENTER_SIZE)
-						text = small_font.render(mouseover_battles[item][0], True, defines.C_WHITE)
-						text_rect = text.get_rect()
-						text_rect.topleft = (item[0] + defines.PAD_DIST / 2, item[1] - defines.BATTLE_CENTER_SIZE - 10)
-						text_backing_surface = pygame.Surface((text_rect.width, text_rect.height))
-						text_backing_surface_rect = text_backing_surface.get_rect()
-						text_backing_surface_rect.topleft = text_rect.topleft
-						text_backing_surface.set_alpha(defines.BATTLE_TEXT_BACKING_ALPHA)
-						window.blit(text_backing_surface, text_backing_surface_rect)
-						window.blit(text, text_rect)
-						clickable_list.append(["slice", mouseover_battles[item][1], text_backing_surface_rect])
-						text_on = True
-						pygame.display.update()
-						break
-				if text_on == False:
-					render_map(window, font, small_font, light_font, stats_font, terrain_map, river_map, border_map,
-							   province_mids_path)
 
 		if current_screen == "info":
 			render_war(window, font, small_font, light_font, stats_font, tag=LOADED_TAG)
