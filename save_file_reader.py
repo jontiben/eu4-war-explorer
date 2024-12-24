@@ -561,7 +561,10 @@ def is_date(line_no: int) -> bool:
 
 
 def clean_tabs(line_no: int) -> str:
-    return file_lines[line_no].replace('	', "")
+    new_line = file_lines[line_no].replace('	', "")
+    if new_line[0] == ' ':
+        new_line = new_line[1:]
+    return new_line
 
 
 def get_line_data(line_no: int) -> str:
