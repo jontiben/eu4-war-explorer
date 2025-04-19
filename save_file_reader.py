@@ -534,9 +534,12 @@ def check_mods(mod_list) -> str | None:
         current_mod_lines = current_mod_file.readlines()
         current_mod_file.close()
         mod_data_path = None
-        for line in current_mod_lines:
+        for l, line in enumerate(current_mod_lines):
             if line[:5] == "path=":
-                mod_data_path = line[6:-2]
+                if l < len(current_mod_lines) - 1: # Non-final line
+                    mod_data_path = line[6:-2] # Remove end-line char
+                else:
+                    mod_data_path = line[6:-1] 
         if mod_data_path is None:
             debug_functions.debug_out(f"Failed to find path for mod {mod[1]}", event_type="WARN")
             return
