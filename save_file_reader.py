@@ -199,24 +199,21 @@ class Participant:
         self.sea_attrition_losses = sum(loss[9:][defines.ATTRITION_OFFSET::defines.GROUP_SIZE])
 
     def get_nation_info(self):
-        output = ["", [150, 150, 150]]
-        standby_color = [150, 150, 150]
+        fallback_color = [150, 150, 150]
+        output = ["", fallback_color]
         if self.name in nation_info_locations.keys():
             for l in range (nation_info_locations[self.name], define_bracket_block(nation_info_locations[self.name])):
                 if "colonial_parent" in file_lines[l]:
                     output[0] = file_lines[l].split('=')[1].strip().replace('"', '')
-                elif "country_color" in file_lines[l]:
+                elif "revolutionary_colors" in file_lines[l]:  ### This is a temporary solution until I get around to pulling colors for each colonial region
+                    color = defines.EU4_COLORS_TRANSLATION[clean_tabs(l+1).split(' ')[0]]
+                    output[1] = list(color)
+                elif "country_color" in file_lines[l] and output[1] == fallback_color:
                     colors = clean_tabs(l + 1).split(' ')[:3]
                     for c, color in enumerate(colors):
-                        standby_color[c] = int(color)
+                        fallback_color[c] = int(color)
                     if self.name[0] == 'C' or self.name[0] == 'F':
-                        output[1] = standby_color
-                elif "flag_colors" in file_lines[l]:
-                    color = clean_tabs(l+1).split(' ')
-                    if color[0] != '0' or color[1] != '0' or color[2] != '0':
-                        output[1] = list(defines.EU4_COLORS_TRANSLATION[color[0]])
-        if output[1] == [150, 150, 150]:
-            output[1] = standby_color # Fallback
+                        output[1] = fallback_color
         return output
 
 
