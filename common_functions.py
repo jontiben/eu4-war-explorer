@@ -96,21 +96,25 @@ def get_all_country_names(countries_folder=defines.PATH_TO_COUNTRIES_FILE[:-16])
     all_countries = []
     for file in os.listdir(countries_folder):
         if os.path.isfile(countries_folder + file):
-            tags_countries_file = open(countries_folder + file, 'r')
-            tc_lines = tags_countries_file.readlines()
-            tags_countries_file.close()
-            for line in tc_lines:
-                if line[0] != '#' and line[0] != '\n':
-                    try:
-                        new_line = line.strip().split(" = ")[-1]
-                        new_line = new_line.replace("\"", '')
-                        new_line = new_line.split('/')[1]
-                        new_line = new_line.split('.')[0]
-                        if new_line.lower() in defines.ALT_NAMES:
-                            new_line = defines.ALT_NAMES[new_line.lower()]
-                        all_countries.append((line[:3], new_line))
-                    except:
-                        pass
+            try:
+                tags_countries_file = open(countries_folder + file, 'r')
+                debug_functions.debug_out(countries_folder + file)
+                tc_lines = tags_countries_file.readlines()
+                tags_countries_file.close()
+                for line in tc_lines:
+                    if line[0] != '#' and line[0] != '\n':
+                        try:
+                            new_line = line.strip().split(" = ")[-1]
+                            new_line = new_line.replace("\"", '')
+                            new_line = new_line.split('/')[1]
+                            new_line = new_line.split('.')[0]
+                            if new_line.lower() in defines.ALT_NAMES:
+                                new_line = defines.ALT_NAMES[new_line.lower()]
+                            all_countries.append((line[:3], new_line))
+                        except:
+                            pass
+            except:
+                continue
 
     if len(all_countries) == 0:  # Fallback
         debug_functions.debug_out(

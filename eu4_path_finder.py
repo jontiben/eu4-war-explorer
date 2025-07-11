@@ -106,6 +106,7 @@ else:
     debug_functions.hold_until_start(f"EU4 folder specified in config as {EU4_FOLDER}")
 PATH_TO_COUNTRIES_FILE = EU4_FOLDER + "/common/country_tags/00_countries.txt"
 PATH_TO_BACKUP_COUNTRIES_FOLDER = EU4_FOLDER + "/history/countries"
+debug_functions.hold_until_start(f"Found the following country data paths: {PATH_TO_COUNTRIES_FILE}; {PATH_TO_BACKUP_COUNTRIES_FOLDER}")
 PATH_TO_FLAGS_FOLDER = EU4_FOLDER + "/gfx/flags"
 PATH_TO_BACKUP_FLAG = PATH_TO_FLAGS_FOLDER + "/colonial_patriot_rebels.tga"
 PATH_TO_CONDOTTIERI_FLAG = PATH_TO_FLAGS_FOLDER + "/ronin_rebels.tga"

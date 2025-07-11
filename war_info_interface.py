@@ -177,7 +177,7 @@ def render_map(window, font, small_font, light_font, stats_font, terrain_map, ri
 			curr_y = province_dict[battle.location][1]
 			mod_x = int(curr_x*(window.get_width()/MAP_SIZE[0]))
 			mod_y = int(curr_y*(sized_terrain_map.get_rect().height/MAP_SIZE[1]))
-		except KeyError:  # No debug file yet
+		except KeyError:
 			if battle.location not in failed_to_render:
 				failed_to_render.append(battle.location)
 				debug_functions.debug_out(f"Could not find midpoint data for province [{battle.location}] in file [{province_mids_path}]. This battle will not be rendered. Try deleting the midpointlist file and restarting the application.", event_type="ERROR")
